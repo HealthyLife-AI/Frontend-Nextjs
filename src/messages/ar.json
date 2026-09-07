@@ -1,0 +1,194 @@
+{
+  "common": {
+    "brandName": "غذائي",
+    "brandFull": "HealthyLife AI",
+    "loading": "جارٍ التحميل..."
+  },
+  "nav": {
+    "dashboard": "الرئيسية",
+    "patients": "المرضى",
+    "plans": "الخطط",
+    "alerts": "التنبيهات",
+    "settings": "الإعدادات",
+    "search": "البحث عن مريض، ملف طبي، أو خطة...",
+    "signOut": "تسجيل الخروج"
+  },
+  "auth": {
+    "login": {
+      "title": "تسجيل الدخول",
+      "subtitle": "أدخل بياناتك للوصول إلى لوحة تحكم عملائك",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "submit": "تسجيل الدخول",
+      "submitting": "جارٍ تسجيل الدخول...",
+      "noAccount": "ليس لديك حساب؟",
+      "createAccount": "إنشاء حساب جديد"
+    },
+    "register": {
+      "title": "إنشاء حساب أخصائي تغذية",
+      "subtitle": "سجّل لإدارة عملائك وتصميم خططهم الغذائية",
+      "name": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "passwordConfirmation": "تأكيد كلمة المرور",
+      "passwordHint": "8 أحرف على الأقل، تتضمن حرفًا كبيرًا وصغيرًا ورقمًا",
+      "submit": "إنشاء الحساب",
+      "submitting": "جارٍ إنشاء الحساب...",
+      "haveAccount": "لديك حساب بالفعل؟",
+      "signIn": "تسجيل الدخول"
+    },
+    "errors": {
+      "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+      "locked": "تم قفل الحساب مؤقتًا بسبب محاولات دخول فاشلة متكررة. حاول مرة أخرى بعد {minutes} دقيقة.",
+      "generic": "حدث خطأ، حاول مرة أخرى.",
+      "emailTaken": "هذا البريد الإلكتروني مستخدم بالفعل."
+    },
+    "validation": {
+      "required": "هذا الحقل مطلوب",
+      "email": "أدخل بريدًا إلكترونيًا صحيحًا",
+      "passwordMismatch": "كلمتا المرور غير متطابقتين",
+      "passwordWeak": "كلمة المرور لا تحقق الشروط المطلوبة"
+    },
+    "activate": {
+      "title": "تفعيل حسابك",
+      "subtitle": "اضبط كلمة مرور لبدء استخدام HealthyLife AI",
+      "password": "كلمة المرور",
+      "passwordConfirmation": "تأكيد كلمة المرور",
+      "passwordHint": "8 أحرف على الأقل، تتضمن حرفًا كبيرًا وصغيرًا ورقمًا",
+      "submit": "تفعيل الحساب",
+      "submitting": "جارٍ التفعيل...",
+      "invalidTitle": "هذا الرابط غير صالح",
+      "invalidBody": "قد يكون قد استُخدم من قبل أو انتهت صلاحيته. اطلب من أخصائي التغذية إرسال رابط دعوة جديد."
+    }
+  },
+  "goals": {
+    "weight_loss": "إنقاص وزن",
+    "weight_gain": "زيادة وزن",
+    "weight_maintenance": "ثبيت وزن",
+    "health_monitoring": "متابعة صحية"
+  },
+  "clientStatus": {
+    "pending": "بانتظار التفعيل",
+    "active": "مفعّل"
+  },
+  "adherence": {
+    "on_track": "ملتزم",
+    "needs_attention": "يحتاج انتباه",
+    "late": "متأخر",
+    "none": "لم يُتابع بعد"
+  },
+  "clients": {
+    "list": {
+      "title": "المرضى",
+      "subtitle": "إدارة ومتابعة الحالة الصحية والالتزام الغذائي لعملائك",
+      "addButton": "إضافة مريض",
+      "searchPlaceholder": "ابحث بالاسم أو رقم الملف...",
+      "searchButton": "بحث",
+      "filterAll": "الكل",
+      "filterActive": "مفعّل",
+      "filterPending": "بانتظار التفعيل",
+      "filterOnTrack": "ملتزم",
+      "filterNeedsAttention": "يحتاج انتباه",
+      "filterLate": "متأخر",
+      "columnName": "المريض",
+      "columnGoal": "الهدف الصحي",
+      "columnStatus": "الحالة",
+      "columnAdherence": "الالتزام",
+      "columnActions": "إجراءات",
+      "viewAction": "عرض",
+      "empty": "لا يوجد مرضى بعد. أضف أول مريض للبدء.",
+      "noResults": "لا يوجد مرضى مطابقون لهذا الفلتر أو البحث.",
+      "showingRange": "عرض {from}–{to} من {total}",
+      "previousPage": "السابق",
+      "nextPage": "التالي"
+    },
+    "stats": {
+      "total": "إجمالي المرضى",
+      "active": "ملتزمون",
+      "needsAttention": "يحتاجون انتباه",
+      "notLoggedToday": "لم يسجّلوا اليوم"
+    },
+    "add": {
+      "title": "إضافة مريض جديد",
+      "subtitle": "أدخل الاسم ورقم الجوال — سيُنشأ رابط تفعيل تلقائيًا",
+      "name": "الاسم الكامل",
+      "phone": "رقم الجوال",
+      "goal": "الهدف الصحي",
+      "submit": "إضافة المريض",
+      "submitting": "جارٍ إضافة المريض...",
+      "successTitle": "تمت إضافة المريض",
+      "successSubtitle": "شارك رابط التفعيل هذا مع {name} عبر واتساب ليتمكن من ضبط كلمة المرور والبدء.",
+      "inviteLinkLabel": "رابط التفعيل",
+      "copyLink": "نسخ الرابط",
+      "linkCopied": "تم النسخ",
+      "shareWhatsapp": "مشاركة عبر واتساب",
+      "whatsappMessage": "مرحبًا {name}، فضلاً فعّل حسابك في HealthyLife AI عبر هذا الرابط: {link}",
+      "addAnother": "إضافة مريض آخر",
+      "backToList": "العودة لقائمة المرضى",
+      "errors": {
+        "phoneTaken": "رقم الجوال هذا مسجّل بالفعل لأحد مرضاك."
+      }
+    },
+    "detail": {
+      "backToList": "العودة لقائمة المرضى",
+      "codeLabel": "رقم الملف",
+      "phoneLabel": "الجوال",
+      "goalLabel": "الهدف",
+      "statusLabel": "الحالة",
+      "adherenceLabel": "الالتزام",
+      "healthProfileLink": "الملف الصحي",
+      "noProfileYet": "لا يوجد ملف صحي مسجّل بعد.",
+      "fillProfile": "تعبئة الملف الصحي"
+    },
+    "healthProfile": {
+      "title": "الملف الصحي",
+      "subtitle": "بيانات الجسم والخلفية الصحية وقياسات اليوم",
+      "sectionBody": "بيانات الجسم",
+      "weight": "الوزن (كجم)",
+      "height": "الطول (سم)",
+      "age": "العمر",
+      "gender": "الجنس",
+      "genderMale": "ذكر",
+      "genderFemale": "أنثى",
+      "activityLevel": "مستوى النشاط",
+      "activitySedentary": "خامل (نشاط بدني قليل جدًا)",
+      "activityLight": "خفيف (رياضة 1–3 أيام أسبوعيًا)",
+      "activityModerate": "متوسط (رياضة 3–5 أيام أسبوعيًا)",
+      "activityActive": "نشيط (رياضة 6–7 أيام أسبوعيًا)",
+      "activityVeryActive": "نشيط جدًا (مجهود بدني يومي عالٍ)",
+      "sectionConditions": "الحالات الصحية",
+      "conditionsHint": "مثال: مقاومة أنسولين، مشاكل الغدة الدرقية",
+      "sectionMedications": "الأدوية",
+      "medicationName": "الدواء",
+      "medicationDose": "الجرعة",
+      "medicationSchedule": "التوقيت",
+      "addMedication": "إضافة دواء",
+      "removeMedication": "حذف",
+      "sectionAllergies": "الحساسيات",
+      "allergiesHint": "مثال: الفول السوداني، الألبان",
+      "sectionPreferences": "تفضيلات الطعام",
+      "preferencesHint": "مثال: فطور نباتي، بدون مأكولات بحرية",
+      "addTag": "إضافة",
+      "tagPlaceholder": "اكتب ثم اضغط إضافة",
+      "removeTag": "حذف {value}",
+      "sectionComposition": "قياسات مكوّنات الجسم اليوم (اختياري)",
+      "compositionHint": "تعبئة أي حقل هنا تسجّل أيضًا قراءة جديدة بتاريخ اليوم في سجل المريض.",
+      "bodyFatPercent": "نسبة الدهون (%)",
+      "muscleMassKg": "الكتلة العضلية (كجم)",
+      "waterPercent": "نسبة الماء (%)",
+      "waistCm": "محيط الخصر (سم)",
+      "sectionNotes": "ملاحظات",
+      "surgeryHistory": "تاريخ الجراحات",
+      "labNotes": "نتائج التحاليل / ملاحظات",
+      "nutritionistNotes": "ملاحظات الأخصائي",
+      "dailyCalorieNeeds": "الاحتياج التقديري اليومي من السعرات",
+      "kcalPerDay": "{value} سعرة/يوم",
+      "submit": "حفظ الملف الصحي",
+      "submitting": "جارٍ الحفظ...",
+      "saved": "تم حفظ الملف الصحي.",
+      "errors": {
+        "generic": "تعذّر حفظ الملف الصحي. راجع البيانات وحاول مرة أخرى."
+      }
+    }
+  }
+}
