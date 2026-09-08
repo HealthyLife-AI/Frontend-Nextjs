@@ -83,7 +83,7 @@ export function TagInput({
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="h-10 flex-1 rounded-control border border-border bg-card px-3.5 text-sm text-ink placeholder:text-ink-muted/60 outline-none transition-colors focus:border-primary focus:ring-[3px] focus:ring-primary/15"
+          className="h-10 flex-1 rounded-control border border-border bg-card px-3.5 text-sm text-ink placeholder:text-ink-muted/60 outline-none transition-all hover:border-ink-muted/40 focus:border-primary focus:ring-[3px] focus:ring-primary/15"
         />
         <Button type="button" variant="secondary" onClick={commit} className="shrink-0">
           {addLabel}

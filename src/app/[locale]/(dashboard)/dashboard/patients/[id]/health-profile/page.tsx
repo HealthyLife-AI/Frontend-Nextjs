@@ -26,7 +26,9 @@ export default function HealthProfilePage({ params }: { params: Promise<{ id: st
         <p className="text-sm text-ink-muted">{t("subtitle")}</p>
       </div>
 
-      <HealthProfileForm subscriberId={id} />
+      <div className="rounded-card border border-border bg-card p-6 shadow-card">
+        <HealthProfileForm subscriberId={id} />
+      </div>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, X } from "lucide-react";
+import { Flame, Plus, X } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { TextField } from "@/components/ui/TextField";
 import { Select } from "@/components/ui/Select";
@@ -196,14 +196,19 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
         </div>
 
         {dailyCalorieNeeds !== null && (
-          <div className="rounded-control bg-primary/5 px-4 py-3">
-            <p className="text-xs text-ink-muted">{t("dailyCalorieNeeds")}</p>
-            <p className="text-lg font-semibold text-primary">{t("kcalPerDay", { value: dailyCalorieNeeds })}</p>
+          <div className="flex items-center gap-3 rounded-control border border-primary/15 bg-primary/5 px-4 py-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-control bg-primary/10 text-primary">
+              <Flame size={18} strokeWidth={1.75} />
+            </div>
+            <div>
+              <p className="text-xs text-ink-muted">{t("dailyCalorieNeeds")}</p>
+              <p className="text-lg font-semibold text-primary">{t("kcalPerDay", { value: dailyCalorieNeeds })}</p>
+            </div>
           </div>
         )}
       </section>
 
-      <section>
+      <section className="border-t border-divider pt-6">
         <TagInput
           label={t("sectionConditions")}
           value={healthConditions}
@@ -215,7 +220,7 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
         />
       </section>
 
-      <section className="flex flex-col gap-3">
+      <section className="flex flex-col gap-3 border-t border-divider pt-6">
         <h2 className="text-sm font-semibold text-ink">{t("sectionMedications")}</h2>
 
         {/*
@@ -229,7 +234,10 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
           instead of only above some breakpoint.
         */}
         {medications.map((medication, index) => (
-          <div key={index} className="flex flex-col gap-2 rounded-control border border-border p-3">
+          <div
+            key={index}
+            className="flex flex-col gap-2 rounded-control border border-border p-3 transition-colors hover:border-ink-muted/30"
+          >
             <div className="flex items-end gap-2">
               <div className="flex-1">
                 <TextField
@@ -242,7 +250,7 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
                 type="button"
                 onClick={() => removeMedication(index)}
                 aria-label={t("removeMedication")}
-                className="mb-0.5 flex h-[42px] w-10 shrink-0 items-center justify-center rounded-control text-ink-muted hover:bg-canvas hover:text-danger"
+                className="mb-0.5 flex h-[42px] w-10 shrink-0 items-center justify-center rounded-control text-ink-muted transition-colors hover:bg-status-late-bg hover:text-danger"
               >
                 <X size={16} />
               </button>
@@ -273,7 +281,7 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
         </Button>
       </section>
 
-      <section>
+      <section className="border-t border-divider pt-6">
         <TagInput
           label={t("sectionAllergies")}
           value={allergies}
@@ -285,7 +293,7 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
         />
       </section>
 
-      <section>
+      <section className="border-t border-divider pt-6">
         <TagInput
           label={t("sectionPreferences")}
           value={foodPreferences}
@@ -342,7 +350,7 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
         </div>
       </section>
 
-      <section className="flex flex-col gap-4">
+      <section className="flex flex-col gap-4 border-t border-divider pt-6">
         <h2 className="text-sm font-semibold text-ink">{t("sectionNotes")}</h2>
         <TextArea label={t("surgeryHistory")} value={surgeryHistory} onChange={setSurgeryHistory} />
         <TextArea label={t("labNotes")} value={labNotes} onChange={setLabNotes} />
@@ -376,7 +384,7 @@ function TextArea({ label, value, onChange }: { label: string; value: string; on
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={3}
-        className="w-full rounded-control border border-border bg-card px-3.5 py-2.5 text-sm text-ink outline-none transition-colors focus:border-primary focus:ring-[3px] focus:ring-primary/15"
+        className="w-full rounded-control border border-border bg-card px-3.5 py-2.5 text-sm text-ink outline-none transition-all hover:border-ink-muted/40 focus:border-primary focus:ring-[3px] focus:ring-primary/15"
       />
     </div>
   );

@@ -26,9 +26,9 @@ export function StatTile({
   tone: Tone;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-card border border-border bg-card p-4">
-      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-control ${TONE_CLASSES[tone]}`}>
-        <Icon size={20} strokeWidth={1.75} />
+    <div className="flex items-center gap-3 rounded-card border border-border bg-card p-4 shadow-card transition-shadow hover:shadow-card-hover">
+      <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-control ${TONE_CLASSES[tone]}`}>
+        <Icon size={22} strokeWidth={1.75} />
       </div>
       <div className="flex flex-col">
         <span className="text-2xl font-semibold tabular-nums text-ink">{value}</span>

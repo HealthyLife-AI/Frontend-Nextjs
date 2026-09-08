@@ -135,16 +135,16 @@ export default function PatientsPage() {
         </div>
       )}
 
-      <div className="flex flex-col gap-4 rounded-card border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 rounded-card border border-border bg-card p-4 shadow-card sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-2">
           {STATUS_FILTERS.map((filter) => (
             <button
               key={filter.labelKey}
               type="button"
               onClick={() => navigate({ status: filter.status, adherence: filter.adherence })}
-              className={`rounded-control px-3 py-1.5 text-sm font-medium transition-colors ${
+              className={`rounded-control px-3 py-1.5 text-sm font-medium transition-all ${
                 isFilterActive(filter)
-                  ? "bg-primary text-card"
+                  ? "bg-primary text-card shadow-[0_2px_6px_rgba(2,128,144,0.25)]"
                   : "text-ink-muted hover:bg-canvas hover:text-ink"
               }`}
             >
@@ -168,12 +168,12 @@ export default function PatientsPage() {
             name="search"
             defaultValue={search}
             placeholder={t("searchPlaceholder")}
-            className="h-10 w-full min-w-[220px] rounded-control border border-border bg-canvas ps-9 pe-3 text-sm text-ink placeholder:text-ink-muted outline-none focus:border-primary focus:ring-[3px] focus:ring-primary/15"
+            className="h-10 w-full min-w-[220px] rounded-control border border-border bg-canvas ps-9 pe-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all hover:border-ink-muted/40 focus:border-primary focus:bg-card focus:ring-[3px] focus:ring-primary/15"
           />
         </form>
       </div>
 
-      <div className="overflow-hidden rounded-card border border-border bg-card">
+      <div className="overflow-hidden rounded-card border border-border bg-card shadow-card">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[720px] text-start text-sm">
             <thead>
@@ -196,8 +196,15 @@ export default function PatientsPage() {
 
               {!loading && clients?.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-10 text-center text-ink-muted">
-                    {search || status || adherence ? t("noResults") : t("empty")}
+                  <td colSpan={5} className="px-4 py-16">
+                    <div className="flex flex-col items-center gap-3 text-center">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <Users size={22} strokeWidth={1.75} />
+                      </div>
+                      <p className="text-sm text-ink-muted">
+                        {search || status || adherence ? t("noResults") : t("empty")}
+                      </p>
+                    </div>
                   </td>
                 </tr>
               )}
@@ -224,7 +231,7 @@ export default function PatientsPage() {
                 type="button"
                 disabled={meta.current_page <= 1}
                 onClick={() => navigate({ status, adherence, search, page: meta.current_page - 1 })}
-                className="rounded-control px-3 py-1.5 text-sm font-medium text-ink-muted hover:bg-canvas hover:text-ink disabled:opacity-40"
+                className="rounded-control px-3 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
               >
                 {t("previousPage")}
               </button>
@@ -232,7 +239,7 @@ export default function PatientsPage() {
                 type="button"
                 disabled={meta.current_page >= meta.last_page}
                 onClick={() => navigate({ status, adherence, search, page: meta.current_page + 1 })}
-                className="rounded-control px-3 py-1.5 text-sm font-medium text-ink-muted hover:bg-canvas hover:text-ink disabled:opacity-40"
+                className="rounded-control px-3 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
               >
                 {t("nextPage")}
               </button>
@@ -249,10 +256,10 @@ function ClientRow({ client }: { client: Client }) {
   const tGoals = useTranslations("goals");
 
   return (
-    <tr className="border-b border-divider last:border-0 hover:bg-canvas">
+    <tr className="border-b border-divider transition-colors last:border-0 hover:bg-canvas/60">
       <td className="px-4 py-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary ring-2 ring-card">
             {client.name.charAt(0)}
           </div>
           <div className="flex min-w-0 flex-col">

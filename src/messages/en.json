@@ -59,6 +59,16 @@
       "submitting": "Activating...",
       "invalidTitle": "This link isn't valid",
       "invalidBody": "It may have already been used or expired. Ask your nutritionist to send you a new invite."
+    },
+    "showcase": {
+      "headline": "AI does not replace the nutritionist; it makes them more efficient.",
+      "body": "Independent nutritionists spend 40–60% of their time on admin instead of consultation. HealthyLife AI gives that time back.",
+      "point1Title": "Every client, one place",
+      "point1Body": "Client list, integrated health profile, and adherence status per client.",
+      "point2Title": "Your data, fully isolated",
+      "point2Body": "No other nutritionist can ever read your clients or their data.",
+      "point3Title": "Full Arabic RTL, side by side",
+      "point3Body": "With English — on every screen, not just this one."
     }
   },
   "goals": {

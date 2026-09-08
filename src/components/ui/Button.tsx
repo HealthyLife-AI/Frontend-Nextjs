@@ -23,11 +23,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const base =
-      "inline-flex h-10 items-center justify-center gap-2 rounded-control px-5 font-medium text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2";
+      "inline-flex h-10 items-center justify-center gap-2 rounded-control px-5 font-medium text-sm transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2";
 
     const variants: Record<ButtonVariant, string> = {
       primary:
-        "bg-accent text-ink hover:bg-accent-hover active:bg-accent-active",
+        "bg-accent text-ink shadow-[0_1px_2px_rgba(11,46,48,0.08),0_8px_16px_-6px_rgba(2,195,154,0.35)] hover:bg-accent-hover hover:shadow-[0_2px_4px_rgba(11,46,48,0.1),0_12px_24px_-8px_rgba(2,195,154,0.4)] active:bg-accent-active",
       secondary:
         "border border-primary text-primary bg-transparent hover:bg-primary/[0.06]",
       ghost: "text-ink-muted bg-transparent hover:bg-ink-muted/[0.08] hover:text-ink",

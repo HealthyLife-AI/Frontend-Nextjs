@@ -41,6 +41,20 @@
 
   --font-cairo: "Cairo", "Segoe UI", sans-serif;
   --font-inter: "Inter", "Segoe UI", sans-serif;
+
+  /*
+   * Elevation — not specified by the PRD (§5.1 only pins color/radius/
+   * direction), so this is our own addition on top of the binding tokens,
+   * not a replacement for any of them. Tinted with `--color-ink` instead
+   * of flat black so shadows read as "lifted off the mint-tinted canvas"
+   * rather than a generic gray drop-shadow — the detail that makes a flat
+   * card feel designed instead of default-browser. Two steps only (rest /
+   * hover) — a card either sits on the canvas or is being interacted
+   * with, nothing in this UI needs a third.
+   */
+  --shadow-card: 0 1px 2px rgba(11, 46, 48, 0.04), 0 8px 24px -8px rgba(11, 46, 48, 0.10);
+  --shadow-card-hover: 0 2px 4px rgba(11, 46, 48, 0.05), 0 16px 32px -12px rgba(11, 46, 48, 0.16);
+  --shadow-float: 0 4px 8px rgba(11, 46, 48, 0.06), 0 24px 48px -16px rgba(11, 46, 48, 0.22);
 }
 
 @theme inline {
@@ -73,6 +87,10 @@
 
   --font-cairo: var(--font-cairo);
   --font-inter: var(--font-inter);
+
+  --shadow-card: var(--shadow-card);
+  --shadow-card-hover: var(--shadow-card-hover);
+  --shadow-float: var(--shadow-float);
 }
 
 body {

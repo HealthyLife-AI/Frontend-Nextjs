@@ -81,7 +81,7 @@ export function Sidebar({
         <div className="flex flex-col gap-6">
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-control bg-primary text-card">
+              <div className="flex h-8 w-8 items-center justify-center rounded-control bg-gradient-to-br from-primary to-ink text-card shadow-[0_2px_6px_rgba(2,128,144,0.35)]">
                 <UtensilsCrossed size={18} />
               </div>
               <span className="text-lg font-semibold text-primary">
@@ -116,9 +116,9 @@ export function Sidebar({
                   href={href}
                   onClick={onClose}
                   aria-current={isActive ? "page" : undefined}
-                  className={`flex items-center gap-3 rounded-control px-3 py-2.5 text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 rounded-control px-3 py-2.5 text-sm font-medium transition-all ${
                     isActive
-                      ? "bg-primary text-card"
+                      ? "bg-primary text-card shadow-[0_2px_8px_rgba(2,128,144,0.28)]"
                       : "text-ink-muted hover:bg-canvas hover:text-ink"
                   }`}
                 >
@@ -131,8 +131,8 @@ export function Sidebar({
         </div>
 
         {user && (
-          <div className="flex items-center gap-3 rounded-control bg-canvas p-2.5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+          <div className="flex items-center gap-3 rounded-control border border-border bg-canvas p-2.5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary ring-2 ring-card">
               {user.name.charAt(0)}
             </div>
             <div className="flex min-w-0 flex-col">

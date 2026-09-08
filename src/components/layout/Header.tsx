@@ -24,7 +24,7 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
   }
 
   return (
-    <header className="fixed inset-x-0 top-0 z-20 flex h-16 items-center justify-between gap-2 border-b border-border bg-card/90 px-4 backdrop-blur-sm sm:px-6 lg:start-64">
+    <header className="fixed inset-x-0 top-0 z-20 flex h-16 items-center justify-between gap-2 border-b border-border bg-card/90 px-4 shadow-[0_1px_0_rgba(11,46,48,0.03),0_4px_12px_-6px_rgba(11,46,48,0.06)] backdrop-blur-sm sm:px-6 lg:start-64">
       <div className="flex min-w-0 flex-1 items-center gap-2">
         <button
           type="button"
@@ -40,7 +40,7 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
           <input
             type="search"
             placeholder={t("search")}
-            className="h-10 w-full rounded-control border border-border bg-canvas ps-10 pe-3 text-sm text-ink placeholder:text-ink-muted outline-none focus:border-primary focus:ring-[3px] focus:ring-primary/15"
+            className="h-10 w-full rounded-control border border-border bg-canvas ps-10 pe-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all hover:border-ink-muted/40 focus:border-primary focus:bg-card focus:ring-[3px] focus:ring-primary/15"
           />
         </div>
       </div>

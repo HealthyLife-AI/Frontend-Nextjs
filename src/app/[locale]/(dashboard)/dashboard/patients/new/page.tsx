@@ -13,7 +13,7 @@ export default function AddClientPage() {
         <p className="text-sm text-ink-muted">{t("subtitle")}</p>
       </div>
 
-      <div className="rounded-card border border-border bg-card p-6">
+      <div className="rounded-card border border-border bg-card p-6 shadow-card">
         <AddClientForm />
       </div>
     </div>

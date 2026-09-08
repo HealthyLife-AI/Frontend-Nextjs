@@ -69,9 +69,9 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         {t("backToList")}
       </Link>
 
-      <div className="rounded-card border border-border bg-card p-6">
+      <div className="rounded-card border border-border bg-card p-6 shadow-card">
         <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-lg font-semibold text-primary">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-lg font-semibold text-primary ring-2 ring-card">
             {client.name.charAt(0)}
           </div>
           <div>
@@ -80,26 +80,26 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           </div>
         </div>
 
-        <dl className="mt-6 grid grid-cols-2 gap-4 text-sm">
-          <div>
+        <dl className="mt-6 grid grid-cols-2 gap-3 border-t border-divider pt-6 text-sm">
+          <div className="rounded-control bg-canvas p-3">
             <dt className="text-ink-muted">{t("phoneLabel")}</dt>
-            <dd className="mt-1 text-ink" dir="ltr">
+            <dd className="mt-1 font-medium text-ink" dir="ltr">
               {client.phone ?? "—"}
             </dd>
           </div>
-          <div>
+          <div className="rounded-control bg-canvas p-3">
             <dt className="text-ink-muted">{t("goalLabel")}</dt>
-            <dd className="mt-1 text-ink">{tGoals(client.goal)}</dd>
+            <dd className="mt-1 font-medium text-ink">{tGoals(client.goal)}</dd>
           </div>
-          <div>
+          <div className="rounded-control bg-canvas p-3">
             <dt className="text-ink-muted">{t("statusLabel")}</dt>
-            <dd className="mt-1">
+            <dd className="mt-1.5">
               <ClientStatusBadge status={client.status} />
             </dd>
           </div>
-          <div>
+          <div className="rounded-control bg-canvas p-3">
             <dt className="text-ink-muted">{t("adherenceLabel")}</dt>
-            <dd className="mt-1">
+            <dd className="mt-1.5">
               <AdherenceBadge status={client.adherence_status} />
             </dd>
           </div>

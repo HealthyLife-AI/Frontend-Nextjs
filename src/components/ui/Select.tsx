@@ -25,7 +25,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             id={fieldId}
             aria-invalid={Boolean(error)}
             aria-describedby={error ? errorId : undefined}
-            className={`h-[42px] w-full appearance-none rounded-control border border-border bg-card ps-3.5 pe-10 text-sm text-ink outline-none transition-colors focus:border-primary focus:ring-[3px] focus:ring-primary/15 ${
+            className={`h-[42px] w-full appearance-none rounded-control border border-border bg-card ps-3.5 pe-10 text-sm text-ink outline-none transition-all hover:border-ink-muted/40 focus:border-primary focus:ring-[3px] focus:ring-primary/15 ${
               error ? "border-danger focus:border-danger focus:ring-danger/15" : ""
             } ${className}`}
             {...props}

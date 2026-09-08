@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { XCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useAuth } from "./AuthProvider";
@@ -43,9 +44,14 @@ export function ActivateClientForm({ token }: { token: string }) {
 
   if (invalidLink) {
     return (
-      <div className="flex flex-col gap-2 text-center">
-        <h1 className="text-xl font-semibold text-ink">{t("invalidTitle")}</h1>
-        <p className="text-sm text-ink-muted">{t("invalidBody")}</p>
+      <div className="flex flex-col items-center gap-3 text-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-status-late-bg text-status-late">
+          <XCircle size={24} strokeWidth={1.75} />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <h1 className="text-xl font-semibold text-ink">{t("invalidTitle")}</h1>
+          <p className="text-sm text-ink-muted">{t("invalidBody")}</p>
+        </div>
       </div>
     );
   }

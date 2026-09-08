@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Check, Copy } from "lucide-react";
+import { Check, CheckCircle2, Copy } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { TextField } from "@/components/ui/TextField";
@@ -74,15 +74,20 @@ export function AddClientForm() {
 
     return (
       <div className="flex flex-col gap-5">
-        <div>
-          <h2 className="text-lg font-semibold text-ink">{t("successTitle")}</h2>
-          <p className="text-sm text-ink-muted">{t("successSubtitle", { name: success.name })}</p>
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-status-on-track-bg text-status-on-track">
+            <CheckCircle2 size={22} strokeWidth={1.75} />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-ink">{t("successTitle")}</h2>
+            <p className="text-sm text-ink-muted">{t("successSubtitle", { name: success.name })}</p>
+          </div>
         </div>
 
         <div className="flex flex-col gap-1.5">
           <span className="text-sm font-medium text-ink">{t("inviteLinkLabel")}</span>
           <div className="flex items-center gap-2 rounded-control border border-border bg-canvas px-3.5 py-2.5">
-            <span className="min-w-0 flex-1 truncate text-sm text-ink-muted" dir="ltr">
+            <span className="min-w-0 flex-1 truncate font-mono text-sm text-ink-muted" dir="ltr">
               {success.inviteLink}
             </span>
             <button
