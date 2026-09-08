@@ -111,3 +111,25 @@ html[data-locale="ar"] body {
 html[data-locale="en"] body {
   font-family: var(--font-inter);
 }
+
+/*
+ * Homepage motion — the marketing page only (Reveal.tsx, the hero's
+ * floating card). Kept out of `@theme` since these are keyframes/utility
+ * classes, not design tokens. `prefers-reduced-motion` is honored twice:
+ * Reveal's own JS skips the observer entirely for that preference, and
+ * this media guard also disables the float loop, which has no JS gate.
+ */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float-y 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float {
+    animation: none;
+  }
+}
