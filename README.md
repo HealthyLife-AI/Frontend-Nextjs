@@ -31,7 +31,55 @@ URL in `LARAVEL_API_URL` (`php artisan serve`, default
 `http://127.0.0.1:8000/api/v1`) with its database migrated and seeded — see
 that project's README.
 
-## Design tokens
+## Deploying to Vercel
+
+Unlike the backend's Taqat deploy (a Dockerfile, migrations, a manually-added
+deploy key — see `Backend/HealthyLife-Laravel/README.md`), this needs almost
+no preparation: Vercel is Next.js's own platform and auto-detects an App
+Router project with zero config. The architecture was already built
+Vercel-shaped from Sprint 1 (see "Authentication (BFF pattern)" above) —
+verified end to end below, not just asserted.
+
+1. **Push this repo to GitHub** if it isn't already (`Frontend-Nextjs`).
+2. On [vercel.com](https://vercel.com): **Add New** → **Project** → import
+   the repo. Framework preset, build command, and output directory are all
+   auto-detected — nothing to change.
+3. Before the first deploy, set two **Environment Variables** (Project
+   Settings → Environment Variables — apply to Production, and to Preview if
+   you want preview deployments to also hit the real API):
+   - `LARAVEL_API_URL` = `https://healthylife.apps.taqat.academy/api/v1`
+   - `NEXT_PUBLIC_LARAVEL_API_URL` = `https://healthylife.apps.taqat.academy/api/v1`
+
+   Same value, two variables, for the same reason the two exist locally (see
+   `src/lib/auth/api.ts`'s docblock): one is read server-side by the BFF
+   routes, the other is inlined into the browser bundle **at build time** —
+   set it before the first build, not after; changing it later needs a
+   redeploy, not just a dashboard edit taking effect live.
+4. Deploy. Vercel serves over HTTPS by default, so `secure: true` on the
+   refresh-token cookie (`src/lib/auth/session.ts`, gated on
+   `NODE_ENV === "production"`, which Vercel sets automatically) is
+   satisfied with no extra config.
+
+**Why no CORS change was needed on the backend**: the browser calls Laravel
+directly for data endpoints (clients, health profiles, foods, dashboard,
+meal plans) using the in-memory access token via `Authorization: Bearer` —
+a genuine cross-origin request, `*.vercel.app` → `*.taqat.academy`. Laravel's
+`HandleCors` middleware is on by default with no `config/cors.php` published,
+which resolves to `allowed_origins: ['*']` (checked via `php artisan
+config:show cors` on the backend) — already permissive enough for any Vercel
+origin, preview deployments included. `supports_credentials: false` on that
+same config is correct, not a gap: no fetch to Laravel ever needs cookies —
+the one cookie in this app (the refresh token) never leaves this Next.js
+origin in the first place (that's the whole point of the BFF layer), so it
+was never a cross-origin cookie to begin with.
+
+**Verified**, not just reasoned through: built this exact app
+(`npm run build`) with both env vars pointed at the live Taqat deployment,
+ran it (`npm run start`), and drove it with Playwright — registered a real
+account against the live backend, logged in, landed on the dashboard shell
+with that account's real name displayed, confirmed the `hl_refresh` cookie
+came back `Secure` + `HttpOnly` + `SameSite=Lax`. No code changes were
+needed to make that work.
 
 `src/app/globals.css` defines the binding tokens from PRD §5.1 (primary
 teal `#028090`, accent mint `#02C39A`, canvas `#F5FAF9`, Cairo/Inter,
