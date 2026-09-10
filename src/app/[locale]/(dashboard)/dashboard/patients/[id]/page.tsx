@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowRight, FileText } from "lucide-react";
+import { ArrowRight, FileText, UtensilsCrossed } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
@@ -106,12 +106,20 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         </dl>
       </div>
 
-      <Link href={`/dashboard/patients/${client.id}/health-profile`}>
-        <Button variant="secondary" className="w-full">
-          <FileText size={18} strokeWidth={1.75} />
-          {t("healthProfileLink")}
-        </Button>
-      </Link>
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <Link href={`/dashboard/patients/${client.id}/health-profile`} className="flex-1">
+          <Button variant="secondary" className="w-full">
+            <FileText size={18} strokeWidth={1.75} />
+            {t("healthProfileLink")}
+          </Button>
+        </Link>
+        <Link href={`/dashboard/patients/${client.id}/plan`} className="flex-1">
+          <Button className="w-full">
+            <UtensilsCrossed size={18} strokeWidth={1.75} />
+            {t("planLink")}
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }
