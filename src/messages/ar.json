@@ -82,9 +82,9 @@
     "active": "مفعّل"
   },
   "adherence": {
-    "on_track": "ملتزم",
-    "needs_attention": "يحتاج انتباه",
-    "late": "متأخر",
+    "stable": "مستقر",
+    "declining": "متراجع",
+    "stopped_logging": "توقّف عن التسجيل",
     "none": "لم يُتابع بعد"
   },
   "clients": {
@@ -97,9 +97,9 @@
       "filterAll": "الكل",
       "filterActive": "مفعّل",
       "filterPending": "بانتظار التفعيل",
-      "filterOnTrack": "ملتزم",
-      "filterNeedsAttention": "يحتاج انتباه",
-      "filterLate": "متأخر",
+      "filterStable": "مستقر",
+      "filterDeclining": "متراجع",
+      "filterStoppedLogging": "توقّف عن التسجيل",
       "columnName": "المريض",
       "columnGoal": "الهدف الصحي",
       "columnStatus": "الحالة",
@@ -114,8 +114,8 @@
     },
     "stats": {
       "total": "إجمالي المرضى",
-      "active": "ملتزمون",
-      "needsAttention": "يحتاجون انتباه",
+      "active": "مفعّلون",
+      "declining": "متراجعون",
       "notLoggedToday": "لم يسجّلوا اليوم"
     },
     "add": {

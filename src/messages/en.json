@@ -82,9 +82,9 @@
     "active": "Active"
   },
   "adherence": {
-    "on_track": "On track",
-    "needs_attention": "Needs attention",
-    "late": "Late",
+    "stable": "Stable",
+    "declining": "Declining",
+    "stopped_logging": "Stopped logging",
     "none": "Not tracked yet"
   },
   "clients": {
@@ -97,9 +97,9 @@
       "filterAll": "All",
       "filterActive": "Active",
       "filterPending": "Pending",
-      "filterOnTrack": "On track",
-      "filterNeedsAttention": "Needs attention",
-      "filterLate": "Late",
+      "filterStable": "Stable",
+      "filterDeclining": "Declining",
+      "filterStoppedLogging": "Stopped logging",
       "columnName": "Client",
       "columnGoal": "Health goal",
       "columnStatus": "Status",
@@ -114,8 +114,8 @@
     },
     "stats": {
       "total": "Total clients",
-      "active": "Committed",
-      "needsAttention": "Needs attention",
+      "active": "Activated",
+      "declining": "Declining",
       "notLoggedToday": "Not logged today"
     },
     "add": {

@@ -8,7 +8,15 @@ export type ClientGoal = "weight_loss" | "weight_gain" | "weight_maintenance" | 
 
 export type ClientStatus = "pending" | "active";
 
-export type AdherenceStatus = "on_track" | "needs_attention" | "late" | null;
+/**
+ * BR-14 / S4-03: a DIRECTION, not a level. Both interviewed nutritionists
+ * said a percentage on its own is not what prompts intervention, so the
+ * backend reclassified these from on_track/needs_attention/late — a
+ * client steady at a modest rate raises nothing, while one who fell from
+ * 85% to 72% is surfaced despite sitting above the reference. `null`
+ * means not computed yet, which is distinct from any of the three.
+ */
+export type AdherenceStatus = "stable" | "declining" | "stopped_logging" | null;
 
 export type Client = {
   id: number;
@@ -36,9 +44,10 @@ export type DashboardOverview = {
   total: number;
   active: number;
   pending: number;
-  on_track: number;
-  needs_attention: number;
-  late: number;
+  /** Same three direction states as `AdherenceStatus` — see its note. */
+  stable: number;
+  declining: number;
+  stopped_logging: number;
   not_logged_today: number;
 };
 
@@ -69,14 +78,30 @@ export type HealthProfile = {
   updated_at: string;
 };
 
+/**
+ * BR-13 / S4-16: `source` records which instrument produced the reading.
+ * A clinic analyser and a client's own tape measure end up in the same
+ * series, so the nutritionist must always be able to tell them apart —
+ * never render a reading without it.
+ *
+ * Body fat, muscle mass and water come off an analyser and are
+ * nutritionist-only (BR-11); a remote client submits weight and the four
+ * circumferences alone, so those three are null on a self-reported row.
+ */
+export type MeasurementSource = "clinic-analyser" | "self-reported";
+
 export type BodyCompositionReading = {
   id: number;
   recorded_at: string;
+  source: MeasurementSource;
   weight_kg: number;
   body_fat_percent: number | null;
   muscle_mass_kg: number | null;
   water_percent: number | null;
   waist_cm: number | null;
+  hip_cm: number | null;
+  thigh_cm: number | null;
+  arm_cm: number | null;
 };
 
 export type Food = {

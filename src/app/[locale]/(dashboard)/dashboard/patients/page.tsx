@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { Users, ShieldCheck, AlertTriangle, BellOff, Plus, Search } from "lucide-react";
+import { Users, ShieldCheck, TrendingDown, BellOff, Plus, Search } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { ClientStatusBadge } from "@/components/clients/ClientStatusBadge";
@@ -13,13 +13,20 @@ import { StatTile } from "@/components/clients/StatTile";
 import { getDashboardOverview, listClients } from "@/lib/clients/api";
 import type { Client, DashboardOverview } from "@/lib/clients/types";
 
+/**
+ * The adherence values must match `ListClientsRequest`'s allow-list
+ * exactly (BR-14: stable/declining/stopped_logging). They previously sent
+ * the pre-S4-03 vocabulary, which that request rejects with a 422 — the
+ * list then rendered its loading state forever, since a failed fetch
+ * leaves `clients` null.
+ */
 const STATUS_FILTERS = [
   { labelKey: "filterAll", status: undefined, adherence: undefined },
   { labelKey: "filterActive", status: "active", adherence: undefined },
   { labelKey: "filterPending", status: "pending", adherence: undefined },
-  { labelKey: "filterOnTrack", status: undefined, adherence: "on_track" },
-  { labelKey: "filterNeedsAttention", status: undefined, adherence: "needs_attention" },
-  { labelKey: "filterLate", status: undefined, adherence: "late" },
+  { labelKey: "filterStable", status: undefined, adherence: "stable" },
+  { labelKey: "filterDeclining", status: undefined, adherence: "declining" },
+  { labelKey: "filterStoppedLogging", status: undefined, adherence: "stopped_logging" },
 ] as const;
 
 /**
@@ -121,9 +128,9 @@ export default function PatientsPage() {
           <StatTile icon={Users} value={overview.total} label={tStats("total")} tone="primary" />
           <StatTile icon={ShieldCheck} value={overview.active} label={tStats("active")} tone="success" />
           <StatTile
-            icon={AlertTriangle}
-            value={overview.needs_attention}
-            label={tStats("needsAttention")}
+            icon={TrendingDown}
+            value={overview.declining}
+            label={tStats("declining")}
             tone="warning"
           />
           <StatTile
