@@ -10,22 +10,42 @@ import { ClientStatusBadge } from "@/components/clients/ClientStatusBadge";
 import { AdherenceBadge } from "@/components/clients/AdherenceBadge";
 import { getClient } from "@/lib/clients/api";
 import type { Client } from "@/lib/clients/types";
+import { getProgress } from "@/lib/progress/api";
+import type { ProgressResponse } from "@/lib/progress/types";
+import { AdherenceHeadline } from "@/components/progress/AdherenceHeadline";
+import { BodyCompositionCards } from "@/components/progress/BodyCompositionCards";
+import { PlanVsActualChart } from "@/components/progress/PlanVsActualChart";
+import { WeightTrendChart } from "@/components/progress/WeightTrendChart";
 
 /**
- * Minimal client summary — enough to host the "View" action from the
- * patient list (S2-10) and the entry point into the health-profile form
- * (S2-12). The full "Client Profile & Progress" screen (adherence
- * charts, weight trend, AI summary — PRD's F-3/F-6/F-7) is a distinct,
- * not-yet-tasked Sprint 3 screen; this page doesn't attempt it.
+ * S4-07 / US-08 / UC-08: the Client Profile & Progress screen — the
+ * summary header, then weight trend, plan-vs-actual and body
+ * composition, in the order the approved Stitch reference
+ * (design-reference/.../nutricare_1) lays them out.
+ *
+ * Progress comes from ONE call (S4-04): `/clients/{id}/progress` carries
+ * the weight series, the composition snapshots, the adherence block and
+ * the daily-calorie series together, because this screen renders all
+ * four and three round trips to paint one view is what NFR-01 is trying
+ * to avoid.
+ *
+ * The mockup also shows an AI weekly-summary card, an alerts panel and a
+ * recent-meals list. Those are S5-09, S5-08 and out of Sprint 4's scope
+ * respectively — and its target-weight, body-fat-goal, macro-adherence
+ * and water figures have no backing field anywhere in the API, so they
+ * are not invented here (the rule S3-09 set for the plan designer).
  */
 export default function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const t = useTranslations("clients.detail");
+  const tProgress = useTranslations("progress");
   const tGoals = useTranslations("goals");
   const { authorizedFetch } = useAuth();
 
   const [client, setClient] = useState<Client | null>(null);
   const [notFound, setNotFound] = useState(false);
+  const [progress, setProgress] = useState<ProgressResponse | null>(null);
+  const [progressFailed, setProgressFailed] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -36,6 +56,18 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         setClient(result.data);
       } else {
         setNotFound(true);
+      }
+    });
+
+    // Fetched alongside the client rather than after it: the two are
+    // independent requests and chaining them would serialise two round
+    // trips for no reason. A progress failure leaves the header usable.
+    getProgress(authorizedFetch, id).then((result) => {
+      if (cancelled) return;
+      if (result.ok) {
+        setProgress(result.data);
+      } else {
+        setProgressFailed(true);
       }
     });
 
@@ -60,7 +92,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
       <Link
         href="/dashboard/patients"
         className="inline-flex w-fit items-center gap-1.5 text-sm font-medium text-ink-muted hover:text-ink"
@@ -120,6 +152,25 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           </Button>
         </Link>
       </div>
+
+      {progressFailed && (
+        <p role="alert" className="rounded-control bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
+          {tProgress("loadFailed")}
+        </p>
+      )}
+
+      {progress && (
+        <div className="flex flex-col gap-4">
+          <AdherenceHeadline adherence={progress.adherence} />
+          <WeightTrendChart points={progress.weight_trend} />
+          <PlanVsActualChart days={progress.daily_calories} />
+          <BodyCompositionCards
+            latest={progress.body_composition.latest}
+            previous={progress.body_composition.previous}
+            change={progress.body_composition.change}
+          />
+        </div>
+      )}
     </div>
   );
 }

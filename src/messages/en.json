@@ -203,6 +203,70 @@
       }
     }
   },
+  "progress": {
+    "title": "Progress",
+    "loadFailed": "Could not load this client's progress.",
+    "weight": {
+      "title": "Weight trend",
+      "subtitle": "Every recorded reading in the selected period",
+      "kg": "kg",
+      "first": "First",
+      "current": "Current",
+      "change": "Total change",
+      "singleReading": "Only one reading so far — a trend needs at least two.",
+      "emptyNoReadings": "No measurements recorded yet",
+      "emptyNoReadingsHint": "The trend appears once a reading is added from the health profile, or the client logs their own weight from the app.",
+      "ariaLabel": "Weight trend chart, {count} readings",
+      "sourceClinic": "Clinic analyser",
+      "sourceSelf": "Self-reported"
+    },
+    "planVsActual": {
+      "title": "Plan vs actual calories",
+      "subtitle": "Planned against what was actually logged, over {days} days",
+      "planned": "Planned",
+      "logged": "Logged",
+      "overPlan": "Over plan",
+      "plannedShort": "Planned",
+      "loggedShort": "Logged",
+      "noActivePlan": "No active plan for this period, so there is nothing to compare against.",
+      "partial": "Logged on {logged} of {total} days — the empty days are days with no entry, not zero-calorie days.",
+      "ariaLabel": "Planned versus logged calories, {days} days",
+      "emptyNoData": "Nothing to compare yet",
+      "emptyNoDataHint": "This chart fills in once the client has an active plan and starts logging meals."
+    },
+    "adherence": {
+      "title": "Plan adherence",
+      "window": "{from} to {to}",
+      "rateLabel": "of logged meals matched the plan",
+      "noData": "Not enough data for this period",
+      "changeVsPrevious": "{pp} points vs the previous period",
+      "noPrevious": "No previous period to compare against",
+      "totalLogs": "Meals logged",
+      "onPlanLogs": "On plan",
+      "offPlanLogs": "Off plan",
+      "reference": "Reference"
+    },
+    "composition": {
+      "title": "Body composition",
+      "recordedAt": "Latest reading · {date}",
+      "since": "since {date}",
+      "sourceClinic": "Clinic analyser",
+      "sourceSelf": "Self-reported",
+      "emptyWeightOnly": "This reading records weight only — body composition figures come from a clinic analyser.",
+      "body_fat_percent": "Body fat",
+      "muscle_mass_kg": "Muscle mass",
+      "water_percent": "Water",
+      "waist_cm": "Waist",
+      "hip_cm": "Hip",
+      "thigh_cm": "Thigh",
+      "arm_cm": "Arm",
+      "unit": {
+        "percent": "%",
+        "kg": "kg",
+        "cm": "cm"
+      }
+    }
+  },
   "home": {
     "nav": {
       "home": "Home",

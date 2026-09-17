@@ -6,19 +6,10 @@ import type {
   HealthProfile,
 } from "./types";
 
-type Fetcher = (path: string, init?: RequestInit) => Promise<Response>;
+import { type Fetcher, parseJson } from "@/lib/api";
 
-export type ApiError = { message: string; errors?: Record<string, string[]> };
-
-async function parseJson<T>(res: Response): Promise<{ ok: true; data: T } | { ok: false; error: ApiError; status: number }> {
-  const body = await res.json().catch(() => null);
-
-  if (!res.ok) {
-    return { ok: false, status: res.status, error: body ?? { message: "Something went wrong." } };
-  }
-
-  return { ok: true, data: body as T };
-}
+// Re-exported for the components that already import it from here.
+export type { ApiError } from "@/lib/api";
 
 export function listClients(
   fetcher: Fetcher,
