@@ -41,6 +41,13 @@ export type MealPlan = {
   is_ai_draft: boolean;
   start_date: string | null;
   status: MealPlanStatus;
+  /**
+   * When the plan was activated — i.e. when the client could first
+   * follow it, as opposed to `created_at` (when it was drafted). Null on
+   * a draft. Also what the backend uses to decide which days a plan was
+   * in force in the plan-vs-actual series.
+   */
+  activated_at: string | null;
   meals: Meal[];
   summary_by_day: Record<string, Macros>;
   created_at: string;

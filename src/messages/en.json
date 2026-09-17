@@ -115,7 +115,9 @@
     "stats": {
       "total": "Total clients",
       "active": "Activated",
+      "stable": "Stable",
       "declining": "Declining",
+      "stoppedLogging": "Stopped logging",
       "notLoggedToday": "Not logged today"
     },
     "add": {

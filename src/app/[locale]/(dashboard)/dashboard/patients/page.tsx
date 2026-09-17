@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { Users, ShieldCheck, TrendingDown, BellOff, Plus, Search } from "lucide-react";
+import { Users, ShieldCheck, TrendingDown, CalendarX, BellOff, Plus, Search } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { ClientStatusBadge } from "@/components/clients/ClientStatusBadge";
@@ -123,10 +123,20 @@ export default function PatientsPage() {
         </Link>
       </div>
 
+      {/*
+        PRD §5: "Overview stat cards: total clients, stable, declining,
+        stopped logging" — the three direction counts are the row's point
+        (BR-14), so all three are shown rather than only `declining`.
+        `not_logged_today` is kept as a fifth because it is a different
+        axis and the one a nutritionist acts on the same day: it is what
+        the FR-22 reminder job sends on. `active` was dropped from the
+        row — pending-vs-activated is onboarding, not adherence, and it
+        is still a filter chip and a badge in the table below.
+      */}
       {overview && (
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
           <StatTile icon={Users} value={overview.total} label={tStats("total")} tone="primary" />
-          <StatTile icon={ShieldCheck} value={overview.active} label={tStats("active")} tone="success" />
+          <StatTile icon={ShieldCheck} value={overview.stable} label={tStats("stable")} tone="success" />
           <StatTile
             icon={TrendingDown}
             value={overview.declining}
@@ -134,10 +144,16 @@ export default function PatientsPage() {
             tone="warning"
           />
           <StatTile
+            icon={CalendarX}
+            value={overview.stopped_logging}
+            label={tStats("stoppedLogging")}
+            tone="danger"
+          />
+          <StatTile
             icon={BellOff}
             value={overview.not_logged_today}
             label={tStats("notLoggedToday")}
-            tone="danger"
+            tone="primary"
           />
         </div>
       )}

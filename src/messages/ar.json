@@ -115,7 +115,9 @@
     "stats": {
       "total": "إجمالي المرضى",
       "active": "مفعّلون",
+      "stable": "مستقرّون",
       "declining": "متراجعون",
+      "stoppedLogging": "توقّفوا عن التسجيل",
       "notLoggedToday": "لم يسجّلوا اليوم"
     },
     "add": {
