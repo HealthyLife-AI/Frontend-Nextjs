@@ -7,6 +7,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { searchFoods } from "@/lib/mealPlans/api";
 import type { Food } from "@/lib/clients/types";
+import { foodName } from "./mealSlots";
 
 const DEBOUNCE_MS = 300;
 const MIN_QUERY_LENGTH = 2;
@@ -73,10 +74,6 @@ export function FoodAutocomplete({
     };
   }, [query, authorizedFetch]);
 
-  function foodLabel(food: Food): string {
-    return (locale === "ar" ? food.name_ar : food.name_en) ?? food.name_en ?? food.name_ar ?? "";
-  }
-
   if (selected) {
     const qty = Number(quantity);
     const validQty = Number.isFinite(qty) && qty > 0;
@@ -84,7 +81,7 @@ export function FoodAutocomplete({
     return (
       <div className="flex flex-col gap-2 rounded-control border border-primary/20 bg-primary/5 p-3">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-ink">{foodLabel(selected)}</span>
+          <span className="text-sm font-medium text-ink">{foodName(selected, locale)}</span>
           <button type="button" onClick={() => setSelected(null)} className="text-ink-muted hover:text-ink">
             <X size={16} />
           </button>
@@ -153,7 +150,7 @@ export function FoodAutocomplete({
                 onClick={() => setSelected(food)}
                 className="flex w-full items-center justify-between border-b border-divider px-3 py-2 text-start text-sm last:border-0 hover:bg-canvas"
               >
-                <span className="text-ink">{foodLabel(food)}</span>
+                <span className="text-ink">{foodName(food, locale)}</span>
                 <span className="text-xs text-ink-muted">{t("caloriesPer100g", { value: food.calories_per_100g })}</span>
               </button>
             ))}

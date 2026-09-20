@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { UtensilsCrossed, Flame } from "lucide-react";
+import { UtensilsCrossed, Flame, ChevronDown } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 import { Badge } from "@/components/ui/Badge";
+import { PlanBreakdown, PlanMacroSummary } from "@/components/mealPlans/PlanBreakdown";
 import { applyMealPlanTemplate, listMealPlanTemplates } from "@/lib/mealPlans/api";
 import type { MealPlan } from "@/lib/mealPlans/types";
 import { listClients } from "@/lib/clients/api";
@@ -118,6 +119,10 @@ function TemplateCard({
   const [subscriberId, setSubscriberId] = useState("");
   const [applying, setApplying] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Collapsed by default so a library of a dozen templates stays
+  // scannable; the macro split above is what narrows the choice, the
+  // food list is what confirms it.
+  const [expanded, setExpanded] = useState(false);
 
   // A template carries no day-specific meals in the common case, so its
   // whole daily total sits under key "0" — sum whatever keys exist
@@ -167,7 +172,30 @@ function TemplateCard({
             </span>
           </div>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-control border border-border px-2.5 py-1.5 text-xs font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
+        >
+          {expanded ? t("hideDetails") : t("showDetails")}
+          <ChevronDown
+            size={14}
+            strokeWidth={2}
+            className={`transition-transform ${expanded ? "rotate-180" : ""}`}
+          />
+        </button>
       </div>
+
+      {/*
+        The macro split stays visible whether or not the foods are
+        expanded: it is what tells a nutritionist whether this template
+        suits a given client's goal at all, before they read the items.
+      */}
+      <PlanMacroSummary plan={template} />
+
+      {expanded && <PlanBreakdown plan={template} />}
 
       <div className="flex flex-col gap-2 border-t border-divider pt-3 sm:flex-row sm:items-end">
         <div className="flex-1">

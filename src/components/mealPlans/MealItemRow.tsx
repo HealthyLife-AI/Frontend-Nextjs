@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Repeat, Trash2 } from "lucide-react";
 import type { Food } from "@/lib/clients/types";
 import { FoodAutocomplete } from "./FoodAutocomplete";
-import { itemMacros, type EditableItem } from "./mealSlots";
+import { foodName, itemMacros, type EditableItem } from "./mealSlots";
 
 /**
  * One planned item and its permitted alternatives (BR-4), indented
@@ -25,10 +25,6 @@ export function MealItemRow({
   const t = useTranslations("planDesigner");
   const locale = useLocale();
   const [addingAlternative, setAddingAlternative] = useState(false);
-
-  function foodLabel(food: Food): string {
-    return (locale === "ar" ? food.name_ar : food.name_en) ?? food.name_en ?? food.name_ar ?? "";
-  }
 
   function addAlternative(food: Food, quantityGrams: number) {
     onChange({ ...item, alternatives: [...item.alternatives, { food, quantityGrams, alternatives: [] }] });
@@ -53,7 +49,7 @@ export function MealItemRow({
     <div className="flex flex-col gap-1.5 rounded-control p-1">
       <div className="flex items-center justify-between rounded-control bg-canvas/60 px-3 py-2">
         <div className="min-w-0">
-          <span className="text-sm font-semibold text-ink">{foodLabel(item.food)}</span>
+          <span className="text-sm font-semibold text-ink">{foodName(item.food, locale)}</span>
           <span className="ms-2 text-xs text-ink-muted">{t("quantityGrams", { value: item.quantityGrams })}</span>
         </div>
         <div className="flex shrink-0 items-center gap-3">
@@ -82,7 +78,7 @@ export function MealItemRow({
                   <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-accent/15 px-2 py-0.5 text-xs font-bold text-accent-active">
                     {t("alternativeNumber", { number: index + 1 })}
                   </span>
-                  <span className="truncate text-sm font-medium text-ink">{foodLabel(alt.food)}</span>
+                  <span className="truncate text-sm font-medium text-ink">{foodName(alt.food, locale)}</span>
                   <span className="shrink-0 text-xs text-ink-muted">{t("quantityGrams", { value: alt.quantityGrams })}</span>
                 </div>
                 <div className="flex shrink-0 items-center gap-3">

@@ -303,7 +303,9 @@
     "applying": "Applying...",
     "applyFailed": "Could not apply this template.",
     "appliedNote": "Applied as a new draft — review and activate it before the client sees it.",
-    "loadFailed": "Could not load your templates."
+    "loadFailed": "Could not load your templates.",
+    "showDetails": "Show meals",
+    "hideDetails": "Hide meals"
   },
   "settings": {
     "title": "Settings",

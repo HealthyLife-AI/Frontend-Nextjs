@@ -143,3 +143,13 @@ function sumMacros(rows: Macros[]): Macros {
 function round1(n: number): number {
   return Math.round(n * 10) / 10;
 }
+
+/**
+ * A food's display name for the active locale, falling back to the other
+ * language rather than rendering blank — the USDA import fills `name_en`
+ * while the curated Arabic layer fills `name_ar`, so a given food may
+ * legitimately carry only one of the two.
+ */
+export function foodName(food: Food, locale: string): string {
+  return (locale === "ar" ? food.name_ar : food.name_en) ?? food.name_en ?? food.name_ar ?? "";
+}
