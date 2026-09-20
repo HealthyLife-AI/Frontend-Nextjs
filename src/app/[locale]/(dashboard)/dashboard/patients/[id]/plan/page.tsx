@@ -1,6 +1,7 @@
 "use client";
 
 import { use } from "react";
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
@@ -8,6 +9,9 @@ import { PlanDesigner } from "@/components/mealPlans/PlanDesigner";
 
 export default function PlanDesignerPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  // Set when arriving from the template library, which creates a new
+  // draft and needs THAT plan opened rather than the client's active one.
+  const planId = useSearchParams().get("planId") ?? undefined;
   const t = useTranslations("planDesigner");
   const tDetail = useTranslations("clients.detail");
 
@@ -26,7 +30,7 @@ export default function PlanDesignerPage({ params }: { params: Promise<{ id: str
         <p className="text-sm text-ink-muted">{t("subtitle")}</p>
       </div>
 
-      <PlanDesigner subscriberId={id} />
+      <PlanDesigner subscriberId={id} planId={planId} />
     </div>
   );
 }

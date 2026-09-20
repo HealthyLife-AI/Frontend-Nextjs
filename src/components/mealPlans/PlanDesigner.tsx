@@ -26,8 +26,14 @@ import { emptySlots, planToSlots, slotsToInput, type EditableMeal } from "./meal
  * until an explicit save (PRD F-4: a plan is edited as one whole form,
  * matching `HealthProfileForm`'s convention) — there's no per-keystroke
  * autosave to fight the backend's full-replace `PUT` semantics.
+ *
+ * `planId` pins which plan to open. Without it this picks the active
+ * plan, which is wrong right after a template is applied: that creates a
+ * new DRAFT, and a client who already had an active plan would land back
+ * on the active one — showing something other than what the nutritionist
+ * just created.
  */
-export function PlanDesigner({ subscriberId }: { subscriberId: string }) {
+export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; planId?: string }) {
   const t = useTranslations("planDesigner");
   const { authorizedFetch } = useAuth();
 
@@ -60,10 +66,12 @@ export function PlanDesigner({ subscriberId }: { subscriberId: string }) {
       }
 
       if (plansResult.ok && plansResult.data.length > 0) {
-        // The active plan if one exists, otherwise the most recently
-        // touched draft — never an archived one, there's nothing to
-        // keep editing there.
+        // An explicitly requested plan wins over both (see the prop's
+        // note); otherwise the active plan if one exists, otherwise the
+        // most recently touched draft — never an archived one, there's
+        // nothing to keep editing there.
         const relevant =
+          (planId ? plansResult.data.find((p) => String(p.id) === planId) : undefined) ??
           plansResult.data.find((p) => p.status === "active") ??
           plansResult.data.filter((p) => p.status === "draft").sort((a, b) => b.updated_at.localeCompare(a.updated_at))[0] ??
           null;
@@ -80,7 +88,7 @@ export function PlanDesigner({ subscriberId }: { subscriberId: string }) {
     return () => {
       cancelled = true;
     };
-  }, [authorizedFetch, subscriberId]);
+  }, [authorizedFetch, subscriberId, planId]);
 
   function updateSlot(index: number, next: EditableMeal) {
     setSlots((prev) => prev.map((slot, i) => (i === index ? next : slot)));

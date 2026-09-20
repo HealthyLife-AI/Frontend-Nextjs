@@ -1,19 +1,9 @@
+import { type Fetcher, parseJson } from "@/lib/api";
 import type { Food } from "@/lib/clients/types";
 import type { MealPlan, MealPlanInput } from "./types";
 
-type Fetcher = (path: string, init?: RequestInit) => Promise<Response>;
-
-export type ApiError = { message: string; errors?: Record<string, string[]> };
-
-async function parseJson<T>(res: Response): Promise<{ ok: true; data: T } | { ok: false; error: ApiError; status: number }> {
-  const body = await res.json().catch(() => null);
-
-  if (!res.ok) {
-    return { ok: false, status: res.status, error: body ?? { message: "Something went wrong." } };
-  }
-
-  return { ok: true, data: body as T };
-}
+// Re-exported for the components that already import it from here.
+export type { ApiError } from "@/lib/api";
 
 export function listMealPlans(fetcher: Fetcher, subscriberId: number | string) {
   return fetcher(`/clients/${subscriberId}/meal-plans`).then((res) => parseJson<MealPlan[]>(res));
@@ -61,6 +51,31 @@ export function generateAiDraft(fetcher: Fetcher, subscriberId: number | string)
 
 export function saveMealPlanAsTemplate(fetcher: Fetcher, subscriberId: number | string, planId: number | string) {
   return fetcher(`/clients/${subscriberId}/meal-plans/${planId}/save-as-template`, { method: "POST" }).then((res) =>
+    parseJson<MealPlan>(res)
+  );
+}
+
+/**
+ * S3-03 / FR-15: this nutritionist's own reusable templates. Templates
+ * carry no `subscriber_id` — isolation runs through `created_by`, so
+ * there is no client id to pass here.
+ */
+export function listMealPlanTemplates(fetcher: Fetcher) {
+  return fetcher("/meal-plan-templates").then((res) => parseJson<MealPlan[]>(res));
+}
+
+/**
+ * Clones a template into a brand-new DRAFT plan for one client — it is
+ * never active on arrival (BR-6/BR-10), so the caller still has to open
+ * and activate it. Returns that new plan, whose `id` is what to navigate
+ * to.
+ */
+export function applyMealPlanTemplate(
+  fetcher: Fetcher,
+  templateId: number | string,
+  subscriberId: number | string
+) {
+  return fetcher(`/meal-plan-templates/${templateId}/apply/${subscriberId}`, { method: "POST" }).then((res) =>
     parseJson<MealPlan>(res)
   );
 }
