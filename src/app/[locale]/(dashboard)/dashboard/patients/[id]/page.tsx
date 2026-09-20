@@ -16,12 +16,15 @@ import { AdherenceHeadline } from "@/components/progress/AdherenceHeadline";
 import { BodyCompositionCards } from "@/components/progress/BodyCompositionCards";
 import { PlanVsActualChart } from "@/components/progress/PlanVsActualChart";
 import { WeightTrendChart } from "@/components/progress/WeightTrendChart";
+import { AiSummaryCard } from "@/components/aiSummaries/AiSummaryCard";
+import { listAiSummaries } from "@/lib/aiSummaries/api";
+import type { AiSummary } from "@/lib/aiSummaries/types";
 
 /**
  * S4-07 / US-08 / UC-08: the Client Profile & Progress screen — the
- * summary header, then weight trend, plan-vs-actual and body
- * composition, in the order the approved Stitch reference
- * (design-reference/.../nutricare_1) lays them out.
+ * summary header, then the AI weekly summary (S5-09), then weight trend,
+ * plan-vs-actual and body composition, in the order the approved Stitch
+ * reference (design-reference/.../nutricare_1) lays them out.
  *
  * Progress comes from ONE call (S4-04): `/clients/{id}/progress` carries
  * the weight series, the composition snapshots, the adherence block and
@@ -29,11 +32,13 @@ import { WeightTrendChart } from "@/components/progress/WeightTrendChart";
  * four and three round trips to paint one view is what NFR-01 is trying
  * to avoid.
  *
- * The mockup also shows an AI weekly-summary card, an alerts panel and a
- * recent-meals list. Those are S5-09, S5-08 and out of Sprint 4's scope
- * respectively — and its target-weight, body-fat-goal, macro-adherence
- * and water figures have no backing field anywhere in the API, so they
- * are not invented here (the rule S3-09 set for the plan designer).
+ * The mockup also shows an alerts panel and a recent-meals list. Alerts
+ * are S5-08, wired to the roster-wide `/dashboard/alerts` page instead of
+ * being duplicated here — the sidebar/header nav already point there, and
+ * a per-client alert list is one `subscriber_id` filter away rather than
+ * a second implementation. Its target-weight, body-fat-goal, macro-
+ * adherence and water figures have no backing field anywhere in the API,
+ * so they are not invented here (the rule S3-09 set for the plan designer).
  */
 export default function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -46,6 +51,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   const [notFound, setNotFound] = useState(false);
   const [progress, setProgress] = useState<ProgressResponse | null>(null);
   const [progressFailed, setProgressFailed] = useState(false);
+  const [latestSummary, setLatestSummary] = useState<AiSummary | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -68,6 +74,17 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
         setProgress(result.data);
       } else {
         setProgressFailed(true);
+      }
+    });
+
+    // Same reasoning: independent of both calls above. No summary yet is
+    // a real, expected state (a brand-new client, or before Monday's
+    // first run) — AiSummaryCard renders its own empty state for it, so
+    // a failed/empty fetch here just leaves latestSummary null.
+    listAiSummaries(authorizedFetch, id).then((result) => {
+      if (cancelled) return;
+      if (result.ok && result.data.data.length > 0) {
+        setLatestSummary(result.data.data[0]);
       }
     });
 
@@ -152,6 +169,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           </Button>
         </Link>
       </div>
+
+      <AiSummaryCard summary={latestSummary} />
 
       {progressFailed && (
         <p role="alert" className="rounded-control bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">

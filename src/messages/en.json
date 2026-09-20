@@ -269,6 +269,35 @@
       }
     }
   },
+  "alerts": {
+    "title": "Alerts",
+    "subtitle": "Proactive, rule-based signals across your whole roster",
+    "filterAll": "All",
+    "filterUnread": "Unread",
+    "filterRead": "Read",
+    "empty": "No alerts yet",
+    "emptyHint": "Alerts appear here once the daily rule engine finds something worth flagging — no log for 3 days, calories over target, or a milestone reached.",
+    "noResults": "No alerts match this filter",
+    "markRead": "Mark as read",
+    "open": "Open",
+    "resolvedTag": "Resolved",
+    "type": {
+      "no_log": "No log for 3+ days",
+      "calories_exceeded": "Calories over target",
+      "milestone": "Milestone reached"
+    },
+    "previousPage": "Previous",
+    "nextPage": "Next"
+  },
+  "aiSummary": {
+    "title": "Weekly AI summary",
+    "week": "Week of {date}",
+    "generatedAt": "Generated {date}",
+    "aiBadge": "AI-generated",
+    "fallbackBadge": "Templated — not AI-generated",
+    "empty": "No summary yet",
+    "emptyHint": "The first weekly summary is generated after this client's first full week of activity, every Monday morning."
+  },
   "home": {
     "nav": {
       "home": "Home",

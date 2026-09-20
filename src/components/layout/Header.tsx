@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Bell, Calendar, LogOut, Menu, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { listAlerts } from "@/lib/alerts/api";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 
 /**
@@ -15,8 +17,25 @@ import { LocaleSwitcher } from "./LocaleSwitcher";
  */
 export function Header({ onMenuClick }: { onMenuClick: () => void }) {
   const t = useTranslations("nav");
-  const { logout } = useAuth();
+  const { logout, authorizedFetch } = useAuth();
   const router = useRouter();
+
+  const [unreadCount, setUnreadCount] = useState<number | null>(null);
+
+  // Mount-once, not polled: neither S5-08 nor S5-09 asks for realtime,
+  // and Header persists across client-side navigation, so a poll here
+  // would need its own cleanup story this feature doesn't need yet.
+  useEffect(() => {
+    let cancelled = false;
+
+    listAlerts(authorizedFetch, { is_read: false }).then((result) => {
+      if (!cancelled && result.ok) setUnreadCount(result.data.meta.total);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authorizedFetch]);
 
   async function handleSignOut() {
     await logout();
@@ -58,13 +77,18 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
           <Calendar size={20} strokeWidth={1.75} />
         </button>
 
-        <button
-          type="button"
-          className="flex h-10 w-10 items-center justify-center rounded-control text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
+        <Link
+          href="/dashboard/alerts"
+          className="relative flex h-10 w-10 items-center justify-center rounded-control text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
           aria-label={t("alerts")}
         >
           <Bell size={20} strokeWidth={1.75} />
-        </button>
+          {!!unreadCount && (
+            <span className="absolute end-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-status-late px-1 text-[10px] font-semibold tabular-nums text-card">
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </span>
+          )}
+        </Link>
 
         <div className="mx-1 hidden h-6 w-px bg-border sm:block" />
 
