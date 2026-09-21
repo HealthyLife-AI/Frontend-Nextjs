@@ -305,7 +305,8 @@
     "appliedNote": "Applied as a new draft — review and activate it before the client sees it.",
     "loadFailed": "Could not load your templates.",
     "showDetails": "Show meals",
-    "hideDetails": "Hide meals"
+    "hideDetails": "Hide meals",
+    "unnamed": "Untitled template"
   },
   "settings": {
     "title": "Settings",
@@ -562,6 +563,7 @@
       "macroGrams": "{value}g ({percent}% of calories)",
       "fiber": "Fiber",
       "fiberValue": "{value} g"
-    }
+    },
+    "templateNamePrompt": "Name this template (optional):"
   }
 }

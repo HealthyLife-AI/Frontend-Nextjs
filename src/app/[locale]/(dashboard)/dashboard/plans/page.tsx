@@ -157,6 +157,17 @@ function TemplateCard({
             <UtensilsCrossed size={20} strokeWidth={1.75} />
           </div>
           <div className="flex min-w-0 flex-col gap-1">
+            {/*
+              The name is the headline once one exists — a library of
+              several similarly-sized templates is otherwise
+              indistinguishable ("3 meals · 876 kcal" repeated). An
+              unnamed template still shows honestly as unnamed rather
+              than silently falling back to the meal-slot list as if
+              that were its title.
+            */}
+            <p className="truncate text-sm font-semibold text-ink">
+              {template.name ?? <span className="italic text-ink-muted">{t("unnamed")}</span>}
+            </p>
             <div className="flex flex-wrap items-center gap-2">
               <Badge tone="primary">{t("mealsCount", { count: template.meals.length })}</Badge>
               <span className="inline-flex items-center gap-1 text-xs text-ink-muted">
@@ -164,7 +175,7 @@ function TemplateCard({
                 <span className="tabular-nums">{t("perDay", { calories: dailyCalories })}</span>
               </span>
             </div>
-            <p className="truncate text-sm text-ink">
+            <p className="truncate text-xs text-ink-muted">
               {template.meals.map((meal) => tSlots(meal.name)).join(" · ")}
             </p>
             <span className="text-xs text-ink-muted/80">

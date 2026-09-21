@@ -39,6 +39,12 @@ export type MealPlan = {
   subscriber_id: number | null;
   is_template: boolean;
   is_ai_draft: boolean;
+  /**
+   * Only ever set on a template — a hand-built client plan has one
+   * audience already and doesn't need to be told apart from another
+   * (see the `meal_plans` migration). Null there by design, not a gap.
+   */
+  name: string | null;
   start_date: string | null;
   status: MealPlanStatus;
   /**

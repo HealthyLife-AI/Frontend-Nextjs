@@ -158,9 +158,15 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
   async function handleSaveAsTemplate() {
     if (!currentPlan) return;
 
+    // A cancelled prompt (null) means "changed my mind" — abort rather
+    // than saving unnamed. An empty string means "skip the name on
+    // purpose", which the API already accepts.
+    const name = window.prompt(t("templateNamePrompt"), "");
+    if (name === null) return;
+
     setError(null);
     setSavingTemplate(true);
-    const result = await saveMealPlanAsTemplate(authorizedFetch, subscriberId, currentPlan.id);
+    const result = await saveMealPlanAsTemplate(authorizedFetch, subscriberId, currentPlan.id, name);
     setSavingTemplate(false);
 
     if (!result.ok) {

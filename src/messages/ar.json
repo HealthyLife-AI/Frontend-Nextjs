@@ -305,7 +305,8 @@
     "appliedNote": "طُبّق كمسودة جديدة — راجعها وفعّلها قبل أن يراها المريض.",
     "loadFailed": "تعذّر تحميل قوالبك.",
     "showDetails": "عرض الوجبات",
-    "hideDetails": "إخفاء الوجبات"
+    "hideDetails": "إخفاء الوجبات",
+    "unnamed": "قالب بلا اسم"
   },
   "settings": {
     "title": "الإعدادات",
@@ -562,6 +563,7 @@
       "macroGrams": "{value} جم ({percent}% من السعرات)",
       "fiber": "الألياف",
       "fiberValue": "{value} جم"
-    }
+    },
+    "templateNamePrompt": "اسم هذا القالب (اختياري):"
   }
 }

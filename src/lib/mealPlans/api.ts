@@ -49,10 +49,18 @@ export function generateAiDraft(fetcher: Fetcher, subscriberId: number | string)
   );
 }
 
-export function saveMealPlanAsTemplate(fetcher: Fetcher, subscriberId: number | string, planId: number | string) {
-  return fetcher(`/clients/${subscriberId}/meal-plans/${planId}/save-as-template`, { method: "POST" }).then((res) =>
-    parseJson<MealPlan>(res)
-  );
+/** `name` is optional — see `MealPlan.name`'s note on why only a template ever has one. */
+export function saveMealPlanAsTemplate(
+  fetcher: Fetcher,
+  subscriberId: number | string,
+  planId: number | string,
+  name?: string | null
+) {
+  return fetcher(`/clients/${subscriberId}/meal-plans/${planId}/save-as-template`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: name || null }),
+  }).then((res) => parseJson<MealPlan>(res));
 }
 
 /**
