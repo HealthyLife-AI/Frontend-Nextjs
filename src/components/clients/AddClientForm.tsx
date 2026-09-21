@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Check, CheckCircle2, Copy } from "lucide-react";
+import { Check, CheckCircle2, Copy, FileText } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { TextField } from "@/components/ui/TextField";
@@ -13,7 +13,7 @@ import type { ClientGoal } from "@/lib/clients/types";
 
 const GOALS: ClientGoal[] = ["weight_loss", "weight_gain", "weight_maintenance", "health_monitoring"];
 
-type SuccessState = { name: string; inviteLink: string };
+type SuccessState = { id: number; name: string; inviteLink: string };
 
 export function AddClientForm() {
   const t = useTranslations("clients.add");
@@ -49,7 +49,7 @@ export function AddClientForm() {
     }
 
     const inviteLink = `${window.location.origin}/${locale}/activate/${result.data.invite_token}`;
-    setSuccess({ name: result.data.client.name, inviteLink });
+    setSuccess({ id: result.data.client.id, name: result.data.client.name, inviteLink });
     setSubmitting(false);
   }
 
@@ -102,10 +102,23 @@ export function AddClientForm() {
         </div>
 
         <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
-          <Button type="button" className="w-full">
+          <Button type="button" variant="secondary" className="w-full">
             {t("shareWhatsapp")}
           </Button>
         </a>
+
+        {/*
+          The critical journey is add -> health profile -> plan -> send
+          link, not add -> back to a list to find the client again. This
+          is the primary action; WhatsApp above is how the link actually
+          reaches the client, so it stays first but secondary-styled.
+        */}
+        <Link href={`/dashboard/patients/${success.id}/health-profile`}>
+          <Button type="button" className="w-full">
+            <FileText size={18} strokeWidth={1.75} />
+            {t("fillHealthProfile")}
+          </Button>
+        </Link>
 
         <div className="flex items-center justify-between text-sm">
           <button type="button" onClick={resetForm} className="font-medium text-primary hover:underline">

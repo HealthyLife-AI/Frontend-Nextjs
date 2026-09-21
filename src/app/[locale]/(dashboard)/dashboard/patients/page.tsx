@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { Users, ShieldCheck, TrendingDown, CalendarX, BellOff, Plus, Search } from "lucide-react";
+import { Plus, Search, Users } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { ClientStatusBadge } from "@/components/clients/ClientStatusBadge";
 import { AdherenceBadge } from "@/components/clients/AdherenceBadge";
-import { StatTile } from "@/components/clients/StatTile";
+import { DashboardStatTiles } from "@/components/clients/DashboardStatTiles";
 import { getDashboardOverview, listClients } from "@/lib/clients/api";
 import type { Client, DashboardOverview } from "@/lib/clients/types";
 
@@ -44,7 +44,6 @@ const STATUS_FILTERS = [
  */
 export default function PatientsPage() {
   const t = useTranslations("clients.list");
-  const tStats = useTranslations("clients.stats");
   const { authorizedFetch } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -133,30 +132,7 @@ export default function PatientsPage() {
         row — pending-vs-activated is onboarding, not adherence, and it
         is still a filter chip and a badge in the table below.
       */}
-      {overview && (
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
-          <StatTile icon={Users} value={overview.total} label={tStats("total")} tone="primary" />
-          <StatTile icon={ShieldCheck} value={overview.stable} label={tStats("stable")} tone="success" />
-          <StatTile
-            icon={TrendingDown}
-            value={overview.declining}
-            label={tStats("declining")}
-            tone="warning"
-          />
-          <StatTile
-            icon={CalendarX}
-            value={overview.stopped_logging}
-            label={tStats("stoppedLogging")}
-            tone="danger"
-          />
-          <StatTile
-            icon={BellOff}
-            value={overview.not_logged_today}
-            label={tStats("notLoggedToday")}
-            tone="primary"
-          />
-        </div>
-      )}
+      {overview && <DashboardStatTiles overview={overview} />}
 
       <div className="flex flex-col gap-4 rounded-card border border-border bg-card p-4 shadow-card sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-2">

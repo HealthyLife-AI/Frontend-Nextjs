@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, Calendar, LogOut, Menu, Search } from "lucide-react";
+import { Bell, LogOut, Menu } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -44,6 +44,12 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
 
   return (
     <header className="fixed inset-x-0 top-0 z-20 flex h-16 items-center justify-between gap-2 border-b border-border bg-card/90 px-4 shadow-[0_1px_0_rgba(11,46,48,0.03),0_4px_12px_-6px_rgba(11,46,48,0.06)] backdrop-blur-sm sm:px-6 lg:start-64">
+      {/*
+        No header search box: it had no value/onChange/handler, and
+        Patients already has a real, URL-driven search — two boxes, one
+        fake, is worse than one real one. `onMenuClick` still needs
+        somewhere to live at narrow widths, so this wrapper stays.
+      */}
       <div className="flex min-w-0 flex-1 items-center gap-2">
         <button
           type="button"
@@ -53,15 +59,6 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
         >
           <Menu size={20} strokeWidth={1.75} />
         </button>
-
-        <div className="relative hidden w-full max-w-sm items-center md:flex">
-          <Search size={18} className="pointer-events-none absolute start-3 text-ink-muted" />
-          <input
-            type="search"
-            placeholder={t("search")}
-            className="h-10 w-full rounded-control border border-border bg-canvas ps-10 pe-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all hover:border-ink-muted/40 focus:border-primary focus:bg-card focus:ring-[3px] focus:ring-primary/15"
-          />
-        </div>
       </div>
 
       <div className="flex shrink-0 items-center gap-1 sm:gap-2">
@@ -69,13 +66,14 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
           <LocaleSwitcher />
         </div>
 
-        <button
-          type="button"
-          className="hidden h-10 w-10 items-center justify-center rounded-control text-ink-muted transition-colors hover:bg-canvas hover:text-ink sm:flex"
-          aria-label="Calendar"
-        >
-          <Calendar size={20} strokeWidth={1.75} />
-        </button>
+        {/*
+          No calendar button: appointments (Rama's top-5, Kholod's
+          evaluation-date reminders) is real and validated, but it is a
+          full module — booking, conflicts, reminders, client-app sync —
+          scheduled as the first Post-MVP feature, not before the pilot.
+          A dead button in front of the person who asked for it is worse
+          than no button.
+        */}
 
         <Link
           href="/dashboard/alerts"

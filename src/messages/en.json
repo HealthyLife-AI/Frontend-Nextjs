@@ -10,7 +10,6 @@
     "plans": "Plans",
     "alerts": "Alerts",
     "settings": "Settings",
-    "search": "Search a patient, chart, or plan...",
     "signOut": "Sign out"
   },
   "auth": {
@@ -139,7 +138,8 @@
       "backToList": "Back to client list",
       "errors": {
         "phoneTaken": "This phone number is already registered to one of your clients."
-      }
+      },
+      "fillHealthProfile": "Fill health profile"
     },
     "detail": {
       "backToList": "Back to client list",
@@ -191,6 +191,9 @@
       "muscleMassKg": "Muscle mass (kg)",
       "waterPercent": "Water (%)",
       "waistCm": "Waist (cm)",
+      "hipCm": "Hip (cm)",
+      "thighCm": "Thigh (cm)",
+      "armCm": "Arm (cm)",
       "sectionNotes": "Notes",
       "surgeryHistory": "Surgery history",
       "labNotes": "Lab results / notes",
@@ -204,6 +207,15 @@
         "generic": "Couldn't save the health profile. Please check the form and try again."
       }
     }
+  },
+  "dashboardHome": {
+    "greeting": "Welcome back, {name}",
+    "subtitle": "Who needs your attention today",
+    "needsAttentionTitle": "Needs attention",
+    "needsAttentionEmpty": "No one needs attention right now.",
+    "alertsTitle": "Recent alerts",
+    "alertsEmpty": "No unread alerts.",
+    "viewAll": "View all"
   },
   "progress": {
     "title": "Progress",

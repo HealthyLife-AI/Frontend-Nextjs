@@ -45,6 +45,9 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
   const [muscleMassKg, setMuscleMassKg] = useState("");
   const [waterPercent, setWaterPercent] = useState("");
   const [waistCm, setWaistCm] = useState("");
+  const [hipCm, setHipCm] = useState("");
+  const [thighCm, setThighCm] = useState("");
+  const [armCm, setArmCm] = useState("");
 
   const [dailyCalorieNeeds, setDailyCalorieNeeds] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -120,9 +123,13 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
     // Body-composition fields are bundled into this same form (S2-12) but
     // belong to a separate history endpoint (FR-10: one row per visit,
     // never overwritten) — only log a reading if something was entered.
-    const hasCompositionData = [bodyFatPercent, muscleMassKg, waterPercent, waistCm].some((v) => v !== "");
+    const hasCompositionData = [bodyFatPercent, muscleMassKg, waterPercent, waistCm, hipCm, thighCm, armCm].some(
+      (v) => v !== ""
+    );
 
     if (hasCompositionData) {
+      // Nutritionist-entered, so the backend stamps source: clinic-analyser
+      // (BR-11/BR-13) — nothing to set here, the endpoint decides by who's calling.
       await addBodyCompositionReading(authorizedFetch, subscriberId, {
         recorded_at: new Date().toISOString().slice(0, 10),
         weight_kg: Number(weight),
@@ -130,6 +137,9 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
         muscle_mass_kg: muscleMassKg ? Number(muscleMassKg) : null,
         water_percent: waterPercent ? Number(waterPercent) : null,
         waist_cm: waistCm ? Number(waistCm) : null,
+        hip_cm: hipCm ? Number(hipCm) : null,
+        thigh_cm: thighCm ? Number(thighCm) : null,
+        arm_cm: armCm ? Number(armCm) : null,
       });
     }
 
@@ -310,7 +320,7 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
           <h2 className="text-sm font-semibold text-ink">{t("sectionComposition")}</h2>
           <p className="text-sm text-ink-muted">{t("compositionHint")}</p>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           <TextField
             label={t("bodyFatPercent")}
             type="number"
@@ -346,6 +356,38 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
             max="300"
             value={waistCm}
             onChange={(e) => setWaistCm(e.target.value)}
+          />
+          {/*
+            S4-16: the same three circumferences a remote client can
+            self-report (FR-29). The nutritionist-side endpoint stamps
+            source: clinic-analyser regardless of who measured — see BR-13.
+          */}
+          <TextField
+            label={t("hipCm")}
+            type="number"
+            step="0.1"
+            min="0"
+            max="300"
+            value={hipCm}
+            onChange={(e) => setHipCm(e.target.value)}
+          />
+          <TextField
+            label={t("thighCm")}
+            type="number"
+            step="0.1"
+            min="0"
+            max="200"
+            value={thighCm}
+            onChange={(e) => setThighCm(e.target.value)}
+          />
+          <TextField
+            label={t("armCm")}
+            type="number"
+            step="0.1"
+            min="0"
+            max="150"
+            value={armCm}
+            onChange={(e) => setArmCm(e.target.value)}
           />
         </div>
       </section>
