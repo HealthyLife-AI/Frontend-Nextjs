@@ -26,11 +26,27 @@ export function Reveal({
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(prefersReducedMotion);
+  // Always false on first render, matching the server (which has no
+  // `window` to check) — checking `prefersReducedMotion()` straight into
+  // `useState`'s initializer reads the real value on the client's first
+  // render too, which for anyone with the OS setting on is guaranteed to
+  // disagree with the server's "false" and throw a hydration mismatch on
+  // every single page load. The real check still happens client-only,
+  // just deferred into the effect below instead of the render itself.
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    if (prefersReducedMotion()) {
+      // Necessary setState-in-effect: `matchMedia` needs `window`, so this
+      // can only be read client-side post-mount — there's no render-time
+      // computation that could replace it.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setVisible(true);
+      return;
+    }
+
     const node = ref.current;
-    if (!node || prefersReducedMotion()) return;
+    if (!node) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {

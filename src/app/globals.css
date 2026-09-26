@@ -35,6 +35,35 @@
 
   --color-danger: #c0392b;
 
+  /*
+   * Marketing-page-only palette, ported verbatim from the Figma file's
+   * literal hex (per explicit direction: match colors exactly, not the
+   * app's own tokens where they're merely "close"). Scoped to `home/*`
+   * components only — none of these replace or shadow the app-wide
+   * tokens above, which the dashboard keeps using unchanged.
+   */
+  --color-mkt-teal-deep: #006572; /* hero headline, badge label, section eyebrows */
+  --color-mkt-teal-cta: #26635e; /* hero primary-CTA fill, outline-CTA label */
+  --color-mkt-sky: #b9f7ff; /* hero badge tint (used at 20% over the photo) */
+  --color-mkt-body: #3d4949; /* hero body copy */
+  --color-mkt-jade: #006b54; /* hero outline-CTA border/icon; how-it-works step-02 icon tile */
+  --color-mkt-amber: #a36700; /* how-it-works step-03 icon tile */
+  --color-mkt-amber-pale: #ffcd8c; /* how-it-works step-03 number */
+  --color-mkt-mint-pale: #76e8c9; /* how-it-works step-02 number */
+  --color-mkt-teal-pale: #9ce0ec; /* how-it-works step-01 number */
+  --color-mkt-nav-muted: #3e494b; /* header nav links */
+  --color-mkt-nav-active: #006a6a; /* header nav: current-page link */
+  --color-mkt-emerald: #0d9488; /* patient-app: solution tag/dot */
+  --color-mkt-emerald-deep: #0f766e; /* patient-app eyebrow text, gradient heading start */
+  --color-mkt-mint: #14b8a6; /* patient-app eyebrow dot, gradient heading end */
+  --color-mkt-mint-bg: #f0fdfa; /* eyebrow pill backgrounds */
+  --color-mkt-mint-border: #99f6e4; /* icon-badge borders on white cards */
+  --color-mkt-slate: #64748b; /* patient-app feature-card body text */
+  --color-mkt-dark-bg: #0e3136; /* CTA/footer/social-proof-strip section background */
+  --color-mkt-dark-muted: #a0c5c7; /* body text on --color-mkt-dark-bg */
+  --color-mkt-forest: #3a8973; /* why-healthylife: "HealthyLife" title highlight, icon accents, chip/number text */
+  --color-mkt-forest-bg: #eaf5f2; /* why-healthylife: card/chip/number-badge/eyebrow tint */
+
   --radius-control: 0.5rem; /* 8px — buttons, inputs (PRD 5.1) */
   --radius-card: 0.75rem; /* 12px — cards, panels (PRD 5.1) */
   --radius-chip: 0.375rem; /* 6px — status chips (Stitch system) */
@@ -80,6 +109,28 @@
   --color-status-late-bg: var(--color-status-late-bg);
 
   --color-danger: var(--color-danger);
+
+  --color-mkt-teal-deep: var(--color-mkt-teal-deep);
+  --color-mkt-teal-cta: var(--color-mkt-teal-cta);
+  --color-mkt-sky: var(--color-mkt-sky);
+  --color-mkt-body: var(--color-mkt-body);
+  --color-mkt-jade: var(--color-mkt-jade);
+  --color-mkt-amber: var(--color-mkt-amber);
+  --color-mkt-amber-pale: var(--color-mkt-amber-pale);
+  --color-mkt-mint-pale: var(--color-mkt-mint-pale);
+  --color-mkt-teal-pale: var(--color-mkt-teal-pale);
+  --color-mkt-nav-muted: var(--color-mkt-nav-muted);
+  --color-mkt-nav-active: var(--color-mkt-nav-active);
+  --color-mkt-emerald: var(--color-mkt-emerald);
+  --color-mkt-emerald-deep: var(--color-mkt-emerald-deep);
+  --color-mkt-mint: var(--color-mkt-mint);
+  --color-mkt-mint-bg: var(--color-mkt-mint-bg);
+  --color-mkt-mint-border: var(--color-mkt-mint-border);
+  --color-mkt-slate: var(--color-mkt-slate);
+  --color-mkt-dark-bg: var(--color-mkt-dark-bg);
+  --color-mkt-dark-muted: var(--color-mkt-dark-muted);
+  --color-mkt-forest: var(--color-mkt-forest);
+  --color-mkt-forest-bg: var(--color-mkt-forest-bg);
 
   --radius-control: var(--radius-control);
   --radius-card: var(--radius-card);

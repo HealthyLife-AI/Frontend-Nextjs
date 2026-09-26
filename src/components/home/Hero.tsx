@@ -1,251 +1,150 @@
-"use client";
-
-import { ArrowLeft, BarChart3, BellRing, Lock, PlayCircle, UtensilsCrossed, Users, Wifi } from "lucide-react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { Button } from "@/components/ui/Button";
 import { Reveal } from "./Reveal";
 
 /**
- * Hero + the "high-fidelity dual device mockup" from the design
- * reference — an illustrative product preview (fictional clinic/client
- * names, same convention as the Stitch dashboard mockups used
- * elsewhere), not real user data. Every color is a PRD §5.1 token.
+ * Hero — rebuilt to match the Figma "Healthylife" landing frame (node
+ * 49:3) 1:1 at the 1440px design width, measured off the SVG export in
+ * `design-reference/SVG for image design/Desktop - 1.svg`:
+ *
+ *   badge rect   x 456..702  y 169..215  r8   #B9F7FF @ 20%
+ *   headline               y 247..352        #006572, 33/61
+ *   brush stroke x 320..392 y 299..303       #006B54 (raster of the
+ *                                            Figma path, `headline-brush.png`)
+ *   body copy              y 399..490        #3D4949, 18/35
+ *   primary CTA  x 482..705 y 525..573  r15  #26635E
+ *   outline CTA  x 223..476 y 525..573  r15  1px #006B54
+ *
+ * The whole background — photo, teal wave, leaf art — is one flattened
+ * 1600x901 raster in the Figma file, so it ships as one image rather
+ * than being re-drawn in CSS. The text column sits in the *left* half
+ * (right-aligned, per RTL) because the plated-salad half of that image
+ * occupies the right: a 620px *right* margin (physical, not `ms-`)
+ * inside the 1210px content box lands the column's right edge on x=705,
+ * the design's — physical because the photo doesn't mirror in English,
+ * so the copy has to stay on the photo's empty side there too.
+ *
+ * The desktop/mobile device mockups that used to live here are gone —
+ * the Figma hero has no mockup at all.
+ *
+ * Copy is the frame's own, which reverses two earlier calls on this
+ * page: the headline drops its second highlight (the frame emphasizes
+ * only "أسرع", with the brush stroke) and the primary CTA is the
+ * frame's "احجز عرضًا تجريبيًا مجانيًا" rather than "ابدأ مجانًا",
+ * which had been chosen so the page wouldn't offer a demo booking the
+ * MVP can't honor (BR-6). It points at #book-demo, the same contact
+ * section `HomeHeader` already links to.
+ *
+ * `lg:text-[33px]` is not the Figma frame's own headline size: that
+ * frame is set in a geometric Arabic face this project doesn't license,
+ * and Cairo (the PRD §5.1 binding font, kept) runs ~24% wider per em.
+ * 33px is the size at which Cairo reproduces the design's measured line
+ * box — 502px vs 510px for line 1, breaking after "ومرضاك" exactly as
+ * the frame does — at the cost of ~8% shorter glyphs. Same reasoning
+ * sets the 20px body copy, which wraps to the design's three lines.
+ *
  */
 export function Hero() {
   const t = useTranslations("home.hero");
-  const m = useTranslations("home.hero.mockup");
 
   return (
-    <section className="relative overflow-hidden px-4 pt-28 pb-20 sm:px-6 lg:px-8 lg:pt-36 lg:pb-32">
-      <div
-        className="pointer-events-none absolute -top-24 end-10 -z-10 h-96 w-96 rounded-full bg-accent/15 blur-3xl"
-        aria-hidden="true"
+    <section className="relative isolate overflow-hidden lg:min-h-[842px]">
+      <Image
+        src="/home/hero-bg.jpg"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="-z-10 object-cover object-left lg:object-center"
       />
-      <div
-        className="pointer-events-none absolute top-1/2 start-0 -z-10 h-80 w-80 rounded-full bg-primary/10 blur-3xl"
-        aria-hidden="true"
-      />
+      {/*
+       * Legibility scrim for narrow viewports only: below `lg` the 16:9
+       * background is cropped hard enough that the plated-food half can
+       * slide under the copy. At `lg`+ the design's own empty cream half
+       * sits behind the text and no scrim is needed.
+       */}
+      <div className="absolute inset-0 -z-10 bg-[#f9f9ed]/65 lg:hidden" aria-hidden="true" />
 
-      <Reveal className="mx-auto flex max-w-4xl flex-col items-center text-center">
-        <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-card px-3.5 py-1.5 text-sm font-medium text-primary shadow-card">
-          <span className="h-2 w-2 rounded-full bg-accent animate-pulse" />
-          {t("badge")}
-        </div>
+      <div className="mx-auto w-full max-w-[1210px] px-4 pt-28 pb-20 sm:px-6 lg:px-0 lg:pt-[169px] lg:pb-[269px]">
+        <Reveal className="lg:ml-auto lg:mr-[620px] lg:w-[512px]">
+          <p className="inline-flex min-h-[46px] items-center rounded-[8px] bg-mkt-sky/20 px-[13px] py-2 text-[13px] font-medium text-mkt-teal-deep">
+            {t("badge")}
+          </p>
 
-        <h1 className="mb-5 max-w-3xl text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl lg:text-[44px] lg:leading-[1.15]">
-          {t.rich("headline", {
-            highlight: (chunks) => (
-              <span className="text-primary underline decoration-accent/50 decoration-4 underline-offset-8">
-                {chunks}
-              </span>
-            ),
-            highlight2: (chunks) => <span className="font-bold text-accent-active">{chunks}</span>,
-          })}
-        </h1>
+          <h1 className="mt-5 text-[30px] font-semibold leading-[1.45] text-mkt-teal-deep sm:text-[36px] lg:mt-[23px] lg:text-[33px] lg:leading-[61px]">
+            {t.rich("headline", {
+              highlight: (chunks) => (
+                <span className="relative font-extrabold">
+                  {chunks}
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-x-0 -bottom-[3px] block h-[4px] bg-[url('/home/headline-brush.png')] bg-[length:100%_100%] bg-no-repeat"
+                  />
+                </span>
+              ),
+            })}
+          </h1>
 
-        <p className="mb-8 max-w-2xl text-lg leading-relaxed text-ink-muted">{t("subheadline")}</p>
+          <p className="mt-6 text-[16px] leading-[30px] text-mkt-body lg:mt-[29px] lg:text-[20px] lg:leading-[35px]">
+            {t("subheadline")}
+          </p>
 
-        <div className="mb-16 flex flex-wrap items-center justify-center gap-4">
-          <Link href="/register">
-            <Button className="!h-12 !px-6 !text-base">
+          <div className="mt-8 flex flex-wrap items-center gap-1.5 lg:mt-[31px]">
+            <a
+              href="#book-demo"
+              className="inline-flex h-12 items-center gap-[18px] rounded-[15px] bg-mkt-teal-cta px-[21px] text-[16px] font-medium text-white transition-colors hover:bg-mkt-teal-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mkt-teal-deep focus-visible:ring-offset-2"
+            >
+              <CalendarIcon />
               {t("ctaPrimary")}
-              <ArrowLeft size={18} strokeWidth={1.75} className="rtl:-scale-x-100" />
-            </Button>
-          </Link>
-          <a href="#how-it-works">
-            <Button variant="secondary" className="!h-12 !px-6 !text-base">
-              <PlayCircle size={20} strokeWidth={1.75} />
+            </a>
+
+            <a
+              href="#how-it-works"
+              className="inline-flex h-12 items-center gap-[11px] rounded-[15px] border border-mkt-jade px-[28px] text-[16px] font-medium text-mkt-teal-cta transition-colors hover:bg-mkt-jade/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mkt-jade focus-visible:ring-offset-2"
+            >
+              <PlayCircleIcon />
               {t("ctaSecondary")}
-            </Button>
-          </a>
-        </div>
-      </Reveal>
-
-      <Reveal delayMs={150} className="relative mx-auto max-w-5xl">
-        {/* Desktop SaaS frame */}
-        <div className="rounded-card border border-border bg-card p-3 shadow-float sm:p-5">
-          <div className="mb-4 flex items-center justify-between rounded-control bg-canvas px-4 py-2.5">
-            <div className="flex items-center gap-1.5">
-              <span className="h-3 w-3 rounded-full bg-status-late/70" />
-              <span className="h-3 w-3 rounded-full bg-status-attention/70" />
-              <span className="h-3 w-3 rounded-full bg-status-on-track/70" />
-            </div>
-            <div className="hidden items-center gap-1.5 rounded bg-card px-3 py-1 text-xs text-ink-muted sm:flex">
-              <Lock size={12} />
-              <span dir="ltr">{m("chromeUrl")}</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-ink-muted">
-              <span className="h-2 w-2 rounded-full bg-accent" />
-              <span className="hidden sm:inline">{m("clinicName")}</span>
-            </div>
+            </a>
           </div>
-
-          <div className="grid grid-cols-1 gap-4 text-start md:grid-cols-12">
-            <div className="hidden flex-col gap-1.5 rounded-control bg-canvas/60 p-2.5 md:col-span-3 md:flex">
-              <div className="flex items-center gap-2 rounded-control bg-primary/10 p-2 text-sm font-semibold text-primary">
-                <Users size={17} strokeWidth={1.75} />
-                <span>{m("navPatients")}</span>
-              </div>
-              <div className="flex items-center gap-2 rounded-control p-2 text-sm text-ink-muted">
-                <UtensilsCrossed size={17} strokeWidth={1.75} />
-                <span>{m("navLibrary")}</span>
-              </div>
-              <div className="flex items-center gap-2 rounded-control p-2 text-sm text-ink-muted">
-                <BellRing size={17} strokeWidth={1.75} />
-                <span className="flex-1">{m("navAlerts")}</span>
-                <span className="rounded-full bg-status-late-bg px-1.5 py-0.5 text-xs text-status-late">3</span>
-              </div>
-              <div className="flex items-center gap-2 rounded-control p-2 text-sm text-ink-muted">
-                <BarChart3 size={17} strokeWidth={1.75} />
-                <span>{m("navReports")}</span>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-3 md:col-span-9">
-              <div className="flex flex-wrap items-center justify-between gap-2 rounded-control bg-canvas/50 p-2.5">
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent/15 text-sm font-bold text-accent-active">
-                    {m("patientName").charAt(0)}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-ink">{m("patientName")}</span>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-accent/15 px-2 py-0.5 text-xs text-accent-active">
-                        <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-                        {m("patientAdherent")}
-                      </span>
-                    </div>
-                    <span className="text-xs text-ink-muted">{m("patientGoal")}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs">
-                  <span className="rounded-control bg-card px-2.5 py-1.5 text-ink">{m("actionEdit")}</span>
-                  <span className="rounded-control bg-accent px-2.5 py-1.5 font-medium text-ink">
-                    {m("actionWhatsapp")}
-                  </span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2.5">
-                <MetricTile
-                  label={m("metricCalories")}
-                  value="1,650"
-                  unit={m("metricCaloriesUnit")}
-                  valueClass="text-primary"
-                  barClass="bg-primary"
-                  width="88%"
-                />
-                <MetricTile
-                  label={m("metricProtein")}
-                  value="118g"
-                  unit={m("metricProteinUnit")}
-                  valueClass="text-accent-active"
-                  barClass="bg-accent"
-                  width="98%"
-                />
-                <MetricTile
-                  label={m("metricResponse")}
-                  value={m("metricResponseValue")}
-                  unit={m("metricResponseSub")}
-                  valueClass="text-status-attention"
-                  barClass="bg-status-attention"
-                  width="85%"
-                />
-              </div>
-
-              <div className="rounded-control bg-canvas/40 p-2.5">
-                <div className="mb-1.5 flex items-center justify-between">
-                  <span className="text-sm font-bold text-ink">{m("mealTitle")}</span>
-                  <span className="text-xs text-primary">{m("mealKcal")}</span>
-                </div>
-                <div className="flex items-center justify-between rounded-control bg-card p-2.5 shadow-card">
-                  <div className="flex items-center gap-2.5">
-                    <UtensilsCrossed size={20} strokeWidth={1.75} className="text-accent-active" />
-                    <div>
-                      <div className="text-sm font-bold text-ink">{m("mealName")}</div>
-                      <div className="text-xs text-ink-muted">{m("mealAlt")}</div>
-                    </div>
-                  </div>
-                  <span className="shrink-0 rounded bg-canvas px-2 py-1 text-xs font-medium text-ink">
-                    {m("mealLogged")}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Overlapping mobile patient-app card */}
-        <div className="animate-float absolute -bottom-8 -start-6 hidden w-64 rounded-card border border-border bg-card p-4 shadow-float lg:block">
-          <div className="mb-2.5 flex items-center justify-between rounded-control bg-canvas/60 p-2 text-xs text-ink-muted">
-            <span>{m("mobileTime")}</span>
-            <span className="font-bold text-primary">{m("mobileHeader")}</span>
-            <Wifi size={14} className="text-accent" />
-          </div>
-          <div className="flex flex-col gap-1.5 text-start">
-            <MobileRow done label={m("mobileBreakfast")} value={m("mobileBreakfastKcal")} />
-            <MobileRow done label={m("mobileSnack")} value={m("mobileSnackKcal")} />
-            <div className="flex items-center justify-between rounded-control bg-primary/10 p-2">
-              <div className="flex items-center gap-2">
-                <span className="h-4 w-4 rounded bg-card" />
-                <span className="text-xs font-bold text-ink">{m("mobileLunch")}</span>
-              </div>
-              <span className="text-xs font-bold text-primary">{m("mobileLunchPending")}</span>
-            </div>
-            <div className="mt-1 rounded-control bg-accent/10 p-2 text-center text-xs text-accent-active">
-              💧 {m("mobileWater")}
-            </div>
-          </div>
-        </div>
-      </Reveal>
+        </Reveal>
+      </div>
     </section>
   );
 }
 
-function MetricTile({
-  label,
-  value,
-  unit,
-  valueClass,
-  barClass,
-  width,
-}: {
-  label: string;
-  value: string;
-  unit: string;
-  valueClass: string;
-  barClass: string;
-  width: string;
-}) {
+/*
+ * Both icons are the Figma frame's own vector paths, copied verbatim
+ * from the SVG export and shown through a viewBox offset to where they
+ * sat on the 1440px canvas — lucide's near-equivalents (`Calendar`,
+ * `PlayCircle`) are drawn as strokes on a 24px grid and don't match
+ * these filled Material shapes.
+ */
+function CalendarIcon() {
   return (
-    <div className="rounded-control bg-card p-2.5 shadow-card">
-      <span className="text-xs text-ink-muted">{label}</span>
-      <div className="mt-0.5 flex items-baseline gap-1">
-        <span className={`text-lg font-bold ${valueClass}`}>{value}</span>
-        <span className="text-xs text-ink-muted">{unit}</span>
-      </div>
-      <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-canvas">
-        <div className={`h-full rounded-full ${barClass}`} style={{ width }} />
-      </div>
-    </div>
+    <svg
+      viewBox="677.062 538 13.5 15"
+      width="13.5"
+      height="15"
+      fill="currentColor"
+      aria-hidden="true"
+      className="shrink-0"
+    >
+      <path d="M678.562 553C678.149 553 677.796 552.853 677.502 552.559C677.208 552.266 677.062 551.913 677.062 551.5V541C677.062 540.588 677.208 540.234 677.502 539.941C677.796 539.647 678.149 539.5 678.562 539.5H679.312V538H680.812V539.5H686.812V538H688.312V539.5H689.062C689.474 539.5 689.827 539.647 690.121 539.941C690.415 540.234 690.562 540.588 690.562 541V551.5C690.562 551.913 690.415 552.266 690.121 552.559C689.827 552.853 689.474 553 689.062 553H678.562ZM678.562 551.5H689.062V544H678.562V551.5ZM678.562 542.5H689.062V541H678.562V542.5ZM678.562 542.5V541V542.5Z" />
+    </svg>
   );
 }
 
-function MobileRow({ done, label, value }: { done: boolean; label: string; value: string }) {
+function PlayCircleIcon() {
   return (
-    <div className="flex items-center justify-between rounded-control bg-canvas/40 p-2">
-      <div className="flex items-center gap-2">
-        <span
-          className={`flex h-4 w-4 items-center justify-center rounded text-[10px] ${
-            done ? "bg-accent/20 text-accent-active" : "bg-card"
-          }`}
-        >
-          {done ? "✓" : ""}
-        </span>
-        <span className="text-xs font-medium text-ink">{label}</span>
-      </div>
-      <span className="text-xs text-ink-muted">{value}</span>
-    </div>
+    <svg
+      viewBox="436 540.667 16.667 16.667"
+      width="16.667"
+      height="16.667"
+      fill="currentColor"
+      aria-hidden="true"
+      className="shrink-0 text-mkt-jade"
+    >
+      <path d="M442.25 552.75L448.083 549L442.25 545.25V552.75ZM444.333 557.333C443.181 557.333 442.097 557.115 441.083 556.677C440.069 556.24 439.188 555.646 438.438 554.896C437.688 554.146 437.094 553.264 436.656 552.25C436.219 551.236 436 550.153 436 549C436 547.847 436.219 546.764 436.656 545.75C437.094 544.736 437.688 543.854 438.438 543.104C439.188 542.354 440.069 541.76 441.083 541.323C442.097 540.885 443.181 540.667 444.333 540.667C445.486 540.667 446.569 540.885 447.583 541.323C448.597 541.76 449.479 542.354 450.229 543.104C450.979 543.854 451.573 544.736 452.01 545.75C452.448 546.764 452.667 547.847 452.667 549C452.667 550.153 452.448 551.236 452.01 552.25C451.573 553.264 450.979 554.146 450.229 554.896C449.479 555.646 448.597 556.24 447.583 556.677C446.569 557.115 445.486 557.333 444.333 557.333ZM444.333 555.667C446.194 555.667 447.771 555.021 449.062 553.729C450.354 552.437 451 550.861 451 549C451 547.139 450.354 545.562 449.062 544.271C447.771 542.979 446.194 542.333 444.333 542.333C442.472 542.333 440.896 542.979 439.604 544.271C438.312 545.562 437.667 547.139 437.667 549C437.667 550.861 438.312 552.437 439.604 553.729C440.896 555.021 442.472 555.667 444.333 555.667Z" />
+    </svg>
   );
 }

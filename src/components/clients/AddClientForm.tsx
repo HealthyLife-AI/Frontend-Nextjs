@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Check, CheckCircle2, Copy, FileText } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -19,7 +19,6 @@ export function AddClientForm() {
   const t = useTranslations("clients.add");
   const tGoals = useTranslations("goals");
   const { authorizedFetch } = useAuth();
-  const locale = useLocale();
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -48,7 +47,15 @@ export function AddClientForm() {
       return;
     }
 
-    const inviteLink = `${window.location.origin}/${locale}/activate/${result.data.invite_token}`;
+    // Custom URL scheme into the Flutter client app — never a web URL.
+    // Activation happens in-app now; there is no web activation page.
+    // "healthylifeai" must match exactly what the Flutter app registers
+    // (iOS CFBundleURLSchemes / Android intent-filter). No cost, no
+    // external service (Branch.io etc.) — a plain scheme registration on
+    // the app side is enough. Known gap: if the client has not installed
+    // the app yet, this link does nothing when tapped (no web fallback by
+    // design) — flagged to the user, accepted for now.
+    const inviteLink = `healthylifeai://activate/${result.data.invite_token}`;
     setSuccess({ id: result.data.client.id, name: result.data.client.name, inviteLink });
     setSubmitting(false);
   }

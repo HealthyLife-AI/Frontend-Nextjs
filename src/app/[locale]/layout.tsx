@@ -10,7 +10,8 @@ import "../globals.css";
 const cairo = Cairo({
   variable: "--font-cairo",
   subsets: ["arabic", "latin"],
-  weight: ["400", "500", "600"],
+  // 700/800 are the marketing hero's headline weights (Figma node 49:3).
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const inter = Inter({

@@ -2,7 +2,16 @@ import { BrainCircuit, SlidersHorizontal, UserPlus, BadgeCheck, Zap, BellRing, t
 import { getTranslations } from "next-intl/server";
 import { Reveal } from "./Reveal";
 import { SectionHeading } from "./SectionHeading";
+import { HowItWorksMockup } from "./HowItWorksMockup";
 
+/**
+ * Card visuals measured off the Figma export (`design-reference/SVG for
+ * image design/Desktop - 1.svg`, node 49:3, y 1708-1976): each card gets
+ * its own near-white tint, a solid-fill icon tile (white glyph, not this
+ * app's usual light-tint-square/colored-icon), and a big background
+ * number tinted a pale version of that same icon color — not the flat
+ * `text-border` gray this section used before.
+ */
 const STEPS: {
   icon: LucideIcon;
   numberKey: "step1Number" | "step2Number" | "step3Number";
@@ -10,7 +19,9 @@ const STEPS: {
   bodyKey: "step1Body" | "step2Body" | "step3Body";
   noteKey: "step1Note" | "step2Note" | "step3Note";
   noteIcon: LucideIcon;
+  cardBg: string;
   tileClass: string;
+  numberClass: string;
 }[] = [
   {
     icon: UserPlus,
@@ -19,7 +30,9 @@ const STEPS: {
     bodyKey: "step1Body",
     noteKey: "step1Note",
     noteIcon: BadgeCheck,
-    tileClass: "bg-primary/10 text-primary",
+    cardBg: "bg-[#F4FEFF]",
+    tileClass: "bg-primary text-white",
+    numberClass: "text-mkt-teal-pale",
   },
   {
     icon: SlidersHorizontal,
@@ -28,7 +41,9 @@ const STEPS: {
     bodyKey: "step2Body",
     noteKey: "step2Note",
     noteIcon: Zap,
-    tileClass: "bg-accent/15 text-accent-active",
+    cardBg: "bg-[#F9FFFE]",
+    tileClass: "bg-mkt-jade text-white",
+    numberClass: "text-mkt-mint-pale",
   },
   {
     icon: BrainCircuit,
@@ -37,7 +52,9 @@ const STEPS: {
     bodyKey: "step3Body",
     noteKey: "step3Note",
     noteIcon: BellRing,
-    tileClass: "bg-status-attention-bg text-status-attention",
+    cardBg: "bg-[#FFFCF8]",
+    tileClass: "bg-mkt-amber text-white",
+    numberClass: "text-mkt-amber-pale",
   },
 ];
 
@@ -47,27 +64,33 @@ export async function HowItWorksSection() {
   return (
     <section id="how-it-works" className="bg-card/60 px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
-        <SectionHeading eyebrow={t("eyebrow")} title={t("title")} subtitle={t("subtitle")} tone="accent" />
+        <Reveal>
+          <HowItWorksMockup />
+        </Reveal>
+
+        <SectionHeading eyebrow={t("eyebrow")} title={t("title")} subtitle={t("subtitle")} pill="plain" />
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {STEPS.map(({ icon: Icon, numberKey, titleKey, bodyKey, noteKey, noteIcon: NoteIcon, tileClass }, i) => (
-            <Reveal key={titleKey} delayMs={i * 100}>
-              <div className="flex h-full flex-col rounded-card border border-border bg-card p-6 text-start shadow-card">
-                <div className="mb-5 flex items-center justify-between">
-                  <div className={`flex h-12 w-12 items-center justify-center rounded-control ${tileClass}`}>
-                    <Icon size={24} strokeWidth={1.75} />
+          {STEPS.map(
+            ({ icon: Icon, numberKey, titleKey, bodyKey, noteKey, noteIcon: NoteIcon, cardBg, tileClass, numberClass }, i) => (
+              <Reveal key={titleKey} delayMs={i * 100}>
+                <div className={`flex h-full flex-col rounded-card ${cardBg} p-6 text-start`}>
+                  <div className="mb-5 flex items-center justify-between">
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${tileClass}`}>
+                      <Icon size={24} strokeWidth={1.75} />
+                    </div>
+                    <span className={`text-3xl font-bold ${numberClass}`}>{t(numberKey)}</span>
                   </div>
-                  <span className="text-3xl font-bold text-border">{t(numberKey)}</span>
+                  <h3 className="mb-2 text-lg font-semibold text-ink">{t(titleKey)}</h3>
+                  <p className="leading-relaxed text-ink-muted">{t(bodyKey)}</p>
+                  <div className="mt-4 flex items-center gap-2 rounded-control bg-canvas px-3 py-2.5 text-sm text-ink-muted">
+                    <NoteIcon size={17} strokeWidth={1.75} className="text-accent-active" />
+                    <span>{t(noteKey)}</span>
+                  </div>
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-ink">{t(titleKey)}</h3>
-                <p className="leading-relaxed text-ink-muted">{t(bodyKey)}</p>
-                <div className="mt-4 flex items-center gap-2 rounded-control bg-canvas px-3 py-2.5 text-sm text-ink-muted">
-                  <NoteIcon size={17} strokeWidth={1.75} className="text-accent-active" />
-                  <span>{t(noteKey)}</span>
-                </div>
-              </div>
-            </Reveal>
-          ))}
+              </Reveal>
+            )
+          )}
         </div>
       </div>
     </section>

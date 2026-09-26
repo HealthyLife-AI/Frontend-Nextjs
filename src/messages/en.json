@@ -48,17 +48,6 @@
       "passwordMismatch": "Passwords don't match",
       "passwordWeak": "Password doesn't meet the requirements"
     },
-    "activate": {
-      "title": "Activate your account",
-      "subtitle": "Set a password to start using HealthyLife AI",
-      "password": "Password",
-      "passwordConfirmation": "Confirm password",
-      "passwordHint": "At least 8 characters, with an uppercase letter, a lowercase letter, and a number",
-      "submit": "Activate account",
-      "submitting": "Activating...",
-      "invalidTitle": "This link isn't valid",
-      "invalidBody": "It may have already been used or expired. Ask your nutritionist to send you a new invite."
-    },
     "showcase": {
       "headline": "AI does not replace the nutritionist; it makes them more efficient.",
       "body": "Independent nutritionists spend 40–60% of their time on admin instead of consultation. HealthyLife AI gives that time back.",
@@ -370,10 +359,51 @@
     },
     "hero": {
       "badge": "The Arabic-first platform for clinical nutritionists",
-      "headline": "Your nutrition plans get built <highlight>faster</highlight>, and your clients stick with them <highlight2>longer</highlight2>",
+      "headline": "Your nutrition plans get built <highlight>faster</highlight>, and your clients stick with them longer",
       "subheadline": "One platform to manage your clients, design their plans with local alternatives, and get an automatic alert the moment someone needs your attention — built for the Arabic-speaking clinic from day one.",
-      "ctaPrimary": "Start free",
-      "ctaSecondary": "See how it works",
+      "ctaPrimary": "Book a free demo",
+      "ctaSecondary": "See how it works"
+    },
+    "whyHealthyLife": {
+      "eyebrow": "Your partner in the journey of change",
+      "title": "Why <highlight>HealthyLife</highlight>?",
+      "subtitle": "Everything the nutrition specialist needs, in one platform",
+      "item1Title": "AI-powered nutrition plans",
+      "item1Body": "Generate personalized, fast nutrition plans built on the latest research and each patient's needs.",
+      "item1Chip": "Higher accuracy, less time",
+      "item2Title": "Integrated patient management",
+      "item2Body": "Organize your patients' data, appointments, measurements and health history in one place, safely and easily.",
+      "item2Chip": "Every patient within reach",
+      "item3Title": "Smart remote follow-up",
+      "item3Body": "Track your patients' progress, reach them easily, and send recommendations and notes anytime, anywhere.",
+      "item3Chip": "Ongoing support, better results",
+      "item4Title": "Professional analytics & reports",
+      "item4Body": "Get clear insight into your patients' performance and track nutrition programs with easy-to-read, shareable reports.",
+      "item4Chip": "Decisions built on data",
+      "trust1Title": "Real results",
+      "trust1Body": "Inspiring success stories",
+      "trust2Title": "Designed for specialists",
+      "trust2Body": "By nutrition experts, for nutrition experts",
+      "trust3Title": "Secure & trusted",
+      "trust3Body": "Data protection to the highest standards",
+      "tagline": "HealthyLife — together toward a healthier future"
+    },
+    "howItWorks": {
+      "eyebrow": "A clinical workflow that just flows",
+      "title": "How HealthyLife AI works",
+      "subtitle": "Three deliberate steps that turn your clinic from manual admin into a system that watches over every client, around the clock.",
+      "step1Number": "01",
+      "step1Title": "Add your client in a minute",
+      "step1Body": "Just a name and phone number. Your client instantly gets an activation link over WhatsApp — no technical setup, no training needed.",
+      "step1Note": "Instant, direct link to WhatsApp",
+      "step2Number": "02",
+      "step2Title": "Design their plan with alternatives",
+      "step2Body": "Pick meals from a rich local library, set flexible alternatives, and let the platform calculate macros and calories automatically and precisely.",
+      "step2Note": "Cuts plan prep and editing time dramatically",
+      "step3Number": "03",
+      "step3Title": "Let AI keep watch",
+      "step3Body": "Instant, proactive alerts for anyone who's fallen behind or stopped logging meals, plus clear clinical summaries ready for the next follow-up.",
+      "step3Note": "Pinpoints exactly who's at risk of dropping off",
       "mockup": {
         "chromeUrl": "app.healthylife.ai/clinic-portal",
         "clinicName": "Dr. Amal Alshamri's clinic",
@@ -409,37 +439,9 @@
         "mobileWater": "2 more glasses of water to hit today's goal"
       }
     },
-    "problem": {
-      "eyebrow": "The daily grind in every clinic",
-      "title": "We know how you work today, and where it's wasting your time",
-      "subtitle": "HealthyLife AI was built around the real problems that eat into a nutritionist's day without any real clinical payoff.",
-      "card1Title": "WhatsApp and scattered files",
-      "card1Body": "Following up on every client by hand — buried chat threads, lost meal photos, health notes split between messages and paper notebooks.",
-      "card2Title": "Manually designing every plan",
-      "card2Body": "Hours lost every week in Excel and Word calculating calories per client and re-editing alternatives with every visit or dietary obstacle.",
-      "card3Title": "No idea who's fallen off track",
-      "card3Body": "Impossible to track who's still following the plan between sessions. You find out weeks — sometimes a month — later, once they've already disengaged."
-    },
-    "howItWorks": {
-      "eyebrow": "A clinical workflow that just flows",
-      "title": "How HealthyLife AI works",
-      "subtitle": "Three deliberate steps that turn your clinic from manual admin into a system that watches over every client, around the clock.",
-      "step1Number": "01",
-      "step1Title": "Add your client in a minute",
-      "step1Body": "Just a name and phone number. Your client instantly gets an activation link over WhatsApp — no technical setup, no training needed.",
-      "step1Note": "Instant, direct link to WhatsApp",
-      "step2Number": "02",
-      "step2Title": "Design their plan with alternatives",
-      "step2Body": "Pick meals from a rich local library, set flexible alternatives, and let the platform calculate macros and calories automatically and precisely.",
-      "step2Note": "Cuts plan prep and editing time dramatically",
-      "step3Number": "03",
-      "step3Title": "Let AI keep watch",
-      "step3Body": "Instant, proactive alerts for anyone who's fallen behind or stopped logging meals, plus clear clinical summaries ready for the next follow-up.",
-      "step3Note": "Pinpoints exactly who's at risk of dropping off"
-    },
     "patientApp": {
       "eyebrow": "A radically simple client experience",
-      "title": "What your client sees: clarity that drives adherence",
+      "title": "What your client sees: <highlight>clarity that drives adherence</highlight>",
       "subtitle": "An app built to feel intuitive and effortless for the client — no math, no clinical jargon.",
       "item1Title": "Today's plan",
       "item1Body": "Their meals and alternatives, clear in one tap — with options built from what's actually in their kitchen.",
@@ -456,18 +458,32 @@
       "item4Title": "Their shopping list",
       "item4Body": "Their plan automatically becomes a smart weekly shopping list with the right quantities, ready before the supermarket run.",
       "item4StatLabel": "Ready to shop",
-      "item4StatValue": "Updates weekly"
-    },
-    "whyUs": {
-      "eyebrow": "Built specifically for you",
-      "title": "Why nutritionists choose us",
-      "subtitle": "Not a translated import — designed together with practicing nutritionists and consultants across the region.",
-      "reason1Title": "Fully Arabic, fully local",
-      "reason1Body": "A genuine RTL interface and a food database covering everyday local and Gulf dishes accurately — no literal translations, no unavailable Western ingredients.",
-      "reason2Title": "Clinical privacy and security first",
-      "reason2Body": "Your clients' data and health records belong to you alone, encrypted end to end and isolated to the strictest healthcare standards.",
-      "reason3Title": "Flexible alternatives that drive adherence",
-      "reason3Body": "Because real life changes plans, alternatives let a client stay on track without breaking their diet — meaningfully raising adherence and goal completion."
+      "item4StatValue": "Updates weekly",
+      "mockup": {
+        "date": "Wednesday, May 12",
+        "greeting": "Good morning, Sara",
+        "streakBadge": "Amazing!",
+        "streakDays": "14-day streak",
+        "streakRank": "Better than 92% of subscribers",
+        "waterLabel": "Water intake",
+        "waterCurrent": "1.8 L",
+        "waterTarget": "/ 2.5 L",
+        "waterAdd": "+ Add 250 mL",
+        "waterRemaining": "2 glasses left",
+        "mealScheduleTitle": "Today's meal schedule",
+        "viewAll": "View all",
+        "breakfastTime": "Breakfast (8:30 AM)",
+        "breakfastName": "Oats with almond milk & berries",
+        "lunchTime": "Suggested lunch (2:00 PM)",
+        "lunchName": "Grilled chicken breast with quinoa & green salad",
+        "swapMeal": "Swap meal",
+        "markEaten": "Mark as eaten",
+        "navProfile": "Profile",
+        "navShopping": "Shopping",
+        "navPlan": "Plan",
+        "navToday": "Today"
+      },
+      "trustLine": "Integrates with Bluetooth smart scales and health apps (Apple Health & Google Fit)"
     },
     "socialProof": {
       "stat1Value": "Built with practicing nutritionists",
@@ -494,8 +510,7 @@
       "badge": "Ready to take your clinic to the next level?",
       "title": "Save hours of your time, and double your clients' adherence with AI",
       "subtitle": "Join the nutrition clinics using HealthyLife AI to raise how consistently their clients follow through — and cut plan-prep time dramatically.",
-      "button": "Create your free account",
-      "contactPrompt": "Or reach us directly for help and questions:"
+      "button": "Book your free demo now"
     },
     "footer": {
       "tagline": "The Arabic-first platform for clinical nutritionists to manage clients, medication, and nutritional adherence with precision, powered by AI.",
@@ -506,10 +521,14 @@
       "terms": "Terms & conditions",
       "supportTechnical": "Technical support",
       "email": "info@healthylife.ai",
-      "location": "Riyadh, Saudi Arabia",
+      "location": "Palestine",
       "copyright": "© {year} HealthyLife AI. All rights reserved.",
       "privacyShort": "Privacy",
-      "securityShort": "Clinical security"
+      "securityShort": "Clinical security",
+      "linkHowItWorks": "How the platform works",
+      "linkForSpecialists": "Solutions for clinics & centers",
+      "linkPatientApp": "Client follow-up app",
+      "faq": "FAQ"
     }
   },
   "planDesigner": {

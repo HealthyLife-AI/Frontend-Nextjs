@@ -41,8 +41,6 @@ type AuthContextValue = AuthState & {
   login: (email: string, password: string) => Promise<AuthActionResult>;
   register: (payload: RegisterPayload) => Promise<AuthActionResult>;
   logout: () => Promise<void>;
-  /** FR-03: consumes the client's one-time invite token; logs them in on success. */
-  activate: (token: string, password: string, passwordConfirmation: string) => Promise<AuthActionResult>;
   /**
    * Call Laravel's data API directly (clients, health profiles, foods,
    * dashboard — NOT the auth endpoints, which stay behind the BFF proxy
@@ -282,26 +280,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     clearSession();
   }, [clearSession]);
 
-  const activate = useCallback(
-    async (token: string, password: string, passwordConfirmation: string): Promise<AuthActionResult> => {
-      const res = await fetch(`/api/auth/activate/${encodeURIComponent(token)}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password, password_confirmation: passwordConfirmation }),
-      });
-
-      if (!res.ok) return parseError(res);
-
-      const data = await res.json();
-      applySession(data.access_token, data.user);
-
-      return { ok: true };
-    },
-    [applySession]
-  );
-
   return (
-    <AuthContext.Provider value={{ ...state, login, register, logout, activate, authorizedFetch }}>
+    <AuthContext.Provider value={{ ...state, login, register, logout, authorizedFetch }}>
       {children}
     </AuthContext.Provider>
   );
