@@ -11,6 +11,7 @@ import { getDashboardOverview, listClients } from "@/lib/clients/api";
 import { listAlerts } from "@/lib/alerts/api";
 import type { Client, DashboardOverview } from "@/lib/clients/types";
 import type { Alert } from "@/lib/alerts/types";
+import { localizedAlertMessage } from "@/lib/alerts/message";
 
 const RECENT_ALERTS_SHOWN = 5;
 const NEEDS_ATTENTION_SHOWN = 6;
@@ -32,6 +33,7 @@ const NEEDS_ATTENTION_SHOWN = 6;
 export default function DashboardHomePage() {
   const t = useTranslations("dashboardHome");
   const tAlertType = useTranslations("alerts.type");
+  const tAlertMessage = useTranslations("alerts.message");
   const tGoals = useTranslations("goals");
   const { authorizedFetch, user } = useAuth();
 
@@ -190,7 +192,7 @@ export default function DashboardHomePage() {
                 <span className="text-sm font-bold text-ink">{alert.subscriber_name}</span>
                 <span className="shrink-0 rounded-full bg-card px-2 py-0.5 text-[11px] font-bold text-ink-muted">{tAlertType(alert.type)}</span>
               </div>
-              <span className="truncate text-xs text-ink-muted">{alert.message}</span>
+              <span className="truncate text-xs text-ink-muted">{localizedAlertMessage(alert, tAlertMessage)}</span>
             </Link>
           ))}
         </section>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { UtensilsCrossed, Flame, ChevronDown } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -112,6 +112,7 @@ function TemplateCard({
 }) {
   const t = useTranslations("plans");
   const tSlots = useTranslations("planDesigner.mealSlots");
+  const format = useFormatter();
   const { authorizedFetch } = useAuth();
 
   const [subscriberId, setSubscriberId] = useState("");
@@ -177,7 +178,7 @@ function TemplateCard({
               {template.meals.map((meal) => tSlots(meal.name)).join(" · ")}
             </p>
             <span className="text-xs text-ink-muted/80">
-              {t("createdAt", { date: new Date(template.created_at).toLocaleDateString() })}
+              {t("createdAt", { date: format.dateTime(new Date(template.created_at), { dateStyle: "medium", numberingSystem: "latn" }) })}
             </span>
           </div>
         </div>

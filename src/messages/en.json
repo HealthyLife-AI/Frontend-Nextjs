@@ -297,7 +297,13 @@
       "milestone": "Milestone reached"
     },
     "previousPage": "Previous",
-    "nextPage": "Next"
+    "nextPage": "Next",
+    "message": {
+      "noLog": "No meal logged in {days}+ days.",
+      "caloriesExceeded": "Daily calorie target exceeded for {days} consecutive days.",
+      "milestoneLost": "Milestone: {kg} kg lost over the last {days} days.",
+      "milestoneGained": "Milestone: {kg} kg gained over the last {days} days."
+    }
   },
   "plans": {
     "title": "Plan templates",

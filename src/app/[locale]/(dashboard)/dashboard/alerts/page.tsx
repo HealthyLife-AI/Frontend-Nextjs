@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { Bell, CalendarX, Flame, Award, Check } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/Badge";
 import { listAlerts, markAlertRead } from "@/lib/alerts/api";
 import type { Alert, AlertType } from "@/lib/alerts/types";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { localizedAlertMessage } from "@/lib/alerts/message";
 
 const FILTERS = [
   { labelKey: "filterAll", is_read: undefined },
@@ -159,6 +160,8 @@ export default function AlertsPage() {
 
 function AlertRow({ alert, onMarkRead }: { alert: Alert; onMarkRead: (id: number) => void }) {
   const t = useTranslations("alerts");
+  const tAlertMessage = useTranslations("alerts.message");
+  const format = useFormatter();
   const Icon = TYPE_ICON[alert.type];
   const tone = TYPE_TONE[alert.type];
   // A milestone has no ongoing condition to resolve — is_resolved reads
@@ -200,8 +203,8 @@ function AlertRow({ alert, onMarkRead }: { alert: Alert; onMarkRead: (id: number
             </Badge>
           )}
         </div>
-        <p className="text-sm text-ink-muted">{alert.message}</p>
-        <span className="text-xs text-ink-muted/80">{new Date(alert.created_at).toLocaleString()}</span>
+        <p className="text-sm text-ink-muted">{localizedAlertMessage(alert, tAlertMessage)}</p>
+        <span className="text-xs text-ink-muted/80">{format.dateTime(new Date(alert.created_at), { dateStyle: "medium", timeStyle: "short", numberingSystem: "latn" })}</span>
       </div>
 
       {!alert.is_read && (

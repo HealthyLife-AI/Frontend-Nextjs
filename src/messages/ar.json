@@ -297,7 +297,13 @@
       "milestone": "تحقيق إنجاز"
     },
     "previousPage": "السابق",
-    "nextPage": "التالي"
+    "nextPage": "التالي",
+    "message": {
+      "noLog": "لم يسجّل أي وجبة منذ {days} أيام أو أكثر.",
+      "caloriesExceeded": "تجاوز السعرات اليومية المستهدفة {days} أيام متتالية.",
+      "milestoneLost": "إنجاز: خسر {kg} كجم خلال آخر {days} يومًا.",
+      "milestoneGained": "إنجاز: اكتسب {kg} كجم خلال آخر {days} يومًا."
+    }
   },
   "plans": {
     "title": "قوالب الخطط",

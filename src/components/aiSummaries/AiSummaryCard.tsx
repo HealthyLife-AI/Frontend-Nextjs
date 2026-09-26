@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import type { AiSummary } from "@/lib/aiSummaries/types";
@@ -15,6 +15,7 @@ import type { AiSummary } from "@/lib/aiSummaries/types";
  */
 export function AiSummaryCard({ summary }: { summary: AiSummary | null }) {
   const t = useTranslations("aiSummary");
+  const format = useFormatter();
 
   if (summary === null) {
     return (
@@ -63,7 +64,7 @@ export function AiSummaryCard({ summary }: { summary: AiSummary | null }) {
       </p>
 
       <p className="mt-3 text-xs text-ink-muted/80">
-        {t("generatedAt", { date: new Date(summary.generated_at).toLocaleString() })}
+        {t("generatedAt", { date: format.dateTime(new Date(summary.generated_at), { dateStyle: "medium", timeStyle: "short", numberingSystem: "latn" }) })}
       </p>
     </section>
   );
