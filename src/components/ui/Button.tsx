@@ -8,13 +8,12 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 /**
- * Button specs from the approved Stitch design system
- * (design-reference/.../serene_clinical_intelligence/DESIGN.md
- * "Components > Buttons"), recolored to the PRD's binding hex tokens.
- * - Primary: mint accent fill — reserved for the primary action on a
- *   screen (PRD §5.1 "Accent (mint)"; the design doc calls this out
- *   explicitly as "exclusively for primary calls to action").
- * - Secondary: teal outline.
+ * Buttons carry the landing page's identity into the product: the same
+ * deep-teal CTA gradient (`--color-primary` -> `--color-mkt-teal-deep`)
+ * with white text the marketing hero uses, instead of the earlier mint
+ * fill — one brand action color across site and app.
+ * - Primary: teal gradient, brand glow — the one main action per screen.
+ * - Secondary: teal outline on white.
  * - Ghost: text-only, muted.
  */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -23,13 +22,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const base =
-      "inline-flex h-10 items-center justify-center gap-2 rounded-control px-5 font-medium text-sm transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2";
+      "inline-flex h-11 items-center justify-center gap-2 rounded-field px-5 font-semibold text-sm transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2";
 
     const variants: Record<ButtonVariant, string> = {
       primary:
-        "bg-accent text-ink shadow-[0_1px_2px_rgba(11,46,48,0.08),0_8px_16px_-6px_rgba(2,195,154,0.35)] hover:bg-accent-hover hover:shadow-[0_2px_4px_rgba(11,46,48,0.1),0_12px_24px_-8px_rgba(2,195,154,0.4)] active:bg-accent-active",
+        "bg-gradient-to-br from-primary to-mkt-teal-deep text-white shadow-brand hover:brightness-110 hover:shadow-[0_14px_28px_-12px_rgba(0,101,114,0.6)] active:brightness-95",
       secondary:
-        "border border-primary text-primary bg-transparent hover:bg-primary/[0.06]",
+        "border border-primary/40 bg-card text-primary hover:border-primary hover:bg-mkt-mint-bg",
       ghost: "text-ink-muted bg-transparent hover:bg-ink-muted/[0.08] hover:text-ink",
     };
 

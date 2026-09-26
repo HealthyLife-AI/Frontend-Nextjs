@@ -46,8 +46,8 @@ export function MealItemRow({
   const macros = itemMacros(item);
 
   return (
-    <div className="flex flex-col gap-1.5 rounded-control p-1">
-      <div className="flex items-center justify-between rounded-control bg-canvas/60 px-3 py-2">
+    <div className="flex flex-col gap-1.5 rounded-field p-1">
+      <div className="flex items-center justify-between rounded-field bg-canvas/60 px-3 py-2">
         <div className="min-w-0">
           <span className="text-sm font-semibold text-ink">{foodName(item.food, locale)}</span>
           <span className="ms-2 text-xs text-ink-muted">{t("quantityGrams", { value: item.quantityGrams })}</span>
@@ -69,7 +69,7 @@ export function MealItemRow({
       </div>
 
       {item.alternatives.length > 0 && (
-        <div className="ms-6 flex flex-col gap-1.5 rounded-control bg-canvas/40 p-2">
+        <div className="ms-6 flex flex-col gap-1.5 rounded-field bg-canvas/40 p-2">
           {item.alternatives.map((alt, index) => {
             const altMacros = itemMacros(alt);
             return (

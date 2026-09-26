@@ -67,7 +67,7 @@ export function BodyCompositionCards({
     <section className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h2 className="text-base font-semibold text-ink">{t("title")}</h2>
+          <h2 className="text-base font-bold text-ink">{t("title")}</h2>
           <p className="text-xs text-ink-muted">{t("recordedAt", { date: latest.recorded_at })}</p>
         </div>
         {/* BR-13: which instrument produced the reading these cards show. */}
@@ -77,7 +77,7 @@ export function BodyCompositionCards({
       </div>
 
       {measured.length === 0 ? (
-        <p className="rounded-card border border-border bg-card p-4 text-sm text-ink-muted shadow-card">
+        <p className="rounded-panel border border-border/70 bg-card p-4 text-sm text-ink-muted shadow-panel">
           {t("emptyWeightOnly")}
         </p>
       ) : (
@@ -118,7 +118,7 @@ function MetricCard({
   const DeltaIcon = delta === null || delta === 0 ? Minus : delta > 0 ? ArrowUpRight : ArrowDownRight;
 
   return (
-    <div className="rounded-card border border-border bg-card p-4 shadow-card">
+    <div className="rounded-panel border border-border/70 bg-card p-4 shadow-panel">
       <p className="text-xs text-ink-muted">{label}</p>
       <p className="mt-1 text-xl font-semibold tabular-nums text-ink">
         {value}

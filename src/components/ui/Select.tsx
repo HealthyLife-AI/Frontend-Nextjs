@@ -15,7 +15,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 
     return (
       <div className="flex flex-col gap-1.5">
-        <label htmlFor={fieldId} className="text-sm font-medium text-ink">
+        <label htmlFor={fieldId} className="text-sm font-semibold text-ink">
           {label}
         </label>
 
@@ -25,7 +25,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             id={fieldId}
             aria-invalid={Boolean(error)}
             aria-describedby={error ? errorId : undefined}
-            className={`h-[42px] w-full appearance-none rounded-control border border-border bg-card ps-3.5 pe-10 text-sm text-ink outline-none transition-all hover:border-ink-muted/40 focus:border-primary focus:ring-[3px] focus:ring-primary/15 ${
+            className={`h-12 w-full appearance-none rounded-field border border-border bg-canvas/60 ps-3.5 pe-10 text-sm text-ink outline-none transition-all hover:border-primary/30 focus:border-primary focus:bg-card focus:ring-4 focus:ring-primary/10 ${
               error ? "border-danger focus:border-danger focus:ring-danger/15" : ""
             } ${className}`}
             {...props}

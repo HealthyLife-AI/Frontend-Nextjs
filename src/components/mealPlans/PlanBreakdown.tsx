@@ -34,7 +34,7 @@ export function PlanBreakdown({ plan }: { plan: MealPlan }) {
         const Icon = slot.icon;
 
         return (
-          <div key={slot.slotKey} className="rounded-control border border-border bg-canvas p-3">
+          <div key={slot.slotKey} className="rounded-field border border-border bg-canvas p-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Icon size={16} strokeWidth={1.75} className="text-primary" />

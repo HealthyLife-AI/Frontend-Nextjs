@@ -69,7 +69,7 @@ export function LoginForm() {
       />
 
       {formError && (
-        <p role="alert" className="rounded-control bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
+        <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
           {formError}
         </p>
       )}

@@ -53,7 +53,7 @@ export function TagInput({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="text-sm font-medium text-ink">{label}</span>
+      <span className="text-sm font-semibold text-ink">{label}</span>
 
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
@@ -83,7 +83,7 @@ export function TagInput({
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="h-10 flex-1 rounded-control border border-border bg-card px-3.5 text-sm text-ink placeholder:text-ink-muted/60 outline-none transition-all hover:border-ink-muted/40 focus:border-primary focus:ring-[3px] focus:ring-primary/15"
+          className="h-11 flex-1 rounded-field border border-border bg-canvas/60 px-3.5 text-sm text-ink placeholder:text-ink-muted/60 outline-none transition-all hover:border-primary/30 focus:border-primary focus:bg-card focus:ring-4 focus:ring-primary/10"
         />
         <Button type="button" variant="secondary" onClick={commit} className="shrink-0">
           {addLabel}

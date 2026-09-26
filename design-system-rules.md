@@ -84,6 +84,8 @@ namespace, one line each, no renaming.
 | Radius | `control` 8px (buttons/inputs), `card` 12px (cards/panels), `chip` 6px (status chips) | `rounded-control`, `rounded-card`, `rounded-chip` |
 | Elevation | `shadow-card`, `shadow-card-hover`, `shadow-float` | `shadow-card`, `hover:shadow-card-hover` |
 | Type face | `font-cairo` (Arabic), `font-inter` (English) | set automatically via `html[data-locale]`, not per-component |
+| App surfaces (dashboard/auth only) | `--radius-panel` 20px, `--radius-field` 14px, `--shadow-panel`, `--shadow-panel-hover`, `--shadow-brand` | `rounded-panel`, `rounded-field`, `shadow-panel`, `shadow-brand` — the product's scale, carrying the landing page's rounder/softer language. Landing-page (`components/home/*`) sections keep `rounded-card`/`rounded-control`/`shadow-card` at their Figma-measured values. |
+| Brand action | teal gradient `from-primary to-mkt-teal-deep`, white text | `Button` primary, active nav item, active filter chips — same CTA treatment as the landing hero |
 
 **No token transformation pipeline exists** (no Style Dictionary, no
 Figma Tokens plugin JSON, no build-time token generation). Tokens are
@@ -105,7 +107,7 @@ values are, since the PRD doesn't specify its own scale for those.
 
 ```
 src/components/
-  ui/           # generic primitives: Button, Badge, Select, TextField, TagInput
+  ui/           # generic primitives: Button, Badge, Select, TextField, TagInput, PageHeader
   layout/       # AppShell, Header, Sidebar, LocaleSwitcher
   auth/         # LoginForm, RegisterForm, AuthProvider, ActivateClientForm
   clients/      # AddClientForm, ClientStatusBadge, StatTile, DashboardStatTiles, ...

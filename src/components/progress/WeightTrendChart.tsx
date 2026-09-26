@@ -70,10 +70,10 @@ export function WeightTrendChart({ points }: { points: WeightTrendPoint[] }) {
   const line = points.map((p, i) => `${i === 0 ? "M" : "L"} ${x(i)} ${y(p.weight_kg)}`).join(" ");
 
   return (
-    <section className="rounded-card border border-border bg-card p-5 shadow-card">
+    <section className="rounded-panel border border-border/70 bg-card p-5 shadow-panel">
       <header className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold text-ink">{t("title")}</h2>
+          <h2 className="text-base font-bold text-ink">{t("title")}</h2>
           <p className="text-xs text-ink-muted">{t("subtitle")}</p>
         </div>
         <dl className="flex gap-4 text-end">
@@ -89,7 +89,7 @@ export function WeightTrendChart({ points }: { points: WeightTrendPoint[] }) {
       </header>
 
       {points.length === 1 && (
-        <p className="mb-3 rounded-control bg-canvas px-3 py-2 text-xs text-ink-muted">
+        <p className="mb-3 rounded-field bg-canvas px-3 py-2 text-xs text-ink-muted">
           {t("singleReading")}
         </p>
       )}
@@ -177,7 +177,7 @@ export function WeightTrendChart({ points }: { points: WeightTrendPoint[] }) {
 
         {hovered !== null && (
           <div
-            className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-control bg-ink px-2.5 py-1.5 text-xs text-card shadow-float"
+            className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded-field bg-ink px-2.5 py-1.5 text-xs text-card shadow-float"
             style={{
               left: `${(x(hovered) / VIEW_W) * 100}%`,
               top: `${(y(points[hovered].weight_kg) / VIEW_H) * 100}%`,
@@ -239,8 +239,8 @@ function Figure({ label, value }: { label: string; value: string }) {
  */
 export function EmptyPlot({ title, message, hint }: { title: string; message: string; hint?: string }) {
   return (
-    <section className="rounded-card border border-border bg-card p-5 shadow-card">
-      <h2 className="text-base font-semibold text-ink">{title}</h2>
+    <section className="rounded-panel border border-border/70 bg-card p-5 shadow-panel">
+      <h2 className="text-base font-bold text-ink">{title}</h2>
       <div className="flex flex-col items-center gap-2 py-10 text-center">
         <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/10 text-primary">
           <LineChart size={20} strokeWidth={1.75} />

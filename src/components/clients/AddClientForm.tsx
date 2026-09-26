@@ -93,7 +93,7 @@ export function AddClientForm() {
 
         <div className="flex flex-col gap-1.5">
           <span className="text-sm font-medium text-ink">{t("inviteLinkLabel")}</span>
-          <div className="flex items-center gap-2 rounded-control border border-border bg-canvas px-3.5 py-2.5">
+          <div className="flex items-center gap-2 rounded-field border border-border bg-canvas px-3.5 py-2.5">
             <span className="min-w-0 flex-1 truncate font-mono text-sm text-ink-muted" dir="ltr">
               {success.inviteLink}
             </span>
@@ -168,7 +168,7 @@ export function AddClientForm() {
       </Select>
 
       {formError && (
-        <p role="alert" className="rounded-control bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
+        <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
           {formError}
         </p>
       )}

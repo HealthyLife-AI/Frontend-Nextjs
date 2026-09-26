@@ -225,12 +225,12 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
       </div>
 
       {error && (
-        <p role="alert" className="rounded-control bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
+        <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
           {error}
         </p>
       )}
       {notice && (
-        <p role="status" className="rounded-control bg-status-on-track-bg px-3.5 py-2.5 text-sm text-status-on-track">
+        <p role="status" className="rounded-field bg-status-on-track-bg px-3.5 py-2.5 text-sm text-status-on-track">
           {notice}
         </p>
       )}

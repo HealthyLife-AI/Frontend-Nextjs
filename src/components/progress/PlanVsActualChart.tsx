@@ -57,17 +57,17 @@ export function PlanVsActualChart({ days }: { days: DailyCalories[] }) {
   const gridValues = [peak, peak / 2];
 
   return (
-    <section className="rounded-card border border-border bg-card p-5 shadow-card">
+    <section className="rounded-panel border border-border/70 bg-card p-5 shadow-panel">
       <header className="mb-4">
-        <h2 className="text-base font-semibold text-ink">{t("title")}</h2>
+        <h2 className="text-base font-bold text-ink">{t("title")}</h2>
         <p className="text-xs text-ink-muted">{t("subtitle", { days: days.length })}</p>
       </header>
 
       {noPlan && (
-        <p className="mb-3 rounded-control bg-canvas px-3 py-2 text-xs text-ink-muted">{t("noActivePlan")}</p>
+        <p className="mb-3 rounded-field bg-canvas px-3 py-2 text-xs text-ink-muted">{t("noActivePlan")}</p>
       )}
       {!noPlan && daysWithLogs > 0 && daysWithLogs < days.length && (
-        <p className="mb-3 rounded-control bg-canvas px-3 py-2 text-xs text-ink-muted">
+        <p className="mb-3 rounded-field bg-canvas px-3 py-2 text-xs text-ink-muted">
           {t("partial", { logged: daysWithLogs, total: days.length })}
         </p>
       )}
@@ -166,7 +166,7 @@ export function PlanVsActualChart({ days }: { days: DailyCalories[] }) {
 
         {hovered !== null && (
           <div
-            className="pointer-events-none absolute top-0 z-10 -translate-x-1/2 rounded-control bg-ink px-2.5 py-1.5 text-xs text-card shadow-float"
+            className="pointer-events-none absolute top-0 z-10 -translate-x-1/2 rounded-field bg-ink px-2.5 py-1.5 text-xs text-card shadow-float"
             style={{ left: `${((PAD.left + slot * hovered + slot / 2) / VIEW_W) * 100}%` }}
           >
             <span className="block text-[10px] opacity-80 tabular-nums">{days[hovered].date}</span>

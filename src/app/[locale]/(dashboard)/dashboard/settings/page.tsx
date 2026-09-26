@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 import { getNutritionistProfile, saveNutritionistProfile } from "@/lib/nutritionists/api";
 import type { NutritionistProfile } from "@/lib/nutritionists/types";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 /**
  * S4-00 / FR-28: the nutritionist's own professional profile — the
@@ -88,32 +89,29 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-ink">{t("title")}</h1>
-        <p className="text-sm text-ink-muted">{t("subtitle")}</p>
-      </div>
+      <PageHeader title={t("title")} subtitle={t("subtitle")} />
 
-      <section className="rounded-card border border-border bg-card p-5 shadow-card">
-        <h2 className="text-base font-semibold text-ink">{t("accountSection")}</h2>
+      <section className="rounded-panel border border-border/70 bg-card p-5 shadow-panel">
+        <h2 className="text-base font-bold text-ink">{t("accountSection")}</h2>
 
         <dl className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div className="rounded-control bg-canvas p-3">
+          <div className="rounded-field bg-canvas p-3">
             <dt className="text-xs text-ink-muted">{t("nameLabel")}</dt>
             <dd className="mt-1 text-sm font-medium text-ink">{user?.name ?? "—"}</dd>
           </div>
-          <div className="rounded-control bg-canvas p-3">
+          <div className="rounded-field bg-canvas p-3">
             <dt className="text-xs text-ink-muted">{t("emailLabel")}</dt>
             <dd className="mt-1 text-sm font-medium text-ink" dir="ltr">
               {user?.email ?? "—"}
             </dd>
           </div>
-          <div className="rounded-control bg-canvas p-3">
+          <div className="rounded-field bg-canvas p-3">
             <dt className="text-xs text-ink-muted">{t("phoneLabel")}</dt>
             <dd className="mt-1 text-sm font-medium text-ink" dir="ltr">
               {user?.phone ?? "—"}
             </dd>
           </div>
-          <div className="rounded-control bg-canvas p-3">
+          <div className="rounded-field bg-canvas p-3">
             <dt className="text-xs text-ink-muted">{t("planTierLabel")}</dt>
             <dd className="mt-1.5 flex flex-wrap items-center gap-2">
               <Badge tone={profile?.plan_tier === "professional" ? "primary" : "neutral"}>
@@ -127,11 +125,11 @@ export default function SettingsPage() {
         <p className="mt-3 text-xs text-ink-muted/80">{t("accountNote")}</p>
       </section>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-card border border-border bg-card p-5 shadow-card">
-        <h2 className="text-base font-semibold text-ink">{t("profileSection")}</h2>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-panel border border-border/70 bg-card p-5 shadow-panel">
+        <h2 className="text-base font-bold text-ink">{t("profileSection")}</h2>
 
         {loadFailed && (
-          <p role="alert" className="rounded-control bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
+          <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
             {t("loadFailed")}
           </p>
         )}
@@ -161,19 +159,19 @@ export default function SettingsPage() {
             onChange={(e) => setBio(e.target.value)}
             maxLength={1000}
             rows={4}
-            className="w-full rounded-control border border-border bg-card p-3.5 text-sm text-ink placeholder:text-ink-muted/60 outline-none transition-all hover:border-ink-muted/40 focus:border-primary focus:ring-[3px] focus:ring-primary/15"
+            className="w-full rounded-field border border-border bg-card p-3.5 text-sm text-ink placeholder:text-ink-muted/60 outline-none transition-all hover:border-ink-muted/40 focus:border-primary focus:ring-4 focus:ring-primary/10"
           />
           <p className="text-sm text-ink-muted">{t("bioHint")}</p>
         </div>
 
         {error && (
-          <p role="alert" className="rounded-control bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
+          <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
             {error}
           </p>
         )}
 
         {notice && (
-          <p role="status" className="rounded-control bg-status-on-track-bg px-3.5 py-2.5 text-sm text-status-on-track">
+          <p role="status" className="rounded-field bg-status-on-track-bg px-3.5 py-2.5 text-sm text-status-on-track">
             {notice}
           </p>
         )}
@@ -185,8 +183,8 @@ export default function SettingsPage() {
         </div>
       </form>
 
-      <section className="rounded-card border border-border bg-card p-5 shadow-card">
-        <h2 className="text-base font-semibold text-ink">{t("languageSection")}</h2>
+      <section className="rounded-panel border border-border/70 bg-card p-5 shadow-panel">
+        <h2 className="text-base font-bold text-ink">{t("languageSection")}</h2>
         <div className="mt-3">
           <LocaleSwitcher />
         </div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
@@ -28,6 +28,7 @@ import { Header } from "./Header";
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, status } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const t = useTranslations("common");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
@@ -39,18 +40,25 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   if (status !== "authenticated") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-canvas text-sm text-ink-muted">
-        {t("loading")}
+      <div className="flex min-h-screen flex-col items-center justify-center gap-5 bg-canvas">
+        {/* eslint-disable-next-line @next/next/no-img-element -- brand logo */}
+        <img src="/home/logo.png" alt="" className="h-20 w-auto animate-pulse" />
+        <span className="text-sm text-ink-muted">{t("loading")}</span>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-canvas">
+    <div className="relative min-h-screen bg-canvas">
+      {/* Faint brand glow in the content area's top corner — the landing page's mint blobs, toned down for a work surface. */}
+      <div
+        className="pointer-events-none fixed -top-40 end-[-10rem] -z-0 h-[28rem] w-[28rem] rounded-full bg-mkt-mint/10 blur-3xl"
+        aria-hidden="true"
+      />
       <Sidebar user={user} open={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
       <Header onMenuClick={() => setMobileNavOpen(true)} />
-      <main className="min-h-screen pt-16 lg:ps-64">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-4 sm:p-6">
+      <main className="relative min-h-screen pt-[72px] lg:ps-72">
+        <div key={pathname} className="animate-page-in mx-auto flex w-full max-w-7xl flex-col gap-7 p-4 sm:p-8">
           {children}
         </div>
       </main>

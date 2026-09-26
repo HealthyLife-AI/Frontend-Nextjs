@@ -10,7 +10,9 @@
     "plans": "Plans",
     "alerts": "Alerts",
     "settings": "Settings",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "menu": "Main menu",
+    "account": "Account"
   },
   "auth": {
     "login": {
@@ -204,7 +206,14 @@
     "needsAttentionEmpty": "No one needs attention right now.",
     "alertsTitle": "Recent alerts",
     "alertsEmpty": "No unread alerts.",
-    "viewAll": "View all"
+    "viewAll": "View all",
+    "heroEyebrow": "Clinic follow-up board",
+    "heroSummary": "{attention} clients need your follow-up and {alerts} unread alerts are waiting.",
+    "heroAllClear": "All your clients are on track today.",
+    "actionAddPatient": "Add client",
+    "actionAlerts": "Review alerts",
+    "activeLabel": "Active clients",
+    "adherenceLabel": "Stable share"
   },
   "progress": {
     "title": "Progress",
@@ -569,7 +578,8 @@
       "afternoon_snackAdd": "Add food to afternoon snack",
       "dinner": "Dinner",
       "dinnerTime": "Suggested: 7:30 - 8:30 PM",
-      "dinnerAdd": "Add food to dinner"
+      "dinnerAdd": "Add food to dinner",
+      "snack": "Snack"
     },
     "foodPicker": {
       "placeholder": "Search the food database…",

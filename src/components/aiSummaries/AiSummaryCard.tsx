@@ -18,10 +18,10 @@ export function AiSummaryCard({ summary }: { summary: AiSummary | null }) {
 
   if (summary === null) {
     return (
-      <section className="rounded-card border border-dashed border-border bg-card p-5 shadow-card">
+      <section className="rounded-panel border border-dashed border-border bg-card p-5 shadow-panel">
         <div className="flex items-center gap-2">
           <Sparkles size={18} strokeWidth={1.75} className="text-primary" />
-          <h2 className="text-base font-semibold text-ink">{t("title")}</h2>
+          <h2 className="text-base font-bold text-ink">{t("title")}</h2>
         </div>
         <p className="mt-3 text-sm text-ink-muted">{t("empty")}</p>
         <p className="mt-1 text-xs text-ink-muted/80">{t("emptyHint")}</p>
@@ -30,11 +30,11 @@ export function AiSummaryCard({ summary }: { summary: AiSummary | null }) {
   }
 
   return (
-    <section className="rounded-card border border-border bg-gradient-to-br from-primary/5 to-transparent p-5 shadow-card">
+    <section className="rounded-panel border border-border bg-gradient-to-br from-primary/5 to-transparent p-5 shadow-panel">
       <header className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Sparkles size={18} strokeWidth={1.75} className="text-primary" />
-          <h2 className="text-base font-semibold text-ink">{t("title")}</h2>
+          <h2 className="text-base font-bold text-ink">{t("title")}</h2>
         </div>
         {/*
           A fallback must never look like the model's own read on the

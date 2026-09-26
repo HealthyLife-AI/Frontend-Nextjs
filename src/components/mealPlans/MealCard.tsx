@@ -36,10 +36,10 @@ export function MealCard({ meal, onChange }: { meal: EditableMeal; onChange: (ne
   const totalCalories = mealMacros(meal).calories;
 
   return (
-    <article className="rounded-card border border-border bg-card shadow-card transition-shadow hover:shadow-card-hover">
+    <article className="rounded-panel border border-border/70 bg-card shadow-panel transition-shadow hover:shadow-panel-hover">
       <div className="flex items-center justify-between rounded-t-card bg-canvas/60 px-5 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-control bg-primary/10 text-primary">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-field bg-primary/10 text-primary">
             <Icon size={20} strokeWidth={1.75} />
           </div>
           <div>
@@ -72,7 +72,7 @@ export function MealCard({ meal, onChange }: { meal: EditableMeal; onChange: (ne
           <button
             type="button"
             onClick={() => setAddingItem(true)}
-            className="mt-1 flex w-full items-center justify-center gap-2 rounded-control bg-canvas py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-canvas/70"
+            className="mt-1 flex w-full items-center justify-center gap-2 rounded-field bg-canvas py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-canvas/70"
           >
             <Plus size={18} strokeWidth={1.75} />
             {tMeals(`${meal.slotKey}Add`)}

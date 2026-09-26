@@ -28,10 +28,10 @@ export function AdherenceHeadline({ adherence }: { adherence: AdherenceSummary }
   const ChangeIcon = changePp === null || changePp === 0 ? Minus : changePp > 0 ? TrendingUp : TrendingDown;
 
   return (
-    <section className="rounded-card border border-border bg-card p-5 shadow-card">
+    <section className="rounded-panel border border-border/70 bg-card p-5 shadow-panel">
       <header className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h2 className="text-base font-semibold text-ink">{t("title")}</h2>
+          <h2 className="text-base font-bold text-ink">{t("title")}</h2>
           <p className="text-xs text-ink-muted">
             {t("window", { from: adherence.from, to: adherence.to })}
           </p>
@@ -78,7 +78,7 @@ export function AdherenceHeadline({ adherence }: { adherence: AdherenceSummary }
 
 function Stat({ label, value, muted }: { label: string; value: number | string; muted?: boolean }) {
   return (
-    <div className="rounded-control bg-canvas p-3">
+    <div className="rounded-field bg-canvas p-3">
       <dt className="text-xs text-ink-muted">{label}</dt>
       <dd className={`mt-0.5 font-semibold tabular-nums ${muted ? "text-ink-muted" : "text-ink"}`}>
         {value}

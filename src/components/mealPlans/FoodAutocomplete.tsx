@@ -79,7 +79,7 @@ export function FoodAutocomplete({
     const validQty = Number.isFinite(qty) && qty > 0;
 
     return (
-      <div className="flex flex-col gap-2 rounded-control border border-primary/20 bg-primary/5 p-3">
+      <div className="flex flex-col gap-2 rounded-field border border-primary/20 bg-primary/5 p-3">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-ink">{foodName(selected, locale)}</span>
           <button type="button" onClick={() => setSelected(null)} className="text-ink-muted hover:text-ink">
@@ -93,7 +93,7 @@ export function FoodAutocomplete({
             max="5000"
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
-            className="h-9 w-24 rounded-control border border-border bg-card px-2.5 text-sm text-ink outline-none focus:border-primary focus:ring-[3px] focus:ring-primary/15"
+            className="h-9 w-24 rounded-field border border-border bg-card px-2.5 text-sm text-ink outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
             autoFocus
           />
           <span className="text-sm text-ink-muted">{t("grams")}</span>
@@ -111,7 +111,7 @@ export function FoodAutocomplete({
   }
 
   return (
-    <div className="flex flex-col gap-2 rounded-control border border-border bg-card p-3 shadow-card">
+    <div className="flex flex-col gap-2 rounded-field border border-border bg-card p-3 shadow-panel">
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
           <Search size={15} className="pointer-events-none absolute inset-y-0 start-2.5 my-auto text-ink-muted" />
@@ -121,7 +121,7 @@ export function FoodAutocomplete({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("placeholder")}
-            className="h-9 w-full rounded-control border border-border bg-canvas ps-8 pe-3 text-sm text-ink outline-none focus:border-primary focus:ring-[3px] focus:ring-primary/15"
+            className="h-9 w-full rounded-field border border-border bg-canvas ps-8 pe-3 text-sm text-ink outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
           />
         </div>
         <button type="button" onClick={onCancel} className="text-ink-muted hover:text-ink" aria-label={t("cancel")}>
@@ -130,7 +130,7 @@ export function FoodAutocomplete({
       </div>
 
       {query.trim().length >= MIN_QUERY_LENGTH && (
-        <div className="max-h-56 overflow-y-auto rounded-control border border-border">
+        <div className="max-h-56 overflow-y-auto rounded-field border border-border">
           {loading && (
             <div className="flex items-center justify-center gap-2 p-3 text-sm text-ink-muted">
               <Loader2 size={14} className="animate-spin" />

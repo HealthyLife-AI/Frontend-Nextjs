@@ -40,7 +40,7 @@ export function DailySummaryPanel({
 
   return (
     <aside className="flex flex-col gap-4 lg:sticky lg:top-20">
-      <div className="rounded-card border border-border bg-card p-5 shadow-card">
+      <div className="rounded-panel border border-border/70 bg-card p-5 shadow-panel">
         <div className="mb-3 flex items-center justify-between">
           <div>
             <h3 className="font-semibold text-ink">{t("title")}</h3>
@@ -82,7 +82,7 @@ export function DailySummaryPanel({
 
         {percent !== null && (
           <div
-            className={`flex items-start gap-2 rounded-control p-2.5 ${
+            className={`flex items-start gap-2 rounded-field p-2.5 ${
               isOverTarget ? "bg-status-late-bg" : "bg-status-on-track-bg"
             }`}
           >
@@ -100,7 +100,7 @@ export function DailySummaryPanel({
           <MacroBar label={t("fat")} grams={macros.fat_g} sharePercent={(macroCalories.fat / totalMacroCalories) * 100} colorClass="bg-status-attention" />
         </div>
 
-        <div className="mt-4 flex items-center justify-between rounded-control border-t border-divider pt-3 text-sm">
+        <div className="mt-4 flex items-center justify-between rounded-field border-t border-divider pt-3 text-sm">
           <span className="flex items-center gap-1.5 text-ink-muted">
             <Wheat size={15} />
             {t("fiber")}

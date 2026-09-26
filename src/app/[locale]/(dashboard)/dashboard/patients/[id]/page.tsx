@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { ArrowRight, FileText, UtensilsCrossed } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { Button } from "@/components/ui/Button";
 import { ClientStatusBadge } from "@/components/clients/ClientStatusBadge";
 import { AdherenceBadge } from "@/components/clients/AdherenceBadge";
 import { getClient } from "@/lib/clients/api";
@@ -97,7 +96,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
     return (
       <div className="mx-auto flex w-full max-w-xl flex-col items-center gap-4 py-16 text-center">
         <p className="text-sm text-ink-muted">404</p>
-        <Link href="/dashboard/patients" className="text-sm font-medium text-primary hover:underline">
+        <Link href="/dashboard/patients" className="inline-flex items-center rounded-full border border-primary/25 bg-card px-3.5 py-1.5 text-xs font-bold text-mkt-teal-deep transition-colors hover:border-primary hover:bg-mkt-mint-bg">
           {t("backToList")}
         </Link>
       </div>
@@ -109,71 +108,86 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
       <Link
         href="/dashboard/patients"
-        className="inline-flex w-fit items-center gap-1.5 text-sm font-medium text-ink-muted hover:text-ink"
+        className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-sm font-semibold text-ink-muted shadow-panel transition-colors hover:border-primary/30 hover:text-mkt-teal-deep"
       >
         <ArrowRight size={16} className="rtl:-scale-x-100" />
         {t("backToList")}
       </Link>
 
-      <div className="rounded-card border border-border bg-card p-6 shadow-card">
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-lg font-semibold text-primary ring-2 ring-card">
-            {client.name.charAt(0)}
-          </div>
-          <div>
-            <h1 className="text-xl font-semibold text-ink">{client.name}</h1>
-            <p className="text-sm text-ink-muted">{client.code}</p>
+      {/*
+        Patient header in the landing page's hero language: a deep-teal
+        banner carrying identity + the two next actions, over a white
+        facts strip. Same data and links as before, regrouped.
+      */}
+      <section className="overflow-hidden rounded-panel border border-border/70 bg-card shadow-panel">
+        <div className="relative overflow-hidden bg-gradient-to-br from-mkt-teal-deep via-mkt-teal-cta to-mkt-dark-bg p-6 text-white sm:p-7">
+          <div className="pointer-events-none absolute -top-24 end-[-3rem] h-64 w-64 rounded-full bg-mkt-mint/25 blur-3xl" aria-hidden="true" />
+
+          <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-white/15 text-2xl font-extrabold ring-4 ring-white/15 backdrop-blur">
+                {client.name.charAt(0)}
+              </div>
+              <div className="flex flex-col gap-1">
+                <h1 className="text-2xl font-extrabold leading-tight">{client.name}</h1>
+                <span className="w-fit rounded-full bg-white/15 px-2.5 py-0.5 text-xs font-bold tracking-wide" dir="ltr">
+                  {client.code}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2.5">
+              <Link
+                href={`/dashboard/patients/${client.id}/plan`}
+                className="inline-flex h-11 items-center gap-2 rounded-field bg-white px-5 text-sm font-bold text-mkt-teal-deep shadow-lg transition-transform hover:-translate-y-0.5"
+              >
+                <UtensilsCrossed size={18} strokeWidth={2} />
+                {t("planLink")}
+              </Link>
+              <Link
+                href={`/dashboard/patients/${client.id}/health-profile`}
+                className="inline-flex h-11 items-center gap-2 rounded-field border border-white/30 bg-white/10 px-5 text-sm font-bold backdrop-blur transition-colors hover:bg-white/20"
+              >
+                <FileText size={18} strokeWidth={2} />
+                {t("healthProfileLink")}
+              </Link>
+            </div>
           </div>
         </div>
 
-        <dl className="mt-6 grid grid-cols-2 gap-3 border-t border-divider pt-6 text-sm">
-          <div className="rounded-control bg-canvas p-3">
-            <dt className="text-ink-muted">{t("phoneLabel")}</dt>
-            <dd className="mt-1 font-medium text-ink" dir="ltr">
+        <dl className="grid grid-cols-2 divide-divider text-sm sm:grid-cols-4 sm:divide-x sm:rtl:divide-x-reverse">
+          <div className="flex flex-col gap-1.5 p-5">
+            <dt className="text-xs font-semibold text-ink-muted">{t("phoneLabel")}</dt>
+            <dd className="font-bold text-ink" dir="ltr">
               {client.phone ?? "—"}
             </dd>
           </div>
-          <div className="rounded-control bg-canvas p-3">
-            <dt className="text-ink-muted">{t("goalLabel")}</dt>
-            <dd className="mt-1 font-medium text-ink">{tGoals(client.goal)}</dd>
+          <div className="flex flex-col gap-1.5 p-5">
+            <dt className="text-xs font-semibold text-ink-muted">{t("goalLabel")}</dt>
+            <dd className="font-bold text-ink">{tGoals(client.goal)}</dd>
           </div>
-          <div className="rounded-control bg-canvas p-3">
-            <dt className="text-ink-muted">{t("statusLabel")}</dt>
-            <dd className="mt-1.5">
+          <div className="flex flex-col gap-1.5 p-5">
+            <dt className="text-xs font-semibold text-ink-muted">{t("statusLabel")}</dt>
+            <dd>
               <ClientStatusBadge status={client.status} />
             </dd>
           </div>
-          <div className="rounded-control bg-canvas p-3">
-            <dt className="text-ink-muted">{t("adherenceLabel")}</dt>
-            <dd className="mt-1.5">
+          <div className="flex flex-col gap-1.5 p-5">
+            <dt className="text-xs font-semibold text-ink-muted">{t("adherenceLabel")}</dt>
+            <dd>
               <AdherenceBadge status={client.adherence_status} />
             </dd>
           </div>
         </dl>
-      </div>
-
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <Link href={`/dashboard/patients/${client.id}/health-profile`} className="flex-1">
-          <Button variant="secondary" className="w-full">
-            <FileText size={18} strokeWidth={1.75} />
-            {t("healthProfileLink")}
-          </Button>
-        </Link>
-        <Link href={`/dashboard/patients/${client.id}/plan`} className="flex-1">
-          <Button className="w-full">
-            <UtensilsCrossed size={18} strokeWidth={1.75} />
-            {t("planLink")}
-          </Button>
-        </Link>
-      </div>
+      </section>
 
       <AiSummaryCard summary={latestSummary} />
 
       {progressFailed && (
-        <p role="alert" className="rounded-control bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
+        <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
           {tProgress("loadFailed")}
         </p>
       )}

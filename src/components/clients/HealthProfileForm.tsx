@@ -206,8 +206,8 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
         </div>
 
         {dailyCalorieNeeds !== null && (
-          <div className="flex items-center gap-3 rounded-control border border-primary/15 bg-primary/5 px-4 py-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-control bg-primary/10 text-primary">
+          <div className="flex items-center gap-3 rounded-field border border-primary/15 bg-primary/5 px-4 py-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-field bg-primary/10 text-primary">
               <Flame size={18} strokeWidth={1.75} />
             </div>
             <div>
@@ -246,7 +246,7 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
         {medications.map((medication, index) => (
           <div
             key={index}
-            className="flex flex-col gap-2 rounded-control border border-border p-3 transition-colors hover:border-ink-muted/30"
+            className="flex flex-col gap-2 rounded-field border border-border p-3 transition-colors hover:border-ink-muted/30"
           >
             <div className="flex items-end gap-2">
               <div className="flex-1">
@@ -260,7 +260,7 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
                 type="button"
                 onClick={() => removeMedication(index)}
                 aria-label={t("removeMedication")}
-                className="mb-0.5 flex h-[42px] w-10 shrink-0 items-center justify-center rounded-control text-ink-muted transition-colors hover:bg-status-late-bg hover:text-danger"
+                className="mb-0.5 flex h-[42px] w-10 shrink-0 items-center justify-center rounded-field text-ink-muted transition-colors hover:bg-status-late-bg hover:text-danger"
               >
                 <X size={16} />
               </button>
@@ -315,7 +315,7 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
         />
       </section>
 
-      <section className="flex flex-col gap-4 rounded-card border border-dashed border-border p-4">
+      <section className="flex flex-col gap-4 rounded-panel border border-dashed border-border p-4">
         <div>
           <h2 className="text-sm font-semibold text-ink">{t("sectionComposition")}</h2>
           <p className="text-sm text-ink-muted">{t("compositionHint")}</p>
@@ -400,13 +400,13 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
       </section>
 
       {formError && (
-        <p role="alert" className="rounded-control bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
+        <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
           {formError}
         </p>
       )}
 
       {savedMessage && (
-        <p role="status" className="rounded-control bg-status-on-track-bg px-3.5 py-2.5 text-sm text-status-on-track">
+        <p role="status" className="rounded-field bg-status-on-track-bg px-3.5 py-2.5 text-sm text-status-on-track">
           {savedMessage}
         </p>
       )}
@@ -426,7 +426,7 @@ function TextArea({ label, value, onChange }: { label: string; value: string; on
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={3}
-        className="w-full rounded-control border border-border bg-card px-3.5 py-2.5 text-sm text-ink outline-none transition-all hover:border-ink-muted/40 focus:border-primary focus:ring-[3px] focus:ring-primary/15"
+        className="w-full rounded-field border border-border bg-card px-3.5 py-2.5 text-sm text-ink outline-none transition-all hover:border-ink-muted/40 focus:border-primary focus:ring-4 focus:ring-primary/10"
       />
     </div>
   );

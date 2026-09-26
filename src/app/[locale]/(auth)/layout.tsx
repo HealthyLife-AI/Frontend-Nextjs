@@ -1,5 +1,7 @@
-import { ShieldCheck, Users, Languages, UtensilsCrossed } from "lucide-react";
+import Image from "next/image";
+import { ShieldCheck, Users, Languages } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 
 const SHOWCASE_POINTS = [
@@ -9,17 +11,16 @@ const SHOWCASE_POINTS = [
 ];
 
 /**
- * Split-screen auth shell (login/register/activate all mount here).
- * The brand panel is new chrome, not a new identity: every color on it
- * is one of the PRD §5.1 tokens (primary/accent/ink), just composed into
- * a gradient + copy instead of a flat teal wordmark on empty canvas. Copy
- * is drawn from real PRD facts (the positioning line, the 40–60% admin-
- * time stat, BR-2 isolation, RTL+EN) — a value-prop panel, not invented
- * marketing claims.
+ * Split-screen auth shell (login/register/activate all mount here), in
+ * the landing page's identity: the brand panel is the landing CTA's
+ * nutritionist photo (`/home/cta-bg.webp`) under a deep-teal gradient,
+ * with the value points in a frosted card; the form side carries the
+ * real HealthyLife logo and the same mint glows the marketing page uses.
+ * Copy is drawn from real PRD facts (positioning line, the 40–60% admin-
+ * time stat, BR-2 isolation, RTL+EN).
  *
- * Hidden below `lg:` rather than stacked above the form: the form is
- * what a returning user on a phone actually needs first, and stacking a
- * full-height panel above it would push the email field below the fold.
+ * The brand panel is hidden below `lg:` rather than stacked above the
+ * form: on a phone the form is what a returning user needs first.
  */
 export default async function AuthLayout({
   children,
@@ -31,56 +32,60 @@ export default async function AuthLayout({
 
   return (
     <div className="flex min-h-screen bg-canvas">
-      <div className="relative hidden w-[42%] max-w-xl shrink-0 flex-col justify-between overflow-hidden bg-gradient-to-br from-primary to-ink p-10 text-card lg:flex">
+      <div className="relative isolate m-3 hidden w-[46%] max-w-2xl shrink-0 flex-col justify-end overflow-hidden rounded-[28px] p-10 text-white lg:flex">
+        <Image
+          src="/home/cta-bg.webp"
+          alt=""
+          fill
+          priority
+          sizes="46vw"
+          className="-z-20 object-cover object-[20%_center]"
+        />
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.07]"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 20% 20%, currentColor 1.5px, transparent 1.5px)",
-            backgroundSize: "28px 28px",
-          }}
+          className="absolute inset-0 -z-10 bg-gradient-to-t from-mkt-dark-bg via-mkt-teal-deep/80 to-mkt-teal-deep/10"
           aria-hidden="true"
         />
 
-        <div className="relative flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-control bg-card/15">
-            <UtensilsCrossed size={19} strokeWidth={1.75} />
-          </div>
-          <span className="text-lg font-semibold">{t("brandName")}</span>
-        </div>
-
-        <div className="relative flex flex-col gap-8">
+        <div className="flex flex-col gap-7">
           <div className="flex flex-col gap-3">
-            <h2 className="text-2xl font-semibold leading-snug">{tShowcase("headline")}</h2>
-            <p className="text-sm leading-relaxed text-card/80">{tShowcase("body")}</p>
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-bold backdrop-blur">
+              <span className="h-1.5 w-1.5 rounded-full bg-mkt-mint" aria-hidden="true" />
+              {t("brandFull")}
+            </span>
+            <h2 className="text-[28px] font-extrabold leading-snug">{tShowcase("headline")}</h2>
+            <p className="text-[15px] leading-relaxed text-white/80">{tShowcase("body")}</p>
           </div>
 
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-4 rounded-[22px] border border-white/15 bg-white/10 p-5 backdrop-blur-md">
             {SHOWCASE_POINTS.map(({ icon: Icon, key }) => (
               <div key={key} className="flex items-start gap-3.5">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-control bg-card/15">
-                  <Icon size={18} strokeWidth={1.75} />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-white/15 text-mkt-mint">
+                  <Icon size={19} strokeWidth={1.9} />
                 </div>
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-sm font-medium">{tShowcase(`${key}Title`)}</span>
-                  <span className="text-sm text-card/70">{tShowcase(`${key}Body`)}</span>
+                  <span className="text-sm font-bold">{tShowcase(`${key}Title`)}</span>
+                  <span className="text-sm text-white/70">{tShowcase(`${key}Body`)}</span>
                 </div>
               </div>
             ))}
           </div>
         </div>
-
-        <div className="relative" />
       </div>
 
-      <div className="flex flex-1 flex-col">
-        <div className="flex items-center justify-between px-6 py-5 lg:justify-end">
-          <span className="text-lg font-semibold text-primary lg:hidden">{t("brandName")}</span>
+      <div className="relative flex flex-1 flex-col overflow-hidden">
+        <div className="pointer-events-none absolute -top-32 end-[-8rem] h-96 w-96 rounded-full bg-mkt-mint/15 blur-3xl" aria-hidden="true" />
+        <div className="pointer-events-none absolute -bottom-40 start-[-6rem] h-96 w-96 rounded-full bg-mkt-sky/30 blur-3xl" aria-hidden="true" />
+
+        <div className="relative flex items-center justify-between px-6 py-5 sm:px-10">
+          <Link href="/" className="flex items-center">
+            {/* eslint-disable-next-line @next/next/no-img-element -- brand logo, fixed-aspect wordmark */}
+            <img src="/home/logo.png" alt={t("brandFull")} className="h-16 w-auto" />
+          </Link>
           <LocaleSwitcher />
         </div>
 
-        <div className="flex flex-1 items-center justify-center px-4 pb-16">
-          <div className="w-full max-w-md rounded-card border border-border bg-card p-8 shadow-card">
+        <div className="relative flex flex-1 items-center justify-center px-4 pb-16">
+          <div className="w-full max-w-[440px] rounded-[26px] border border-border/60 bg-white/85 p-8 shadow-panel backdrop-blur-xl sm:p-10">
             {children}
           </div>
         </div>

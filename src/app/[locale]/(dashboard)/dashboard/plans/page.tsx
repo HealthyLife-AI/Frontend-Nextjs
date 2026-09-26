@@ -13,6 +13,7 @@ import { applyMealPlanTemplate, listMealPlanTemplates } from "@/lib/mealPlans/ap
 import type { MealPlan } from "@/lib/mealPlans/types";
 import { listClients } from "@/lib/clients/api";
 import type { Client } from "@/lib/clients/types";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 /**
  * S3-03 / FR-15: the nutritionist's template library — the "Plans" nav
@@ -64,13 +65,10 @@ export default function PlansPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-ink">{t("title")}</h1>
-        <p className="text-sm text-ink-muted">{t("subtitle")}</p>
-      </div>
+      <PageHeader title={t("title")} subtitle={t("subtitle")} />
 
       {loadFailed && (
-        <p role="alert" className="rounded-control bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
+        <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
           {t("loadFailed")}
         </p>
       )}
@@ -78,7 +76,7 @@ export default function PlansPage() {
       {templates === null && <div className="py-10 text-center text-sm text-ink-muted">…</div>}
 
       {templates?.length === 0 && !loadFailed && (
-        <div className="flex flex-col items-center gap-3 rounded-card border border-border bg-card py-16 text-center shadow-card">
+        <div className="flex flex-col items-center gap-3 rounded-panel border border-border/70 bg-card py-16 text-center shadow-panel">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
             <UtensilsCrossed size={22} strokeWidth={1.75} />
           </div>
@@ -150,10 +148,10 @@ function TemplateCard({
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-card border border-border bg-card p-4 shadow-card">
+    <div className="flex flex-col gap-4 rounded-panel border border-border/70 bg-card p-4 shadow-panel">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-control bg-primary/10 text-primary">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-field bg-primary/10 text-primary">
             <UtensilsCrossed size={20} strokeWidth={1.75} />
           </div>
           <div className="flex min-w-0 flex-col gap-1">
@@ -188,7 +186,7 @@ function TemplateCard({
           type="button"
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-control border border-border px-2.5 py-1.5 text-xs font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-field border border-border px-2.5 py-1.5 text-xs font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
         >
           {expanded ? t("hideDetails") : t("showDetails")}
           <ChevronDown
@@ -229,7 +227,7 @@ function TemplateCard({
       </div>
 
       {error && (
-        <p role="alert" className="rounded-control bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
+        <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
           {error}
         </p>
       )}

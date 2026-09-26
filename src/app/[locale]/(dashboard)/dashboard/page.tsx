@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { AlertTriangle, Bell, CheckCircle2 } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Bell, CheckCircle2, Plus } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { AdherenceBadge } from "@/components/clients/AdherenceBadge";
 import { DashboardStatTiles } from "@/components/clients/DashboardStatTiles";
@@ -73,22 +73,60 @@ export default function DashboardHomePage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        {/* AppShell only renders this page once status === "authenticated", so user is never null here. */}
-        <h1 className="text-2xl font-semibold text-ink">{t("greeting", { name: user!.name })}</h1>
-        <p className="text-sm text-ink-muted">{t("subtitle")}</p>
-      </div>
+      {/*
+        Welcome banner in the landing page's hero language: deep-teal
+        gradient, soft mint glow, the headline counts in plain words, and
+        the two actions this screen leads to. Numbers come from the same
+        requests the panels below use — nothing new is fetched for it.
+      */}
+      <section className="relative overflow-hidden rounded-panel bg-gradient-to-br from-mkt-teal-deep via-mkt-teal-cta to-mkt-dark-bg p-6 text-white shadow-brand sm:p-8">
+        <div className="pointer-events-none absolute -top-24 end-[-4rem] h-72 w-72 rounded-full bg-mkt-mint/25 blur-3xl" aria-hidden="true" />
+        <div className="pointer-events-none absolute -bottom-28 start-1/3 h-64 w-64 rounded-full bg-white/10 blur-3xl" aria-hidden="true" />
+
+        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex max-w-2xl flex-col gap-3">
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-bold backdrop-blur">
+              <span className="h-1.5 w-1.5 rounded-full bg-mkt-mint" aria-hidden="true" />
+              {t("heroEyebrow")}
+            </span>
+            {/* AppShell only renders this page once status === "authenticated", so user is never null here. */}
+            <h1 className="text-2xl font-extrabold leading-tight sm:text-[32px]">{t("greeting", { name: user!.name })}</h1>
+            <p className="text-sm leading-relaxed text-white/80 sm:text-base">
+              {needsAttention && alerts && needsAttention.length + alerts.length === 0
+                ? t("heroAllClear")
+                : t("heroSummary", { attention: needsAttention?.length ?? "…", alerts: alerts?.length ?? "…" })}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2.5">
+            <Link
+              href="/dashboard/patients/new"
+              className="inline-flex h-11 items-center gap-2 rounded-field bg-white px-5 text-sm font-bold text-mkt-teal-deep shadow-lg transition-transform hover:-translate-y-0.5"
+            >
+              <Plus size={18} strokeWidth={2.2} />
+              {t("actionAddPatient")}
+            </Link>
+            <Link
+              href="/dashboard/alerts"
+              className="inline-flex h-11 items-center gap-2 rounded-field border border-white/30 bg-white/10 px-5 text-sm font-bold backdrop-blur transition-colors hover:bg-white/20"
+            >
+              {t("actionAlerts")}
+              <ArrowLeft size={17} strokeWidth={2.2} className="ltr:rotate-180" />
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {overview && <DashboardStatTiles overview={overview} />}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <section className="flex flex-col gap-3 rounded-card border border-border bg-card p-4 shadow-card">
-          <div className="flex items-center justify-between">
-            <h2 className="flex items-center gap-2 text-base font-semibold text-ink">
-              <AlertTriangle size={18} strokeWidth={1.75} className="text-status-attention" />
+        <section className="flex flex-col gap-2 rounded-panel border border-border/70 bg-card p-5 shadow-panel">
+          <div className="mb-2 flex items-center justify-between">
+            <h2 className="flex items-center gap-2.5 text-base font-bold text-ink">
+              <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-status-attention-bg text-status-attention"><AlertTriangle size={18} strokeWidth={1.9} /></span>
               {t("needsAttentionTitle")}
             </h2>
-            <Link href="/dashboard/patients" className="text-xs font-medium text-primary hover:underline">
+            <Link href="/dashboard/patients" className="rounded-full bg-canvas px-3 py-1 text-xs font-bold text-mkt-teal-deep transition-colors hover:bg-mkt-mint-bg">
               {t("viewAll")}
             </Link>
           </div>
@@ -106,14 +144,14 @@ export default function DashboardHomePage() {
             <Link
               key={client.id}
               href={`/dashboard/patients/${client.id}`}
-              className="flex items-center justify-between gap-3 rounded-control border border-divider p-2.5 transition-colors hover:bg-canvas"
+              className="flex items-center justify-between gap-3 rounded-field p-3 transition-colors hover:bg-mkt-mint-bg/60"
             >
               <div className="flex min-w-0 items-center gap-2.5">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-mkt-mint-bg to-mkt-sky/40 text-sm font-bold text-mkt-teal-deep ring-1 ring-mkt-mint-border/60">
                   {client.name.charAt(0)}
                 </div>
                 <div className="flex min-w-0 flex-col">
-                  <span className="truncate text-sm font-medium text-ink">{client.name}</span>
+                  <span className="truncate text-sm font-bold text-ink">{client.name}</span>
                   <span className="truncate text-xs text-ink-muted">{tGoals(client.goal)}</span>
                 </div>
               </div>
@@ -122,13 +160,13 @@ export default function DashboardHomePage() {
           ))}
         </section>
 
-        <section className="flex flex-col gap-3 rounded-card border border-border bg-card p-4 shadow-card">
-          <div className="flex items-center justify-between">
-            <h2 className="flex items-center gap-2 text-base font-semibold text-ink">
-              <Bell size={18} strokeWidth={1.75} className="text-primary" />
+        <section className="flex flex-col gap-2 rounded-panel border border-border/70 bg-card p-5 shadow-panel">
+          <div className="mb-2 flex items-center justify-between">
+            <h2 className="flex items-center gap-2.5 text-base font-bold text-ink">
+              <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-mkt-mint-bg text-mkt-teal-deep"><Bell size={18} strokeWidth={1.9} /></span>
               {t("alertsTitle")}
             </h2>
-            <Link href="/dashboard/alerts" className="text-xs font-medium text-primary hover:underline">
+            <Link href="/dashboard/alerts" className="rounded-full bg-canvas px-3 py-1 text-xs font-bold text-mkt-teal-deep transition-colors hover:bg-mkt-mint-bg">
               {t("viewAll")}
             </Link>
           </div>
@@ -146,11 +184,11 @@ export default function DashboardHomePage() {
             <Link
               key={alert.id}
               href={`/dashboard/patients/${alert.subscriber_id}`}
-              className="flex flex-col gap-0.5 rounded-control border border-divider p-2.5 transition-colors hover:bg-canvas"
+              className="flex flex-col gap-1 rounded-field border-s-[3px] border-s-status-attention/60 bg-canvas/60 p-3 transition-colors hover:bg-mkt-mint-bg/60"
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="text-sm font-medium text-ink">{alert.subscriber_name}</span>
-                <span className="shrink-0 text-xs text-ink-muted">{tAlertType(alert.type)}</span>
+                <span className="text-sm font-bold text-ink">{alert.subscriber_name}</span>
+                <span className="shrink-0 rounded-full bg-card px-2 py-0.5 text-[11px] font-bold text-ink-muted">{tAlertType(alert.type)}</span>
               </div>
               <span className="truncate text-xs text-ink-muted">{alert.message}</span>
             </Link>

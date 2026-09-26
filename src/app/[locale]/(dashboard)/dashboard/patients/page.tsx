@@ -12,6 +12,7 @@ import { AdherenceBadge } from "@/components/clients/AdherenceBadge";
 import { DashboardStatTiles } from "@/components/clients/DashboardStatTiles";
 import { getDashboardOverview, listClients } from "@/lib/clients/api";
 import type { Client, DashboardOverview } from "@/lib/clients/types";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 /**
  * The adherence values must match `ListClientsRequest`'s allow-list
@@ -109,10 +110,7 @@ export default function PatientsPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-ink">{t("title")}</h1>
-          <p className="text-sm text-ink-muted">{t("subtitle")}</p>
-        </div>
+        <PageHeader title={t("title")} subtitle={t("subtitle")} />
 
         <Link href="/dashboard/patients/new">
           <Button>
@@ -134,17 +132,17 @@ export default function PatientsPage() {
       */}
       {overview && <DashboardStatTiles overview={overview} />}
 
-      <div className="flex flex-col gap-4 rounded-card border border-border bg-card p-4 shadow-card sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 rounded-panel border border-border/70 bg-card p-4 shadow-panel sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap gap-2">
           {STATUS_FILTERS.map((filter) => (
             <button
               key={filter.labelKey}
               type="button"
               onClick={() => navigate({ status: filter.status, adherence: filter.adherence })}
-              className={`rounded-control px-3 py-1.5 text-sm font-medium transition-all ${
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
                 isFilterActive(filter)
-                  ? "bg-primary text-card shadow-[0_2px_6px_rgba(2,128,144,0.25)]"
-                  : "text-ink-muted hover:bg-canvas hover:text-ink"
+                  ? "bg-gradient-to-br from-primary to-mkt-teal-deep text-white shadow-brand"
+                  : "text-ink-muted hover:bg-mkt-mint-bg hover:text-mkt-teal-deep"
               }`}
             >
               {t(filter.labelKey)}
@@ -160,28 +158,28 @@ export default function PatientsPage() {
           }}
           className="relative flex items-center"
         >
-          <Search size={16} className="pointer-events-none absolute start-3 text-ink-muted" />
+          <Search size={17} className="pointer-events-none absolute start-3.5 text-ink-muted" />
           <input
             key={search}
             type="search"
             name="search"
             defaultValue={search}
             placeholder={t("searchPlaceholder")}
-            className="h-10 w-full min-w-[220px] rounded-control border border-border bg-canvas ps-9 pe-3 text-sm text-ink placeholder:text-ink-muted outline-none transition-all hover:border-ink-muted/40 focus:border-primary focus:bg-card focus:ring-[3px] focus:ring-primary/15"
+            className="h-11 w-full min-w-[260px] rounded-full border border-border bg-canvas/70 ps-10 pe-4 text-sm text-ink placeholder:text-ink-muted outline-none transition-all hover:border-primary/30 focus:border-primary focus:bg-card focus:ring-4 focus:ring-primary/10"
           />
         </form>
       </div>
 
-      <div className="overflow-hidden rounded-card border border-border bg-card shadow-card">
+      <div className="overflow-hidden rounded-panel border border-border/70 bg-card shadow-panel">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[720px] text-start text-sm">
             <thead>
-              <tr className="border-b border-border bg-canvas text-xs font-medium text-ink-muted">
-                <th className="px-4 py-3 text-start">{t("columnName")}</th>
-                <th className="px-4 py-3 text-start">{t("columnGoal")}</th>
-                <th className="px-4 py-3 text-start">{t("columnStatus")}</th>
-                <th className="px-4 py-3 text-start">{t("columnAdherence")}</th>
-                <th className="px-4 py-3 text-end">{t("columnActions")}</th>
+              <tr className="border-b border-border/70 bg-mkt-mint-bg/60 text-xs font-bold text-mkt-teal-deep">
+                <th className="px-5 py-3.5 text-start">{t("columnName")}</th>
+                <th className="px-5 py-3.5 text-start">{t("columnGoal")}</th>
+                <th className="px-5 py-3.5 text-start">{t("columnStatus")}</th>
+                <th className="px-5 py-3.5 text-start">{t("columnAdherence")}</th>
+                <th className="px-5 py-3.5 text-end">{t("columnActions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -230,7 +228,7 @@ export default function PatientsPage() {
                 type="button"
                 disabled={meta.current_page <= 1}
                 onClick={() => navigate({ status, adherence, search, page: meta.current_page - 1 })}
-                className="rounded-control px-3 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
+                className="rounded-field px-3 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
               >
                 {t("previousPage")}
               </button>
@@ -238,7 +236,7 @@ export default function PatientsPage() {
                 type="button"
                 disabled={meta.current_page >= meta.last_page}
                 onClick={() => navigate({ status, adherence, search, page: meta.current_page + 1 })}
-                className="rounded-control px-3 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
+                className="rounded-field px-3 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
               >
                 {t("nextPage")}
               </button>
@@ -255,29 +253,29 @@ function ClientRow({ client }: { client: Client }) {
   const tGoals = useTranslations("goals");
 
   return (
-    <tr className="border-b border-divider transition-colors last:border-0 hover:bg-canvas/60">
-      <td className="px-4 py-3">
+    <tr className="border-b border-divider transition-colors last:border-0 hover:bg-mkt-mint-bg/40">
+      <td className="px-5 py-3.5">
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary ring-2 ring-card">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-mkt-mint-bg to-mkt-sky/40 text-sm font-bold text-mkt-teal-deep ring-1 ring-mkt-mint-border/60">
             {client.name.charAt(0)}
           </div>
           <div className="flex min-w-0 flex-col">
-            <span className="truncate font-medium text-ink">{client.name}</span>
+            <span className="truncate font-bold text-ink">{client.name}</span>
             <span className="text-xs text-ink-muted">{client.code}</span>
           </div>
         </div>
       </td>
-      <td className="px-4 py-3 text-ink-muted">{tGoals(client.goal)}</td>
-      <td className="px-4 py-3">
+      <td className="px-5 py-3.5 text-ink-muted">{tGoals(client.goal)}</td>
+      <td className="px-5 py-3.5">
         <ClientStatusBadge status={client.status} />
       </td>
-      <td className="px-4 py-3">
+      <td className="px-5 py-3.5">
         <AdherenceBadge status={client.adherence_status} />
       </td>
-      <td className="px-4 py-3 text-end">
+      <td className="px-5 py-3.5 text-end">
         <Link
           href={`/dashboard/patients/${client.id}`}
-          className="text-sm font-medium text-primary hover:underline"
+          className="inline-flex items-center rounded-full border border-primary/25 bg-card px-3.5 py-1.5 text-xs font-bold text-mkt-teal-deep transition-colors hover:border-primary hover:bg-mkt-mint-bg"
         >
           {t("viewAction")}
         </Link>

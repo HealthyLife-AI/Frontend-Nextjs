@@ -1,9 +1,10 @@
 "use client";
 
-import { LayoutGrid, Users, UtensilsCrossed, Bell, Settings, X } from "lucide-react";
+import { LayoutGrid, Users, UtensilsCrossed, Bell, Settings, X, LogOut } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import type { ComponentType } from "react";
+import { useAuth } from "@/components/auth/AuthProvider";
 import type { AuthUser } from "@/lib/auth/types";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 
@@ -22,28 +23,20 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 /**
- * Persistent nav rail at desktop width; below `lg:` it becomes an
- * off-canvas drawer (dashboard-builder Step 1) driven by `open`/`onClose`
- * from AppShell. Fixed to the inline-start edge via logical CSS
- * (`start-0`) so it docks right in Arabic (RTL) and left in English
- * (LTR) automatically — matching the approved Stitch reference ("docked
- * to the visual right in RTL layout") without a separate mirrored layout
- * per direction. The closed-drawer transform is the one place that can't
- * use a logical property (CSS has no logical `translate`), so it's
- * spelled out per direction with `rtl:`/`ltr:` variants instead — scoped
- * under `max-lg:` rather than paired with a separate `lg:translate-x-0`
- * to cancel them. A bare `rtl:`/`ltr:` class and a `lg:` class have equal
- * specificity, so which one wins at desktop width came down to Tailwind's
- * internal stylesheet ordering, not viewport size — and it was picking
- * the closed-drawer transform, leaving the sidebar rendered but shoved
- * off-screen by its own width at every viewport, including desktop.
- * `max-lg:` removes the conflict structurally: the closed-state class
- * cannot match at `lg:` and up in the first place, so there's nothing
- * left to override there.
+ * Persistent nav rail at desktop width; below `lg:` an off-canvas drawer
+ * driven by `open`/`onClose` from AppShell. Docked to the inline-start
+ * edge via logical `start-0` (right in Arabic, left in English).
  *
- * Only `/dashboard` has a page behind it in Sprint 1; the other items are
- * real links to where Sprint 2/3 land their pages (patients, plans,
- * alerts, settings) — this shell is built to host them, not to fake them.
+ * Visual language follows the marketing page: the real HealthyLife logo
+ * (`/home/logo.png`, the Figma frame's own asset) instead of an icon +
+ * text wordmark, the landing CTA's teal gradient for the active item, and
+ * mint-tint hovers.
+ *
+ * The closed-drawer transform can't use a logical property (CSS has no
+ * logical `translate`), so it's spelled out per direction — scoped under
+ * `max-lg:` so it structurally can't match at desktop width, where a bare
+ * `rtl:`/`ltr:` class used to win over `lg:translate-x-0` by stylesheet
+ * order and push the rail off-screen.
  */
 export function Sidebar({
   user,
@@ -57,54 +50,60 @@ export function Sidebar({
   const t = useTranslations("nav");
   const tCommon = useTranslations("common");
   const pathname = usePathname();
+  const router = useRouter();
+  const { logout } = useAuth();
 
   const activeHref = NAV_ITEMS
     .map((item) => item.href)
     .filter((href) => pathname === href || pathname.startsWith(`${href}/`))
     .sort((a, b) => b.length - a.length)[0];
 
+  async function handleSignOut() {
+    await logout();
+    router.push("/login");
+  }
+
   return (
     <>
       {open && (
         <div
-          className="fixed inset-0 z-30 bg-ink/40 lg:hidden"
+          className="fixed inset-0 z-30 bg-ink/40 backdrop-blur-[2px] lg:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
       )}
 
       <aside
-        className={`fixed inset-y-0 start-0 z-40 flex w-64 flex-col justify-between border-e border-border bg-card p-4 transition-transform duration-200 ${
+        className={`fixed inset-y-0 start-0 z-40 flex w-72 flex-col border-e border-border/70 bg-card transition-transform duration-300 ${
           open ? "translate-x-0" : "max-lg:rtl:translate-x-full max-lg:ltr:-translate-x-full"
         }`}
       >
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-control bg-gradient-to-br from-primary to-ink text-card shadow-[0_2px_6px_rgba(2,128,144,0.35)]">
-                <UtensilsCrossed size={18} />
-              </div>
-              <span className="text-lg font-semibold text-primary">
-                {tCommon("brandName")}
-              </span>
-            </div>
+        {/* Soft brand wash behind the logo — the landing page's mint blobs, scaled down. */}
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-mkt-mint-bg to-transparent"
+          aria-hidden="true"
+        />
 
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex h-8 w-8 items-center justify-center rounded-control text-ink-muted hover:bg-canvas hover:text-ink lg:hidden"
-              aria-label="Close navigation"
-            >
-              <X size={18} />
-            </button>
-          </div>
+        <div className="relative flex items-center justify-between px-5 pt-5 pb-4">
+          <Link href="/dashboard" onClick={onClose} className="flex items-center">
+            {/* eslint-disable-next-line @next/next/no-img-element -- brand logo, fixed-aspect wordmark */}
+            <img src="/home/logo.png" alt={tCommon("brandFull")} className="h-14 w-auto" />
+          </Link>
 
-          {/* Header hides its own switcher below `sm:` for space (see
-              Header.tsx) — this is the mobile replacement, so locale is
-              always reachable regardless of screen width. */}
-          <div className="sm:hidden">
-            <LocaleSwitcher />
-          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex h-9 w-9 items-center justify-center rounded-field text-ink-muted hover:bg-canvas hover:text-ink lg:hidden"
+            aria-label="Close navigation"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="relative flex flex-1 flex-col gap-2 overflow-y-auto px-4">
+          <span className="px-3 pt-2 pb-1 text-[11px] font-bold uppercase tracking-wider text-ink-muted/70">
+            {t("menu")}
+          </span>
 
           <nav className="flex flex-col gap-1">
             {NAV_ITEMS.map(({ href, labelKey, icon: Icon }) => {
@@ -116,28 +115,53 @@ export function Sidebar({
                   href={href}
                   onClick={onClose}
                   aria-current={isActive ? "page" : undefined}
-                  className={`flex items-center gap-3 rounded-control px-3 py-2.5 text-sm font-medium transition-all ${
+                  className={`group flex h-12 items-center gap-3 rounded-field px-3.5 text-[15px] font-semibold transition-all ${
                     isActive
-                      ? "bg-primary text-card shadow-[0_2px_8px_rgba(2,128,144,0.28)]"
-                      : "text-ink-muted hover:bg-canvas hover:text-ink"
+                      ? "bg-gradient-to-br from-primary to-mkt-teal-deep text-white shadow-brand"
+                      : "text-ink-muted hover:bg-mkt-mint-bg hover:text-mkt-teal-deep"
                   }`}
                 >
-                  <Icon size={20} strokeWidth={1.75} />
+                  <span
+                    className={`flex h-8 w-8 items-center justify-center rounded-[10px] transition-colors ${
+                      isActive ? "bg-white/15" : "bg-canvas group-hover:bg-white"
+                    }`}
+                  >
+                    <Icon size={18} strokeWidth={1.9} />
+                  </span>
                   <span>{t(labelKey)}</span>
                 </Link>
               );
             })}
           </nav>
+
+          {/* Header hides its switcher below `sm:` — this keeps locale reachable on phones. */}
+          <div className="mt-4 px-3 sm:hidden">
+            <LocaleSwitcher />
+          </div>
         </div>
 
         {user && (
-          <div className="flex items-center gap-3 rounded-control border border-border bg-canvas p-2.5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary ring-2 ring-card">
-              {user.name.charAt(0)}
-            </div>
-            <div className="flex min-w-0 flex-col">
-              <span className="truncate text-sm font-semibold text-ink">{user.name}</span>
-              <span className="truncate text-xs text-ink-muted">{user.email}</span>
+          <div className="relative p-4">
+            <span className="mb-2 block px-3 text-[11px] font-bold uppercase tracking-wider text-ink-muted/70">
+              {t("account")}
+            </span>
+            <div className="flex items-center gap-3 rounded-panel border border-border/70 bg-gradient-to-br from-card to-mkt-mint-bg p-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-mkt-teal-deep text-sm font-bold text-white shadow-brand">
+                {user.name.replace(/^د\.\s*/, "").charAt(0)}
+              </div>
+              <div className="flex min-w-0 flex-1 flex-col">
+                <span className="truncate text-sm font-bold text-ink">{user.name}</span>
+                <span className="truncate text-xs text-ink-muted" dir="ltr">{user.email}</span>
+              </div>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-field text-ink-muted transition-colors hover:bg-status-late-bg hover:text-status-late"
+                aria-label={t("signOut")}
+                title={t("signOut")}
+              >
+                <LogOut size={17} strokeWidth={1.9} className="rtl:-scale-x-100" />
+              </button>
             </div>
           </div>
         )}

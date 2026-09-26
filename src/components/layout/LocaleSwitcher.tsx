@@ -13,16 +13,16 @@ export function LocaleSwitcher() {
   const router = useRouter();
 
   return (
-    <div className="flex items-center gap-1 text-sm">
+    <div className="flex items-center gap-0.5 rounded-full border border-border bg-card p-1 text-xs">
       {routing.locales.map((l) => (
         <button
           key={l}
           type="button"
           onClick={() => router.replace(pathname, { locale: l })}
-          className={`rounded-control px-2.5 py-1 transition-colors ${
+          className={`rounded-full px-3 py-1.5 font-semibold transition-colors ${
             l === locale
-              ? "bg-primary/10 font-medium text-primary"
-              : "text-ink-muted hover:bg-ink-muted/10 hover:text-ink"
+              ? "bg-gradient-to-br from-primary to-mkt-teal-deep text-white shadow-brand"
+              : "text-ink-muted hover:text-mkt-teal-deep"
           }`}
           aria-current={l === locale ? "true" : undefined}
         >

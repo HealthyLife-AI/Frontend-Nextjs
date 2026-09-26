@@ -9,6 +9,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { Badge } from "@/components/ui/Badge";
 import { listAlerts, markAlertRead } from "@/lib/alerts/api";
 import type { Alert, AlertType } from "@/lib/alerts/types";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 const FILTERS = [
   { labelKey: "filterAll", is_read: undefined },
@@ -93,10 +94,7 @@ export default function AlertsPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-ink">{t("title")}</h1>
-        <p className="text-sm text-ink-muted">{t("subtitle")}</p>
-      </div>
+      <PageHeader title={t("title")} subtitle={t("subtitle")} />
 
       <div className="flex gap-2">
         {FILTERS.map((filter) => (
@@ -104,9 +102,9 @@ export default function AlertsPage() {
             key={filter.labelKey}
             type="button"
             onClick={() => navigate({ is_read: filter.is_read })}
-            className={`rounded-control px-3 py-1.5 text-sm font-medium transition-all ${
+            className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
               filter.is_read === isRead
-                ? "bg-primary text-card shadow-[0_2px_6px_rgba(2,128,144,0.25)]"
+                ? "bg-gradient-to-br from-primary to-mkt-teal-deep text-white shadow-brand"
                 : "border border-border bg-card text-ink-muted hover:bg-canvas hover:text-ink"
             }`}
           >
@@ -119,7 +117,7 @@ export default function AlertsPage() {
         {loading && <div className="py-10 text-center text-sm text-ink-muted">…</div>}
 
         {!loading && alerts?.length === 0 && (
-          <div className="flex flex-col items-center gap-3 rounded-card border border-border bg-card py-16 text-center shadow-card">
+          <div className="flex flex-col items-center gap-3 rounded-panel border border-border/70 bg-card py-16 text-center shadow-panel">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
               <Bell size={22} strokeWidth={1.75} />
             </div>
@@ -133,14 +131,14 @@ export default function AlertsPage() {
       </div>
 
       {meta && meta.last_page > 1 && (
-        <div className="flex items-center justify-between rounded-card border border-border bg-card px-4 py-3 shadow-card">
+        <div className="flex items-center justify-between rounded-panel border border-border/70 bg-card px-4 py-3 shadow-panel">
           <span className="text-sm text-ink-muted">{meta.total}</span>
           <div className="flex gap-2">
             <button
               type="button"
               disabled={meta.current_page <= 1}
               onClick={() => navigate({ is_read: isRead, page: meta.current_page - 1 })}
-              className="rounded-control px-3 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
+              className="rounded-field px-3 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
             >
               {t("previousPage")}
             </button>
@@ -148,7 +146,7 @@ export default function AlertsPage() {
               type="button"
               disabled={meta.current_page >= meta.last_page}
               onClick={() => navigate({ is_read: isRead, page: meta.current_page + 1 })}
-              className="rounded-control px-3 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
+              className="rounded-field px-3 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
             >
               {t("nextPage")}
             </button>
@@ -170,12 +168,12 @@ function AlertRow({ alert, onMarkRead }: { alert: Alert; onMarkRead: (id: number
 
   return (
     <div
-      className={`flex items-start gap-3 rounded-card border border-border bg-card p-4 shadow-card ${
+      className={`flex items-start gap-3 rounded-panel border border-border/70 bg-card p-4 shadow-panel ${
         alert.is_read ? "opacity-70" : ""
       }`}
     >
       <div
-        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-control ${
+        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-field ${
           tone === "danger"
             ? "bg-status-late-bg text-status-late"
             : tone === "warning"
@@ -210,7 +208,7 @@ function AlertRow({ alert, onMarkRead }: { alert: Alert; onMarkRead: (id: number
         <button
           type="button"
           onClick={() => onMarkRead(alert.id)}
-          className="flex shrink-0 items-center gap-1.5 rounded-control border border-border px-2.5 py-1.5 text-xs font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
+          className="flex shrink-0 items-center gap-1.5 rounded-field border border-border px-2.5 py-1.5 text-xs font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink"
         >
           <Check size={14} strokeWidth={2} />
           {t("markRead")}
