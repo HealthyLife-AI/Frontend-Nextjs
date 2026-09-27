@@ -18,7 +18,8 @@ they get resynced to Figma as each one is next touched, not in a bulk pass.
 **Landing-page addendum, 2026-09-27.** At the user's request the public
 homepage (`src/app/[locale]/page.tsx`, `components/home/*`) was redesigned
 as a product-led page with its own motion system and no longer mirrors the
-Figma "Healthylife" frame (node 49:3). The token catalog (§1), the
+Figma "Healthylife" frame (node 49:3); the frame's photographs and
+illustrations are kept and composed into the new layout. The token catalog (§1), the
 logical-property rule (§6) and the two-locale message rule (§7) still apply
 to it in full; only the layout/visual source changed. The dashboard, auth
 and account screens are unaffected and remain Figma-bound.

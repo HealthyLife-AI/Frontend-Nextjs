@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import Image from "next/image";
 import { Check, Languages, Lock, ShieldCheck, Sparkles } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
@@ -6,9 +7,25 @@ import { getTranslations } from "next-intl/server";
  * The small product illustrations inside the "why" bento cards. Each is
  * plain markup + CSS: bars grow, lines draw, rows rise — all keyed off
  * the surrounding `Reveal`'s `data-inview` (globals.css), so they play
- * exactly once, when their card scrolls in. No raster art: these scale
- * crisply, follow the token palette, and mirror correctly in RTL.
+ * exactly once, when their card scrolls in. Each capability card pairs
+ * that live data with the designer's illustration for the feature
+ * (`public/home/why/illo-*.webp`, restored at the user's request): the
+ * illustration carries the warmth, the CSS part carries the product.
+ * Illustrations blend with `mix-blend-multiply` and a radial mask so
+ * their near-white crop background drops out against the panel.
  */
+
+function Illo({ src, className = "" }: { src: string; className?: string }) {
+  return (
+    <Image
+      src={src}
+      alt=""
+      width={480}
+      height={374}
+      className={`h-auto shrink-0 mix-blend-multiply [mask-image:radial-gradient(ellipse_closest-side,black_60%,transparent)] ${className}`}
+    />
+  );
+}
 
 function Rise({ i, className = "", children }: { i: number; className?: string; children?: React.ReactNode }) {
   return (
@@ -35,6 +52,7 @@ export async function AiDraftVisual() {
 
   return (
     <div className="relative flex h-full flex-col justify-between gap-4 rounded-2xl border border-divider bg-gradient-to-b from-canvas to-white p-4 sm:p-5">
+      <Illo src="/home/why/illo-1.webp" className="mx-auto -my-2 w-44 sm:w-52" />
       <div className="flex items-center justify-between">
         <span className="text-xs font-bold text-ink sm:text-sm">{t("draftLabel")}</span>
         <span className="relative flex h-10 w-10 items-center justify-center">
@@ -89,7 +107,9 @@ export async function ClientsVisual() {
   const rows = ["bg-status-on-track", "bg-status-attention", "bg-status-on-track"];
 
   return (
-    <div className="rounded-2xl border border-divider bg-gradient-to-b from-canvas to-white p-4">
+    <div className="flex items-center gap-3 rounded-2xl border border-divider bg-gradient-to-b from-canvas to-white p-4">
+      <Illo src="/home/why/illo-2.webp" className="-my-3 w-28 sm:w-32" />
+      <div className="min-w-0 flex-1">
       <div className="flex items-center justify-between">
         <div className="flex -space-x-2 rtl:space-x-reverse">
           {avatars.map((tone, i) => (
@@ -110,6 +130,7 @@ export async function ClientsVisual() {
           </Rise>
         ))}
       </div>
+      </div>
     </div>
   );
 }
@@ -123,7 +144,9 @@ export async function FollowUpVisual() {
   ];
 
   return (
-    <div className="rounded-2xl border border-divider bg-gradient-to-b from-canvas to-white p-4">
+    <div className="flex items-center gap-3 rounded-2xl border border-divider bg-gradient-to-b from-canvas to-white p-4">
+      <Illo src="/home/why/illo-3.webp" className="-my-3 w-28 sm:w-32" />
+      <div className="min-w-0 flex-1">
       <div className="mb-3 text-xs font-bold text-ink">{t("followTitle")}</div>
       <div className="flex flex-col gap-2.5">
         {rows.map(({ key, width, tone, text }, i) => (
@@ -138,6 +161,7 @@ export async function FollowUpVisual() {
           </Rise>
         ))}
       </div>
+      </div>
     </div>
   );
 }
@@ -146,7 +170,9 @@ export async function AnalyticsVisual() {
   const t = await getTranslations("home.why.visual");
 
   return (
-    <div className="rounded-2xl border border-divider bg-gradient-to-b from-canvas to-white p-4">
+    <div className="flex items-center gap-3 rounded-2xl border border-divider bg-gradient-to-b from-canvas to-white p-4">
+      <Illo src="/home/why/illo-4.webp" className="-my-3 w-24 sm:w-28" />
+      <div className="min-w-0 flex-1">
       <div className="mb-2 flex items-center justify-between">
         <span className="text-xs font-bold text-ink">{t("chartLabel")}</span>
         <span className="mkt-nums rounded-full bg-status-on-track-bg px-2 py-0.5 text-[11px] font-bold text-status-on-track">{t("chartDelta")}</span>
@@ -174,6 +200,7 @@ export async function AnalyticsVisual() {
         />
         <circle cx="236" cy="72" r="4" fill="var(--color-accent)" stroke="white" strokeWidth="2" />
       </svg>
+      </div>
     </div>
   );
 }

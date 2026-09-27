@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Image from "next/image";
 import { BarChart3, Bot, Languages, LineChart, ShieldCheck, Users, Zap, type LucideIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { AiDraftVisual, AnalyticsVisual, ClientsVisual, FollowUpVisual, LanguageVisual, PrivacyVisual } from "./BentoVisuals";
@@ -12,18 +13,19 @@ import { SpotlightGrid } from "./SpotlightGrid";
  * tiles (privacy, Arabic-first). The grid is wrapped in `SpotlightGrid`
  * so a soft glow and lit border follow the cursor across the cards.
  *
- * Replaces the earlier four-illustration row: the raster illustrations
- * were soft on 2x screens and said nothing specific about the product,
- * while these visuals are built from the product's own states (an
+ * The designer's illustrations and section backdrop sit inside this
+ * layout (restored at the user's request after a CSS-only pass): each
+ * capability card pairs its illustration with a live product state (an
  * allergy-checked draft, an adherence split, a weight trend).
  */
 export async function WhyHealthyLifeSection() {
   const t = await getTranslations("home.why");
 
   return (
-    <section id="why" className="relative scroll-mt-24 overflow-hidden bg-white px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+    <section id="why" className="relative isolate scroll-mt-24 overflow-hidden bg-canvas px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+      {/* The designer's section backdrop (corner blobs, leaf, stethoscope), restored at the user's request. */}
+      <Image src="/home/why/bg.webp" alt="" fill sizes="100vw" className="-z-20 object-cover opacity-90" />
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" aria-hidden="true" />
-      <div className="pointer-events-none absolute -top-40 end-[-10%] -z-10 h-[30rem] w-[30rem] rounded-full bg-mkt-sky/40 blur-3xl" aria-hidden="true" />
 
       <div className="mx-auto max-w-7xl">
         <SectionHeading
@@ -72,7 +74,7 @@ function Card({
 }) {
   return (
     <Reveal delayMs={delayMs} className={`h-full ${className}`} variant="scale">
-      <article className="mkt-spot flex h-full flex-col rounded-3xl border border-ink/[0.07] bg-white p-5 text-start shadow-card transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:shadow-card-hover sm:p-6">
+      <article className="mkt-spot flex h-full flex-col rounded-3xl border border-white/80 bg-white/90 p-5 backdrop-blur text-start shadow-card transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:shadow-card-hover sm:p-6">
         <div className={`relative ${tall ? "mb-6 flex-1" : "mb-5"}`}>{visual}</div>
         <div className="relative flex items-start gap-3">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-mkt-mint-bg text-mkt-emerald-deep ring-1 ring-mkt-mint-border">
