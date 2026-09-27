@@ -1,150 +1,133 @@
-import Image from "next/image";
-import { useTranslations } from "next-intl";
-import { Reveal } from "./Reveal";
+import { ArrowUpRight, PlayCircle, Sparkles } from "lucide-react";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
+import { HeroVisual } from "./HeroVisual";
+import { SplitWords, countWords } from "./SplitWords";
 
 /**
- * Hero — rebuilt to match the Figma "Healthylife" landing frame (node
- * 49:3) 1:1 at the 1440px design width, measured off the SVG export in
- * `design-reference/SVG for image design/Desktop - 1.svg`:
+ * Product-led hero: a slow aurora of the brand's teal/mint behind a
+ * centered headline that arrives word by word, then the product itself
+ * — `HeroVisual`, a "live clinic" dashboard that tips into place in 3D
+ * and keeps cycling through the platform's core loop (alert → reminder
+ * → AI summary).
  *
- *   badge rect   x 456..702  y 169..215  r8   #B9F7FF @ 20%
- *   headline               y 247..352        #006572, 33/61
- *   brush stroke x 320..392 y 299..303       #006B54 (raster of the
- *                                            Figma path, `headline-brush.png`)
- *   body copy              y 399..490        #3D4949, 18/35
- *   primary CTA  x 482..705 y 525..573  r15  #26635E
- *   outline CTA  x 223..476 y 525..573  r15  1px #006B54
+ * Centered composition on purpose: it reads identically in RTL and LTR
+ * (no photo with a fixed empty side to keep the copy on), and the visual
+ * gets the full content width, which is where the persuasion happens on
+ * a software landing page.
  *
- * The whole background — photo, teal wave, leaf art — is one flattened
- * 1600x901 raster in the Figma file, so it ships as one image rather
- * than being re-drawn in CSS. The text column sits in the *left* half
- * (right-aligned, per RTL) because the plated-salad half of that image
- * occupies the right: a 620px *right* margin (physical, not `ms-`)
- * inside the 1210px content box lands the column's right edge on x=705,
- * the design's — physical because the photo doesn't mirror in English,
- * so the copy has to stay on the photo's empty side there too.
- *
- * The desktop/mobile device mockups that used to live here are gone —
- * the Figma hero has no mockup at all.
- *
- * Copy is the frame's own, which reverses two earlier calls on this
- * page: the headline drops its second highlight (the frame emphasizes
- * only "أسرع", with the brush stroke) and the primary CTA is the
- * frame's "احجز عرضًا تجريبيًا مجانيًا" rather than "ابدأ مجانًا",
- * which had been chosen so the page wouldn't offer a demo booking the
- * MVP can't honor (BR-6). It points at #book-demo, the same contact
- * section `HomeHeader` already links to.
- *
- * `lg:text-[33px]` is not the Figma frame's own headline size: that
- * frame is set in a geometric Arabic face this project doesn't license,
- * and Cairo (the PRD §5.1 binding font, kept) runs ~24% wider per em.
- * 33px is the size at which Cairo reproduces the design's measured line
- * box — 502px vs 510px for line 1, breaking after "ومرضاك" exactly as
- * the frame does — at the cost of ~8% shorter glyphs. Same reasoning
- * sets the 20px body copy, which wraps to the design's three lines.
- *
+ * The headline's emphasised word gets a hand-drawn underline that draws
+ * itself in (SVG stroke, dash-offset animation) once the words have
+ * landed. The word stagger is a single sequence across the three copy
+ * runs, so `startIndex` carries the count forward from run to run.
  */
-export function Hero() {
-  const t = useTranslations("home.hero");
+export async function Hero() {
+  const t = await getTranslations("home.hero");
+  const start = t("headlineStart");
+  const highlight = t("headlineHighlight");
+  const end = t("headlineEnd");
+  const startCount = countWords(start);
+  const totalWords = startCount + 1 + countWords(end);
 
   return (
-    <section className="relative isolate overflow-hidden lg:min-h-[842px]">
-      <Image
-        src="/home/hero-bg.jpg"
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        className="-z-10 object-cover object-left lg:object-center"
-      />
-      {/*
-       * Legibility scrim for narrow viewports only: below `lg` the 16:9
-       * background is cropped hard enough that the plated-food half can
-       * slide under the copy. At `lg`+ the design's own empty cream half
-       * sits behind the text and no scrim is needed.
-       */}
-      <div className="absolute inset-0 -z-10 bg-[#f9f9ed]/65 lg:hidden" aria-hidden="true" />
+    <section className="relative isolate overflow-hidden bg-canvas pt-32 lg:pt-44">
+      {/* Aurora: three blurred brand-colored fields drifting on long, offset loops. */}
+      <div className="pointer-events-none absolute inset-0 -z-20 overflow-hidden" aria-hidden="true">
+        <div className="absolute -top-40 start-[-10%] h-[42rem] w-[42rem] rounded-full bg-mkt-glow/35 blur-3xl animate-aurora-a" />
+        <div className="absolute -top-32 end-[-12%] h-[38rem] w-[38rem] rounded-full bg-mkt-sky/60 blur-3xl animate-aurora-b" />
+        <div className="absolute top-[28rem] start-[30%] h-[30rem] w-[36rem] rounded-full bg-primary/15 blur-3xl animate-aurora-c" />
+      </div>
+      <div className="mkt-dots pointer-events-none absolute inset-x-0 top-0 -z-10 h-[46rem]" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-canvas to-transparent" aria-hidden="true" />
 
-      <div className="mx-auto w-full max-w-[1210px] px-4 pt-28 pb-20 sm:px-6 lg:px-0 lg:pt-[169px] lg:pb-[269px]">
-        <Reveal className="lg:ml-auto lg:mr-[620px] lg:w-[512px]">
-          <p className="inline-flex min-h-[46px] items-center rounded-[8px] bg-mkt-sky/20 px-[13px] py-2 text-[13px] font-medium text-mkt-teal-deep">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
+          <p
+            className="mkt-word inline-flex items-center gap-2 rounded-full border border-mkt-mint-border bg-white/70 px-4 py-1.5 text-[13px] font-semibold text-mkt-teal-deep shadow-[0_1px_0_rgba(255,255,255,0.8)_inset] backdrop-blur"
+            style={{ "--i": 0 } as React.CSSProperties}
+          >
+            <Sparkles size={14} strokeWidth={2} className="text-mkt-mint" />
             {t("badge")}
           </p>
 
-          <h1 className="mt-5 text-[30px] font-semibold leading-[1.45] text-mkt-teal-deep sm:text-[36px] lg:mt-[23px] lg:text-[33px] lg:leading-[61px]">
-            {t.rich("headline", {
-              highlight: (chunks) => (
-                <span className="relative font-extrabold">
-                  {chunks}
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-x-0 -bottom-[3px] block h-[4px] bg-[url('/home/headline-brush.png')] bg-[length:100%_100%] bg-no-repeat"
-                  />
-                </span>
-              ),
-            })}
+          <h1 className="mt-7 text-balance text-[2.25rem] font-extrabold leading-[1.18] text-ink sm:text-5xl lg:text-[64px] lg:leading-[1.1] ltr:tracking-[-0.02em]">
+            <SplitWords text={start} startIndex={1} />{" "}
+            <span className="relative inline-block whitespace-nowrap">
+              <SplitWords
+                text={highlight}
+                startIndex={startCount + 1}
+                className="bg-gradient-to-br from-primary via-mkt-teal-deep to-mkt-emerald bg-clip-text text-transparent"
+              />
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 200 14"
+                preserveAspectRatio="none"
+                className="pointer-events-none absolute inset-x-0 -bottom-1.5 h-[0.35em] w-full text-mkt-mint motion-reduce:[&_path]:animate-none motion-reduce:[&_path]:[stroke-dashoffset:0]"
+              >
+                <path
+                  d="M3 10.5C40 4 80 3 118 5.5c30 2 55 3.5 79 1.5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  pathLength={100}
+                  strokeDasharray={100}
+                  strokeDashoffset={100}
+                  className="animate-[draw-line_1s_cubic-bezier(0.22,1,0.36,1)_1.1s_forwards]"
+                  style={{ "--draw-length": 100 } as React.CSSProperties}
+                />
+              </svg>
+            </span>{" "}
+            <SplitWords text={end} startIndex={startCount + 2} />
           </h1>
 
-          <p className="mt-6 text-[16px] leading-[30px] text-mkt-body lg:mt-[29px] lg:text-[20px] lg:leading-[35px]">
+          <p
+            className="mkt-word mt-7 max-w-2xl text-pretty text-base leading-relaxed text-mkt-body sm:text-lg lg:text-xl lg:leading-[1.7]"
+            style={{ "--i": totalWords + 2 } as React.CSSProperties}
+          >
             {t("subheadline")}
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-1.5 lg:mt-[31px]">
-            <a
-              href="#book-demo"
-              className="inline-flex h-12 items-center gap-[18px] rounded-[15px] bg-mkt-teal-cta px-[21px] text-[16px] font-medium text-white transition-colors hover:bg-mkt-teal-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mkt-teal-deep focus-visible:ring-offset-2"
+          <div
+            className="mkt-word mt-9 flex flex-col items-center gap-3 sm:flex-row"
+            style={{ "--i": totalWords + 5 } as React.CSSProperties}
+          >
+            <Link
+              href="/register"
+              className="group relative inline-flex h-13 items-center gap-2 overflow-hidden rounded-full bg-gradient-to-br from-primary to-mkt-teal-deep px-7 text-base font-bold text-white shadow-brand transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_36px_-14px_rgba(0,101,114,0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
-              <CalendarIcon />
+              <span className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:animate-shimmer group-hover:opacity-100" aria-hidden="true" />
               {t("ctaPrimary")}
-            </a>
-
+              <ArrowUpRight size={18} strokeWidth={2.2} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:-scale-x-100 rtl:group-hover:-translate-x-0.5" />
+            </Link>
             <a
               href="#how-it-works"
-              className="inline-flex h-12 items-center gap-[11px] rounded-[15px] border border-mkt-jade px-[28px] text-[16px] font-medium text-mkt-teal-cta transition-colors hover:bg-mkt-jade/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mkt-jade focus-visible:ring-offset-2"
+              className="inline-flex h-13 items-center gap-2 rounded-full border border-ink/10 bg-white/70 px-6 text-base font-semibold text-mkt-teal-deep backdrop-blur transition-[background-color,border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             >
-              <PlayCircleIcon />
+              <PlayCircle size={20} strokeWidth={1.75} className="text-mkt-jade" />
               {t("ctaSecondary")}
             </a>
           </div>
-        </Reveal>
+
+          <p
+            className="mkt-word mt-5 text-[13px] font-medium text-ink-muted"
+            style={{ "--i": totalWords + 7 } as React.CSSProperties}
+          >
+            {t("reassurance")}
+          </p>
+        </div>
+
+        <HeroVisual />
+
+        <div className="flex justify-center pb-6 pt-10 text-ink-muted/70" aria-hidden="true">
+          <span className="flex flex-col items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em]">
+            <span className="flex h-9 w-5 items-start justify-center rounded-full border border-ink/15 p-1">
+              <span className="block h-2 w-1 rounded-full bg-primary animate-scroll-hint" />
+            </span>
+            {t("scrollHint")}
+          </span>
+        </div>
       </div>
     </section>
-  );
-}
-
-/*
- * Both icons are the Figma frame's own vector paths, copied verbatim
- * from the SVG export and shown through a viewBox offset to where they
- * sat on the 1440px canvas — lucide's near-equivalents (`Calendar`,
- * `PlayCircle`) are drawn as strokes on a 24px grid and don't match
- * these filled Material shapes.
- */
-function CalendarIcon() {
-  return (
-    <svg
-      viewBox="677.062 538 13.5 15"
-      width="13.5"
-      height="15"
-      fill="currentColor"
-      aria-hidden="true"
-      className="shrink-0"
-    >
-      <path d="M678.562 553C678.149 553 677.796 552.853 677.502 552.559C677.208 552.266 677.062 551.913 677.062 551.5V541C677.062 540.588 677.208 540.234 677.502 539.941C677.796 539.647 678.149 539.5 678.562 539.5H679.312V538H680.812V539.5H686.812V538H688.312V539.5H689.062C689.474 539.5 689.827 539.647 690.121 539.941C690.415 540.234 690.562 540.588 690.562 541V551.5C690.562 551.913 690.415 552.266 690.121 552.559C689.827 552.853 689.474 553 689.062 553H678.562ZM678.562 551.5H689.062V544H678.562V551.5ZM678.562 542.5H689.062V541H678.562V542.5ZM678.562 542.5V541V542.5Z" />
-    </svg>
-  );
-}
-
-function PlayCircleIcon() {
-  return (
-    <svg
-      viewBox="436 540.667 16.667 16.667"
-      width="16.667"
-      height="16.667"
-      fill="currentColor"
-      aria-hidden="true"
-      className="shrink-0 text-mkt-jade"
-    >
-      <path d="M442.25 552.75L448.083 549L442.25 545.25V552.75ZM444.333 557.333C443.181 557.333 442.097 557.115 441.083 556.677C440.069 556.24 439.188 555.646 438.438 554.896C437.688 554.146 437.094 553.264 436.656 552.25C436.219 551.236 436 550.153 436 549C436 547.847 436.219 546.764 436.656 545.75C437.094 544.736 437.688 543.854 438.438 543.104C439.188 542.354 440.069 541.76 441.083 541.323C442.097 540.885 443.181 540.667 444.333 540.667C445.486 540.667 446.569 540.885 447.583 541.323C448.597 541.76 449.479 542.354 450.229 543.104C450.979 543.854 451.573 544.736 452.01 545.75C452.448 546.764 452.667 547.847 452.667 549C452.667 550.153 452.448 551.236 452.01 552.25C451.573 553.264 450.979 554.146 450.229 554.896C449.479 555.646 448.597 556.24 447.583 556.677C446.569 557.115 445.486 557.333 444.333 557.333ZM444.333 555.667C446.194 555.667 447.771 555.021 449.062 553.729C450.354 552.437 451 550.861 451 549C451 547.139 450.354 545.562 449.062 544.271C447.771 542.979 446.194 542.333 444.333 542.333C442.472 542.333 440.896 542.979 439.604 544.271C438.312 545.562 437.667 547.139 437.667 549C437.667 550.861 438.312 552.437 439.604 553.729C440.896 555.021 442.472 555.667 444.333 555.667Z" />
-    </svg>
   );
 }

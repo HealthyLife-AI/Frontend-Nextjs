@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ArrowUpRight, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Reveal } from "./Reveal";
 
@@ -13,64 +13,78 @@ const QUESTIONS = [
 ] as const;
 
 /**
- * A two-column split in the Figma reference (`Desktop - 1.svg`,
- * y 4380-4850) — the accordion on one side, a right-aligned (not
- * centered) eyebrow/title/subtitle block on the other — not the
- * centered `SectionHeading`-above-a-single-column layout every other
- * section here uses; bespoke markup instead of stretching that shared
- * component to cover a one-off asymmetric case. The eyebrow is also a
- * bordered pill with no dot, a fourth eyebrow treatment the reference
- * doesn't use anywhere else on the page.
- *
- * Figma gives only its first question real, distinct copy; the other
- * three accordion rows all reuse that same placeholder string verbatim
- * (a duplicated layer, never rewritten). `q2`-`q4` here are genuine
- * questions instead, same call `SocialProofSection` already makes for
- * its own placeholder-precise Figma stats.
+ * Two-column FAQ: a sticky heading with a "still have a question?" card
+ * on one side, the accordion on the other. Answers open with the
+ * grid-rows height trick (no measuring), the plus icon rotates into a
+ * cross, and only one answer is open at a time.
  */
 export function FaqSection() {
   const t = useTranslations("home.faq");
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const tFooter = useTranslations("home.footer");
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const email = tFooter("email");
 
   return (
-    <section id="faq" className="bg-card px-4 py-20 sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-[1216px] gap-10 lg:grid-cols-[29rem_1fr] lg:items-start lg:gap-[53px]">
-        <Reveal className="text-center lg:sticky lg:top-28 lg:text-start">
-          <span className="inline-flex items-center rounded-full border border-mkt-mint-border bg-mkt-mint-bg px-4 py-1.5 text-sm font-semibold text-mkt-emerald-deep">
+    <section id="faq" className="scroll-mt-24 bg-white px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+      <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[26rem_1fr] lg:items-start lg:gap-20">
+        <Reveal className="text-start lg:sticky lg:top-28">
+          <span className="inline-flex items-center gap-2 rounded-full border border-mkt-mint-border bg-mkt-mint-bg px-4 py-1.5 text-sm font-semibold text-mkt-emerald-deep">
             {t("eyebrow")}
           </span>
-          <h2 className="mt-3 text-2xl font-bold text-ink sm:text-3xl">{t("title")}</h2>
-          <p className="mt-3 text-ink-muted">{t("subtitle")}</p>
+          <h2 className="mt-5 text-balance text-3xl font-extrabold leading-[1.2] text-ink sm:text-4xl lg:text-[44px] lg:leading-[1.15] ltr:tracking-tight">
+            {t("title")}
+          </h2>
+          <p className="mt-4 text-pretty text-lg leading-relaxed text-ink-muted">{t("subtitle")}</p>
+
+          <div className="mt-8 rounded-3xl border border-ink/[0.07] bg-canvas p-6">
+            <div className="text-base font-bold text-ink">{t("moreTitle")}</div>
+            <p className="mt-1 text-sm text-ink-muted">{t("moreBody")}</p>
+            <a
+              href={`mailto:${email}`}
+              className="group mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-mkt-teal-deep transition-colors hover:text-primary"
+            >
+              {t("moreLink")}
+              <ArrowUpRight size={16} strokeWidth={2.2} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:-scale-x-100 rtl:group-hover:-translate-x-0.5" />
+            </a>
+          </div>
         </Reveal>
 
-        <div className="flex flex-col gap-3.5">
+        <div className="flex flex-col gap-3">
           {QUESTIONS.map(({ questionKey, answerKey }, index) => {
             const open = openIndex === index;
 
             return (
-              <Reveal key={questionKey} delayMs={index * 60}>
-                <div className="rounded-card bg-mkt-mint-bg">
+              <Reveal key={questionKey} delayMs={index * 70}>
+                <div
+                  className={`rounded-2xl border transition-[background-color,border-color,box-shadow] duration-400 ${
+                    open ? "border-primary/25 bg-white shadow-panel" : "border-ink/[0.07] bg-canvas hover:border-primary/20"
+                  }`}
+                >
                   <button
                     type="button"
                     onClick={() => setOpenIndex(open ? null : index)}
                     aria-expanded={open}
-                    className="flex w-full items-center justify-between gap-4 px-5 py-[26px] text-start"
+                    aria-controls={`faq-answer-${index}`}
+                    className="flex w-full items-center gap-4 px-5 py-5 text-start sm:px-6"
                   >
-                    <span className="font-semibold text-ink">{t(questionKey)}</span>
-                    <ChevronDown
-                      size={20}
-                      className={`shrink-0 text-ink-muted transition-transform duration-200 ${
-                        open ? "rotate-180" : ""
+                    <span className={`mkt-nums text-sm font-bold ${open ? "text-primary" : "text-ink-muted"}`}>{String(index + 1).padStart(2, "0")}</span>
+                    <span className="flex-1 text-base font-bold text-ink sm:text-lg">{t(questionKey)}</span>
+                    <span
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-[transform,background-color,color] duration-400 ${
+                        open ? "rotate-45 bg-primary text-white" : "bg-white text-ink-muted shadow-card"
                       }`}
-                    />
+                    >
+                      <Plus size={16} strokeWidth={2.2} />
+                    </span>
                   </button>
                   <div
-                    className={`grid overflow-hidden transition-all duration-300 ${
+                    id={`faq-answer-${index}`}
+                    className={`grid transition-[grid-template-rows,opacity] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] ${
                       open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                     }`}
                   >
                     <div className="min-h-0 overflow-hidden">
-                      <p className="px-5 pb-5 leading-relaxed text-ink-muted">{t(answerKey)}</p>
+                      <p className="px-5 pb-6 ps-[3.75rem] text-pretty leading-relaxed text-ink-muted sm:px-6 sm:ps-16">{t(answerKey)}</p>
                     </div>
                   </div>
                 </div>

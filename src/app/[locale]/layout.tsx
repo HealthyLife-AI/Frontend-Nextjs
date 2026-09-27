@@ -17,7 +17,7 @@ const cairo = Cairo({
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export function generateStaticParams() {
@@ -59,6 +59,10 @@ export default async function LocaleLayout({
       lang={locale}
       dir={direction}
       data-locale={locale}
+      // globals.css sets `scroll-behavior: smooth` for the homepage's anchor
+      // links; this attribute asks Next 16 to keep overriding it during SPA
+      // route transitions so app navigation still lands instantly.
+      data-scroll-behavior="smooth"
       className={`${cairo.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full">

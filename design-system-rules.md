@@ -15,6 +15,14 @@ silently overridden. Existing PRD-token-based screens (dashboard, clients,
 meal plans, etc.) are not being retroactively rewritten by this change;
 they get resynced to Figma as each one is next touched, not in a bulk pass.
 
+**Landing-page addendum, 2026-09-27.** At the user's request the public
+homepage (`src/app/[locale]/page.tsx`, `components/home/*`) was redesigned
+as a product-led page with its own motion system and no longer mirrors the
+Figma "Healthylife" frame (node 49:3). The token catalog (§1), the
+logical-property rule (§6) and the two-locale message rule (§7) still apply
+to it in full; only the layout/visual source changed. The dashboard, auth
+and account screens are unaffected and remain Figma-bound.
+
 Previous rule, kept for context:
 
 > "Stitch mockups are references; the code must conform to these tokens,

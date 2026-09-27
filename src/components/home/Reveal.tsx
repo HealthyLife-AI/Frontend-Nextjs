@@ -1,74 +1,53 @@
 "use client";
 
-import { ReactNode, useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
+import { useInView } from "./useInView";
 
-function prefersReducedMotion(): boolean {
-  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
+type Variant = "up" | "fade" | "scale" | "blur";
+
+const HIDDEN: Record<Variant, string> = {
+  up: "translate-y-6 opacity-0",
+  fade: "opacity-0",
+  scale: "scale-[0.96] opacity-0",
+  blur: "translate-y-4 opacity-0 blur-sm",
+};
 
 /**
- * Fades + slides a section's content up into place the first time it
- * scrolls into view — the "professional effects" pass on the marketing
- * homepage only (the actual product screens stay effect-free; this is
- * presentation chrome, not app UI).
+ * Scroll-triggered entrance for the marketing homepage only (product
+ * screens stay effect-free). Plays once, the first time the block
+ * enters the viewport.
  *
- * Respects `prefers-reduced-motion`: when set, content renders visible
- * immediately and the observer never attaches, rather than firing a
- * motion effect a reduced-motion mode is supposed to skip.
+ * Beyond its own fade/slide, it marks the wrapper with `data-inview`
+ * when visible so purely-CSS child animations (`.mkt-grow`, `.mkt-ring`,
+ * `.mkt-draw`, `.mkt-rise` in globals.css) can key off it — one observer
+ * per block instead of one per animated detail.
+ *
+ * Respects `prefers-reduced-motion` via `useInView`: content renders
+ * visible immediately and the observer never attaches.
  */
 export function Reveal({
   children,
   delayMs = 0,
   className = "",
+  variant = "up",
+  threshold,
 }: {
   children: ReactNode;
   delayMs?: number;
   className?: string;
+  variant?: Variant;
+  threshold?: number;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  // Always false on first render, matching the server (which has no
-  // `window` to check) — checking `prefersReducedMotion()` straight into
-  // `useState`'s initializer reads the real value on the client's first
-  // render too, which for anyone with the OS setting on is guaranteed to
-  // disagree with the server's "false" and throw a hydration mismatch on
-  // every single page load. The real check still happens client-only,
-  // just deferred into the effect below instead of the render itself.
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    if (prefersReducedMotion()) {
-      // Necessary setState-in-effect: `matchMedia` needs `window`, so this
-      // can only be read client-side post-mount — there's no render-time
-      // computation that could replace it.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setVisible(true);
-      return;
-    }
-
-    const node = ref.current;
-    if (!node) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
-    );
-
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
+  const { ref, inView } = useInView<HTMLDivElement>({ threshold });
 
   return (
     <div
       ref={ref}
-      className={`transition-all duration-700 ease-out ${
-        visible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+      data-inview={inView ? "" : undefined}
+      className={`transition-[opacity,transform,filter] duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        inView ? "translate-y-0 scale-100 opacity-100 blur-none" : HIDDEN[variant]
       } ${className}`}
-      style={{ transitionDelay: visible ? `${delayMs}ms` : "0ms" }}
+      style={{ transitionDelay: inView ? `${delayMs}ms` : "0ms" }}
     >
       {children}
     </div>

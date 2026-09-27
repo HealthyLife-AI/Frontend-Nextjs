@@ -1,57 +1,62 @@
 import type { ReactNode } from "react";
 import { Reveal } from "./Reveal";
 
+/**
+ * One heading treatment for every homepage section: a mint eyebrow pill
+ * with a live dot, a large balanced display title, and a muted lede.
+ * Sections that need a partial-color title pass `t.rich(...)` output.
+ *
+ * `tone="dark"` is the inverse for the deep-teal bands (principles,
+ * closing CTA).
+ */
 export function SectionHeading({
   eyebrow,
   title,
   subtitle,
-  tone = "primary",
-  pill = false,
+  align = "center",
+  tone = "light",
+  className = "",
 }: {
   eyebrow: string;
-  /** A plain string for most sections; `t.rich(...)` output (patient-app) for a partial-color headline. */
   title: ReactNode;
-  subtitle: string;
-  tone?: "primary" | "accent";
-  /**
-   * Figma's eyebrow treatment differs by section, not an oversight:
-   * - `"dotted"` — a bordered mint pill with a trailing dot
-   *   (patient-app).
-   * - `"plain"` — an unbordered sky-tint pill, no dot; the same chip
-   *   `Hero`'s badge uses (how-it-works, why-healthylife).
-   * - `false` (default) — a plain uppercase tracked label.
-   *
-   * FAQ has its own fourth treatment (a bordered pill with *no* dot,
-   * right-aligned instead of centered) on a two-column layout this
-   * component doesn't fit — `FaqSection` builds its heading directly
-   * rather than routing that one-off shape through here.
-   */
-  pill?: boolean | "dotted" | "plain";
+  subtitle?: string;
+  align?: "center" | "start";
+  tone?: "light" | "dark";
+  className?: string;
 }) {
-  const pillStyle = pill === true ? "dotted" : pill;
+  const dark = tone === "dark";
 
   return (
-    <Reveal className="mx-auto mb-12 max-w-2xl text-center">
-      {pillStyle === "dotted" ? (
-        <span className="inline-flex items-center gap-2 rounded-full border border-mkt-mint-border bg-mkt-mint-bg px-4 py-1.5 text-sm font-semibold text-mkt-emerald-deep">
-          {eyebrow}
-          <span className="h-2 w-2 rounded-full bg-mkt-mint" />
+    <Reveal
+      className={`${align === "center" ? "mx-auto text-center" : "text-start"} mb-14 max-w-3xl lg:mb-20 ${className}`}
+    >
+      <span
+        className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-semibold ${
+          dark
+            ? "border-white/15 bg-white/[0.06] text-mkt-glow"
+            : "border-mkt-mint-border bg-mkt-mint-bg text-mkt-emerald-deep"
+        }`}
+      >
+        <span className="relative flex h-2 w-2">
+          <span className={`absolute inline-flex h-full w-full rounded-full ${dark ? "bg-mkt-glow" : "bg-mkt-mint"} animate-pulse-ring`} />
+          <span className={`relative inline-flex h-2 w-2 rounded-full ${dark ? "bg-mkt-glow" : "bg-mkt-mint"}`} />
         </span>
-      ) : pillStyle === "plain" ? (
-        <span className="inline-flex min-h-[46px] items-center rounded-[8px] bg-mkt-sky/20 px-[13px] py-2 text-[13px] font-medium text-mkt-teal-deep">
-          {eyebrow}
-        </span>
-      ) : (
-        <span
-          className={`text-sm font-bold uppercase tracking-wider ${
-            tone === "accent" ? "text-accent-active" : "text-primary"
-          }`}
-        >
-          {eyebrow}
-        </span>
-      )}
-      <h2 className="mt-2 text-2xl font-bold text-ink sm:text-3xl">{title}</h2>
-      <p className="mt-3 text-ink-muted">{subtitle}</p>
+        {eyebrow}
+      </span>
+
+      <h2
+        className={`mt-5 text-balance text-3xl font-extrabold leading-[1.2] sm:text-4xl lg:text-[44px] lg:leading-[1.15] ltr:tracking-tight ${
+          dark ? "text-white" : "text-ink"
+        }`}
+      >
+        {title}
+      </h2>
+
+      {subtitle ? (
+        <p className={`mt-4 text-pretty text-base leading-relaxed sm:text-lg ${dark ? "text-mkt-dark-muted" : "text-ink-muted"}`}>
+          {subtitle}
+        </p>
+      ) : null}
     </Reveal>
   );
 }

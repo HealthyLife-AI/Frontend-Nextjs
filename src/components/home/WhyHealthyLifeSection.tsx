@@ -1,111 +1,95 @@
-import Image from "next/image";
-import { Heart, LineChart, PieChart, Shield, Star, Users, Zap, type LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
+import { BarChart3, Bot, Languages, LineChart, ShieldCheck, Users, Zap, type LucideIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { AiDraftVisual, AnalyticsVisual, ClientsVisual, FollowUpVisual, LanguageVisual, PrivacyVisual } from "./BentoVisuals";
 import { Reveal } from "./Reveal";
 import { SectionHeading } from "./SectionHeading";
+import { SpotlightGrid } from "./SpotlightGrid";
 
 /**
- * Figma's "لماذا HealthyLife؟" section (`Desktop - 1.svg`, y 3285-4244)
- * is one flattened 1536x1024 raster (`image6_49_3`), not live layers —
- * so text stays HTML here and only the artwork is image:
- * - `why/bg.webp` — the section backdrop (corner blobs, leaf, stethoscope)
- *   with the cards/text removed, supplied separately by the designer.
- * - `why/illo-{1..4}.webp` — each card's illustration. 1 and 4 are cut
- *   from the designer's higher-res card exports; 2 and 3 only exist in
- *   the flattened section raster, so they're upscaled from that and
- *   are visibly softer on 2x screens.
- * Illustrations sit on the card with `mix-blend-multiply`, so their
- * near-white crop background drops out against the card's own white.
+ * "Why HealthyLife" as a bento grid: four capability cards with live,
+ * CSS-drawn product visuals (`BentoVisuals`) and two smaller trust
+ * tiles (privacy, Arabic-first). The grid is wrapped in `SpotlightGrid`
+ * so a soft glow and lit border follow the cursor across the cards.
  *
- * Replaced `ChallengesSection`, whose challenge/solution pairs and photo
- * collage don't exist anywhere in this Figma file.
+ * Replaces the earlier four-illustration row: the raster illustrations
+ * were soft on 2x screens and said nothing specific about the product,
+ * while these visuals are built from the product's own states (an
+ * allergy-checked draft, an adherence split, a weight trend).
  */
-const ITEMS: {
-  illo: string;
-  titleKey: "item1Title" | "item2Title" | "item3Title" | "item4Title";
-  bodyKey: "item1Body" | "item2Body" | "item3Body" | "item4Body";
-  chipKey: "item1Chip" | "item2Chip" | "item3Chip" | "item4Chip";
-  chipIcon: LucideIcon;
-  number: "01" | "02" | "03" | "04";
-}[] = [
-  { illo: "/home/why/illo-1.webp", titleKey: "item1Title", bodyKey: "item1Body", chipKey: "item1Chip", chipIcon: Zap, number: "01" },
-  { illo: "/home/why/illo-2.webp", titleKey: "item2Title", bodyKey: "item2Body", chipKey: "item2Chip", chipIcon: Users, number: "02" },
-  { illo: "/home/why/illo-3.webp", titleKey: "item3Title", bodyKey: "item3Body", chipKey: "item3Chip", chipIcon: LineChart, number: "03" },
-  { illo: "/home/why/illo-4.webp", titleKey: "item4Title", bodyKey: "item4Body", chipKey: "item4Chip", chipIcon: PieChart, number: "04" },
-];
-
-const TRUST: {
-  icon: LucideIcon;
-  titleKey: "trust1Title" | "trust2Title" | "trust3Title";
-  bodyKey: "trust1Body" | "trust2Body" | "trust3Body";
-}[] = [
-  { icon: Star, titleKey: "trust1Title", bodyKey: "trust1Body" },
-  { icon: Heart, titleKey: "trust2Title", bodyKey: "trust2Body" },
-  { icon: Shield, titleKey: "trust3Title", bodyKey: "trust3Body" },
-];
-
 export async function WhyHealthyLifeSection() {
-  const t = await getTranslations("home.whyHealthyLife");
+  const t = await getTranslations("home.why");
 
   return (
-    <section id="for-specialists" className="relative isolate overflow-hidden bg-[#f5fbfb] px-4 py-20 sm:px-6 lg:px-8">
-      <Image src="/home/why/bg.webp" alt="" fill sizes="100vw" className="-z-10 object-cover" />
+    <section id="why" className="relative scroll-mt-24 overflow-hidden bg-white px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" aria-hidden="true" />
+      <div className="pointer-events-none absolute -top-40 end-[-10%] -z-10 h-[30rem] w-[30rem] rounded-full bg-mkt-sky/40 blur-3xl" aria-hidden="true" />
 
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-7xl">
         <SectionHeading
           eyebrow={t("eyebrow")}
           title={t.rich("title", {
-            highlight: (chunks) => <span className="text-mkt-forest">{chunks}</span>,
+            highlight: (chunks) => (
+              <span className="bg-gradient-to-br from-primary via-mkt-teal-deep to-mkt-emerald bg-clip-text text-transparent">{chunks}</span>
+            ),
           })}
           subtitle={t("subtitle")}
-          pill="plain"
         />
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {ITEMS.map(({ illo, titleKey, bodyKey, chipKey, chipIcon: ChipIcon, number }, i) => (
-            <Reveal key={titleKey} delayMs={i * 80}>
-              <div className="relative flex h-full flex-col rounded-3xl bg-white/90 p-6 text-start shadow-card">
-                <span className="absolute end-5 top-5 inline-flex h-10 w-10 items-center justify-center rounded-full bg-mkt-forest-bg text-sm font-bold text-mkt-forest">
-                  {number}
-                </span>
-                <Image
-                  src={illo}
-                  alt=""
-                  width={480}
-                  height={374}
-                  className="mx-auto mb-4 h-auto w-48 mix-blend-multiply [mask-image:radial-gradient(ellipse_closest-side,black_65%,transparent)]"
-                />
-                <h3 className="mb-3 text-lg font-bold leading-snug text-ink">{t(titleKey)}</h3>
-                <p className="mb-6 text-sm leading-7 text-ink-muted">{t(bodyKey)}</p>
-                <span className="mt-auto inline-flex w-full items-center justify-center gap-2 rounded-full bg-mkt-forest-bg px-4 py-3 text-sm font-semibold text-mkt-forest">
-                  <ChipIcon size={17} strokeWidth={2} />
-                  {t(chipKey)}
-                </span>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-
-        <Reveal delayMs={340} className="mx-auto mt-10 flex max-w-4xl flex-wrap items-center justify-center gap-x-10 gap-y-6 rounded-3xl border border-mkt-forest-bg bg-white/80 px-8 py-6 shadow-card">
-          {TRUST.map(({ icon: Icon, titleKey, bodyKey }, i) => (
-            <div key={titleKey} className={`flex items-center gap-4 ${i > 0 ? "lg:border-s lg:border-mkt-forest/30 lg:ps-10" : ""}`}>
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-mkt-forest-bg text-mkt-forest">
-                <Icon size={24} strokeWidth={1.75} />
-              </div>
-              <div className="text-start">
-                <div className="font-bold text-ink">{t(titleKey)}</div>
-                <div className="text-sm text-ink-muted">{t(bodyKey)}</div>
-              </div>
-            </div>
-          ))}
-        </Reveal>
-
-        <Reveal delayMs={420} className="mt-10 flex items-center justify-center gap-4 text-sm text-ink-muted">
-          <span className="h-px w-24 bg-gradient-to-l from-mkt-forest/40 to-transparent" aria-hidden="true" />
-          {t("tagline")}
-          <span className="h-px w-24 bg-gradient-to-r from-mkt-forest/40 to-transparent" aria-hidden="true" />
-        </Reveal>
+        <SpotlightGrid className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-6">
+          <Card className="sm:col-span-2 lg:col-span-3 lg:row-span-2" delayMs={0} icon={Bot} title={t("item1Title")} body={t("item1Body")} chip={t("item1Chip")} chipIcon={Zap} visual={<AiDraftVisual />} tall />
+          <Card className="lg:col-span-3" delayMs={80} icon={Users} title={t("item2Title")} body={t("item2Body")} chip={t("item2Chip")} chipIcon={Users} visual={<ClientsVisual />} />
+          <Card className="lg:col-span-3" delayMs={160} icon={LineChart} title={t("item3Title")} body={t("item3Body")} chip={t("item3Chip")} chipIcon={LineChart} visual={<FollowUpVisual />} />
+          <Card className="lg:col-span-2" delayMs={240} icon={BarChart3} title={t("item4Title")} body={t("item4Body")} chip={t("item4Chip")} chipIcon={BarChart3} visual={<AnalyticsVisual />} />
+          <Card className="lg:col-span-2" delayMs={320} icon={ShieldCheck} title={t("tile1Title")} body={t("tile1Body")} visual={<PrivacyVisual />} />
+          <Card className="lg:col-span-2" delayMs={400} icon={Languages} title={t("tile2Title")} body={t("tile2Body")} visual={<LanguageVisual />} />
+        </SpotlightGrid>
       </div>
     </section>
+  );
+}
+
+function Card({
+  className = "",
+  delayMs,
+  icon: Icon,
+  title,
+  body,
+  chip,
+  chipIcon: ChipIcon,
+  visual,
+  tall = false,
+}: {
+  className?: string;
+  delayMs: number;
+  icon: LucideIcon;
+  title: string;
+  body: string;
+  chip?: string;
+  chipIcon?: LucideIcon;
+  visual: ReactNode;
+  tall?: boolean;
+}) {
+  return (
+    <Reveal delayMs={delayMs} className={`h-full ${className}`} variant="scale">
+      <article className="mkt-spot flex h-full flex-col rounded-3xl border border-ink/[0.07] bg-white p-5 text-start shadow-card transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:shadow-card-hover sm:p-6">
+        <div className={`relative ${tall ? "mb-6 flex-1" : "mb-5"}`}>{visual}</div>
+        <div className="relative flex items-start gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-mkt-mint-bg text-mkt-emerald-deep ring-1 ring-mkt-mint-border">
+            <Icon size={20} strokeWidth={1.75} />
+          </span>
+          <div className="min-w-0">
+            <h3 className="text-lg font-bold leading-snug text-ink">{title}</h3>
+            <p className="mt-1.5 text-pretty text-sm leading-relaxed text-ink-muted">{body}</p>
+            {chip && ChipIcon ? (
+              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-canvas px-3 py-1 text-xs font-semibold text-mkt-forest">
+                <ChipIcon size={13} strokeWidth={2} />
+                {chip}
+              </span>
+            ) : null}
+          </div>
+        </div>
+      </article>
+    </Reveal>
   );
 }
