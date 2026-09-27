@@ -1,14 +1,18 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { ArrowUpRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useAuth } from "./AuthProvider";
+import { AuthDivider } from "./AuthDivider";
+import { GOOGLE_ENABLED, GoogleButton } from "./GoogleButton";
 import { TextField } from "@/components/ui/TextField";
 import { Button } from "@/components/ui/Button";
 
 export function LoginForm() {
   const t = useTranslations("auth.login");
+  const tCommon = useTranslations("auth.common");
   const tErrors = useTranslations("auth.errors");
   const { login } = useAuth();
   const router = useRouter();
@@ -47,43 +51,58 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
-      <TextField
-        label={t("email")}
-        type="email"
-        name="email"
-        autoComplete="email"
-        required
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-
-      <TextField
-        label={t("password")}
-        type="password"
-        name="password"
-        autoComplete="current-password"
-        required
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-
-      {formError && (
-        <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
-          {formError}
-        </p>
+    <div className="flex flex-col gap-5">
+      {GOOGLE_ENABLED && (
+        <>
+          <GoogleButton mode="login" onError={setFormError} />
+          <AuthDivider label={tCommon("or")} />
+        </>
       )}
 
-      <Button type="submit" isLoading={submitting} className="w-full">
-        {submitting ? t("submitting") : t("submit")}
-      </Button>
+      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
+        <TextField
+          label={t("email")}
+          type="email"
+          name="email"
+          autoComplete="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <div className="flex flex-col gap-1.5">
+          <TextField
+            label={t("password")}
+            type="password"
+            name="password"
+            autoComplete="current-password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Link href="/forgot-password" className="self-end text-sm font-semibold text-mkt-teal-deep transition-colors hover:text-primary">
+            {t("forgotPassword")}
+          </Link>
+        </div>
+
+        {formError && (
+          <p role="alert" className="rounded-field border border-status-late/20 bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
+            {formError}
+          </p>
+        )}
+
+        <Button type="submit" isLoading={submitting} className="h-12 w-full text-[15px]">
+          {submitting ? t("submitting") : t("submit")}
+          {!submitting && <ArrowUpRight size={17} strokeWidth={2.2} className="rtl:-scale-x-100" />}
+        </Button>
+      </form>
 
       <p className="text-center text-sm text-ink-muted">
         {t("noAccount")}{" "}
-        <Link href="/register" className="font-medium text-primary hover:underline">
+        <Link href="/register" className="font-semibold text-mkt-teal-deep hover:text-primary">
           {t("createAccount")}
         </Link>
       </p>
-    </form>
+    </div>
   );
 }

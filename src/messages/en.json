@@ -15,19 +15,29 @@
     "account": "Account"
   },
   "auth": {
+    "common": {
+      "or": "or continue with e-mail",
+      "googleLogin": "Continue with Google",
+      "googleRegister": "Sign up with Google",
+      "googleUnavailable": "Google sign-in isn't set up on this deployment yet. Use your e-mail and password instead.",
+      "googleFailed": "Google sign-in didn't complete. Please try again.",
+      "backToLogin": "Back to sign in",
+      "terms": "By continuing you agree to our terms of service and privacy policy."
+    },
     "login": {
-      "title": "Sign in",
-      "subtitle": "Enter your details to access your client dashboard",
+      "title": "Welcome back",
+      "subtitle": "Sign in to your clinic workspace to see who needs your attention today.",
       "email": "Email",
       "password": "Password",
+      "forgotPassword": "Forgot your password?",
       "submit": "Sign in",
       "submitting": "Signing in...",
-      "noAccount": "Don't have an account?",
-      "createAccount": "Create an account"
+      "noAccount": "New to HealthyLife?",
+      "createAccount": "Create your account"
     },
     "register": {
-      "title": "Create a nutritionist account",
-      "subtitle": "Register to manage your clients and design their nutrition plans",
+      "title": "Create your nutritionist account",
+      "subtitle": "Free to start. Add your first client the same day, no setup fees.",
       "name": "Full name",
       "email": "Email",
       "password": "Password",
@@ -38,11 +48,45 @@
       "haveAccount": "Already have an account?",
       "signIn": "Sign in"
     },
+    "forgot": {
+      "title": "Forgot your password?",
+      "subtitle": "Enter the e-mail you registered with and we'll send you a link to set a new one.",
+      "email": "Email",
+      "submit": "Send reset link",
+      "submitting": "Sending...",
+      "sentTitle": "Check your inbox",
+      "sentBody": "If an account exists for {email}, a reset link is on its way. It expires in 60 minutes — check your spam folder if it doesn't arrive.",
+      "resend": "Use a different e-mail"
+    },
+    "reset": {
+      "title": "Set a new password",
+      "subtitle": "Choose a strong password you don't use anywhere else.",
+      "for": "Resetting the password for",
+      "password": "New password",
+      "passwordConfirmation": "Confirm new password",
+      "passwordHint": "At least 8 characters, with an uppercase letter, a lowercase letter, and a number",
+      "submit": "Save new password",
+      "submitting": "Saving...",
+      "successTitle": "Password updated",
+      "successBody": "Your password has been changed and every other session was signed out. You can sign in with the new one now.",
+      "goToLogin": "Go to sign in",
+      "expired": "This reset link is invalid or has expired. Request a new one and try again.",
+      "invalidLink": "This reset link is incomplete. Open the link from the e-mail again, or request a new one.",
+      "requestNew": "Request a new link"
+    },
+    "strength": {
+      "label": "Password strength:",
+      "weak": "weak",
+      "fair": "fair",
+      "good": "good",
+      "strong": "strong"
+    },
     "errors": {
       "invalidCredentials": "That email or password doesn't match our records.",
       "locked": "This account is temporarily locked after repeated failed sign-ins. Try again in {minutes} minutes.",
       "generic": "Something went wrong. Please try again.",
-      "emailTaken": "This email is already registered."
+      "emailTaken": "This email is already registered.",
+      "tooMany": "Too many attempts. Please wait a minute and try again."
     },
     "validation": {
       "required": "This field is required",
@@ -58,7 +102,11 @@
       "point2Title": "Your data, fully isolated",
       "point2Body": "No other nutritionist can ever read your clients or their data.",
       "point3Title": "Full Arabic RTL, side by side",
-      "point3Body": "With English — on every screen, not just this one."
+      "point3Body": "With English — on every screen, not just this one.",
+      "cardAlertTitle": "Adherence alert",
+      "cardAlertBody": "Sara hasn't logged a meal in 3 days",
+      "cardSummaryTitle": "Weekly AI summary",
+      "cardSummaryBody": "Adherence held at 88% this week; weight moved −0.6 kg."
     }
   },
   "goals": {
