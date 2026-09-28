@@ -16,6 +16,7 @@ import { BodyCompositionCards } from "@/components/progress/BodyCompositionCards
 import { PlanVsActualChart } from "@/components/progress/PlanVsActualChart";
 import { WeightTrendChart } from "@/components/progress/WeightTrendChart";
 import { AiSummaryCard } from "@/components/aiSummaries/AiSummaryCard";
+import { DeleteClientButton } from "@/components/clients/DeleteClientButton";
 import { listAiSummaries } from "@/lib/aiSummaries/api";
 import type { AiSummary } from "@/lib/aiSummaries/types";
 
@@ -204,6 +205,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           />
         </div>
       )}
+
+      {/* Kept at the bottom, away from the everyday actions in the header. */}
+      <div className="flex justify-end border-t border-divider pt-6">
+        <DeleteClientButton client={client} />
+      </div>
     </div>
   );
 }

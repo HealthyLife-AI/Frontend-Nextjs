@@ -45,6 +45,11 @@ export function getClient(fetcher: Fetcher, id: number | string) {
   return fetcher(`/clients/${id}`).then((res) => parseJson<Client>(res));
 }
 
+/** Permanently removes the client and everything recorded about them (204). */
+export function deleteClient(fetcher: Fetcher, id: number | string) {
+  return fetcher(`/clients/${id}`, { method: "DELETE" }).then((res) => parseJson<null>(res));
+}
+
 export function getHealthProfile(fetcher: Fetcher, subscriberId: number | string) {
   return fetcher(`/clients/${subscriberId}/health-profile`).then(async (res) => {
     if (res.status === 204) return { ok: true as const, data: null };
