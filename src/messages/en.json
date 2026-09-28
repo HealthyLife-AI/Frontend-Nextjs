@@ -713,7 +713,11 @@
     "inUseTitle": "This food is in use",
     "inUseBody": "\"{name}\" is used in {plans, plural, one {# meal plan} other {# meal plans}} and {logs, plural, one {# client meal log} other {# client meal logs}}. Saving changes the calories and macros computed for all of them. Continue?",
     "inUseBack": "Back to editing",
-    "inUseConfirm": "Yes, save changes"
+    "inUseConfirm": "Yes, save changes",
+    "dailyRunOk": "Last daily patient check: {when} — {patients, plural, one {# patient} other {# patients}}, {changes, plural, =0 {no adherence status changed} one {# adherence status changed} other {# adherence statuses changed}}.",
+    "dailyRunFailures": "({count, plural, one {# failure} other {# failures}})",
+    "dailyRunStale": "Last daily patient check was {when} — the 06:00 check did not run today. Check the cron job on the server (see DEPLOYMENT.md).",
+    "dailyRunNever": "No daily patient check has been recorded yet. The 06:00 check has not run on this server (see DEPLOYMENT.md)."
   },
   "clientsDelete": {
     "button": "Delete client",

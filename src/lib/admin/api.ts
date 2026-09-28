@@ -1,6 +1,17 @@
 import { type Fetcher, parseJson } from "@/lib/api";
 import type { CatalogFood, FoodInput, FoodPage, FoodStatus } from "@/lib/foods/api";
 
+/** What the 06:00 job (adherence refresh + alerts) did on its last run. */
+export type DailyRun = {
+  ran_at: string;
+  patients: number;
+  status_changes: number;
+  failures: number;
+  stable: number;
+  declining: number;
+  stopped_logging: number;
+};
+
 export type AdminOverview = {
   nutritionists: number;
   clients: number;
@@ -8,6 +19,8 @@ export type AdminOverview = {
   foods_total: number;
   foods_pending: number;
   foods_by_source: { usda: number; admin: number; nutritionist: number };
+  /** null until the 06:00 job has run once. */
+  last_daily_run: DailyRun | null;
 };
 
 export type AdminNutritionist = {

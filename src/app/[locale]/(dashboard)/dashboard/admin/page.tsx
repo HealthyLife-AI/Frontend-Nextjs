@@ -8,6 +8,7 @@ import { StatTile } from "@/components/clients/StatTile";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { FoodTable } from "@/components/foods/FoodTable";
 import { usePendingFoods } from "@/components/admin/PendingFoodsProvider";
+import { DailyRunStatus } from "@/components/admin/DailyRunStatus";
 import { approveFood, getAdminOverview, listAdminFoods, rejectFood, type AdminOverview } from "@/lib/admin/api";
 import type { CatalogFood } from "@/lib/foods/api";
 
@@ -52,6 +53,8 @@ export default function AdminOverviewPage() {
   return (
     <div className="flex flex-col gap-7">
       <PageHeader eyebrow={t("eyebrow")} title={t("overviewTitle")} subtitle={t("overviewSubtitle")} />
+
+      {overview && <DailyRunStatus run={overview.last_daily_run} />}
 
       {failed && (
         <p role="alert" className="rounded-field bg-status-late-bg px-4 py-3 text-sm text-status-late">
