@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutGrid, Users, UtensilsCrossed, Bell, Settings, X, LogOut } from "lucide-react";
+import { Apple, Bell, LayoutGrid, LogOut, Settings, Stethoscope, Users, UtensilsCrossed, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import type { ComponentType } from "react";
@@ -10,7 +10,7 @@ import { LocaleSwitcher } from "./LocaleSwitcher";
 
 type NavItem = {
   href: string;
-  labelKey: "dashboard" | "patients" | "plans" | "alerts" | "settings";
+  labelKey: "dashboard" | "patients" | "plans" | "foods" | "alerts" | "settings" | "adminOverview" | "adminFoods" | "adminNutritionists";
   icon: ComponentType<{ size?: number; strokeWidth?: number }>;
 };
 
@@ -18,8 +18,16 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", labelKey: "dashboard", icon: LayoutGrid },
   { href: "/dashboard/patients", labelKey: "patients", icon: Users },
   { href: "/dashboard/plans", labelKey: "plans", icon: UtensilsCrossed },
+  { href: "/dashboard/foods", labelKey: "foods", icon: Apple },
   { href: "/dashboard/alerts", labelKey: "alerts", icon: Bell },
   { href: "/dashboard/settings", labelKey: "settings", icon: Settings },
+];
+
+/** Admins get their own section — none of the nutritionist screens apply to them. */
+const ADMIN_NAV_ITEMS: NavItem[] = [
+  { href: "/dashboard/admin", labelKey: "adminOverview", icon: LayoutGrid },
+  { href: "/dashboard/admin/foods", labelKey: "adminFoods", icon: Apple },
+  { href: "/dashboard/admin/nutritionists", labelKey: "adminNutritionists", icon: Stethoscope },
 ];
 
 /**
@@ -53,7 +61,9 @@ export function Sidebar({
   const router = useRouter();
   const { logout } = useAuth();
 
-  const activeHref = NAV_ITEMS
+  const items = user?.role === "admin" ? ADMIN_NAV_ITEMS : NAV_ITEMS;
+
+  const activeHref = items
     .map((item) => item.href)
     .filter((href) => pathname === href || pathname.startsWith(`${href}/`))
     .sort((a, b) => b.length - a.length)[0];
@@ -85,7 +95,7 @@ export function Sidebar({
         />
 
         <div className="relative flex items-center justify-between px-5 pt-5 pb-4">
-          <Link href="/dashboard" onClick={onClose} className="flex items-center">
+          <Link href={user?.role === "admin" ? "/dashboard/admin" : "/dashboard"} onClick={onClose} className="flex items-center">
             {/* eslint-disable-next-line @next/next/no-img-element -- brand logo, fixed-aspect wordmark */}
             <img src="/home/logo.png" alt={tCommon("brandFull")} className="h-14 w-auto" />
           </Link>
@@ -102,11 +112,11 @@ export function Sidebar({
 
         <div className="relative flex flex-1 flex-col gap-2 overflow-y-auto px-4">
           <span className="px-3 pt-2 pb-1 text-[11px] font-bold uppercase tracking-wider text-ink-muted/70">
-            {t("menu")}
+            {user?.role === "admin" ? t("adminMenu") : t("menu")}
           </span>
 
           <nav className="flex flex-col gap-1">
-            {NAV_ITEMS.map(({ href, labelKey, icon: Icon }) => {
+            {items.map(({ href, labelKey, icon: Icon }) => {
               const isActive = href === activeHref;
 
               return (

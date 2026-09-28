@@ -38,7 +38,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     }
   }, [status, router]);
 
-  if (status !== "authenticated") {
+  // Admins and nutritionists use different screens (and different API
+  // permissions) — land each on their own, whatever URL they arrive at.
+  const isAdmin = user?.role === "admin";
+  const onAdminPath = pathname === "/dashboard/admin" || pathname.startsWith("/dashboard/admin/");
+  const wrongArea = status === "authenticated" && isAdmin !== onAdminPath;
+
+  useEffect(() => {
+    if (wrongArea) router.replace(isAdmin ? "/dashboard/admin" : "/dashboard");
+  }, [wrongArea, isAdmin, router]);
+
+  if (status !== "authenticated" || wrongArea) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-5 bg-canvas">
         {/* eslint-disable-next-line @next/next/no-img-element -- brand logo */}

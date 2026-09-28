@@ -9,6 +9,10 @@ import { listAlerts } from "@/lib/alerts/api";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 
 const SECTIONS = [
+  { href: "/dashboard/admin/foods", key: "adminFoods" },
+  { href: "/dashboard/admin/nutritionists", key: "adminNutritionists" },
+  { href: "/dashboard/admin", key: "adminOverview" },
+  { href: "/dashboard/foods", key: "foods" },
   { href: "/dashboard/patients", key: "patients" },
   { href: "/dashboard/plans", key: "plans" },
   { href: "/dashboard/alerts", key: "alerts" },
@@ -28,7 +32,8 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
   const t = useTranslations("nav");
   const locale = useLocale();
   const pathname = usePathname();
-  const { authorizedFetch } = useAuth();
+  const { authorizedFetch, user } = useAuth();
+  const isAdmin = user?.role === "admin";
 
   const [unreadCount, setUnreadCount] = useState<number | null>(null);
 
@@ -37,6 +42,8 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
   // Mount-once, not polled: nothing asks for realtime yet, and Header
   // persists across client-side navigation.
   useEffect(() => {
+    // Alerts belong to a nutritionist's clients; an admin has none (403).
+    if (isAdmin) return;
     let cancelled = false;
 
     listAlerts(authorizedFetch, { is_read: false }).then((result) => {
@@ -46,7 +53,7 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
     return () => {
       cancelled = true;
     };
-  }, [authorizedFetch]);
+  }, [authorizedFetch, isAdmin]);
 
   // Header only mounts after AppShell sees an authenticated session, which
   // is resolved client-side — it never server-renders, so formatting the
@@ -80,6 +87,7 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
           <LocaleSwitcher />
         </div>
 
+        {!isAdmin && (
         <Link
           href="/dashboard/alerts"
           className="relative flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-ink-muted transition-colors hover:border-primary/30 hover:bg-mkt-mint-bg hover:text-mkt-teal-deep"
@@ -92,6 +100,7 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
             </span>
           )}
         </Link>
+        )}
       </div>
     </header>
   );
