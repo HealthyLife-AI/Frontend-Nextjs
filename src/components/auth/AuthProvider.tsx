@@ -40,6 +40,8 @@ type RegisterPayload = {
 type AuthContextValue = AuthState & {
   login: (email: string, password: string) => Promise<AuthActionResult>;
   register: (payload: RegisterPayload) => Promise<AuthActionResult>;
+  /** "Continue with Google" — `accessToken` comes from Google Identity Services (GoogleButton). */
+  loginWithGoogle: (accessToken: string) => Promise<AuthActionResult>;
   logout: () => Promise<void>;
   /**
    * Call Laravel's data API directly (clients, health profiles, foods,
@@ -275,13 +277,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [applySession]
   );
 
+  const loginWithGoogle = useCallback(
+    async (accessToken: string): Promise<AuthActionResult> => {
+      const res = await fetch("/api/auth/google", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ access_token: accessToken }),
+      });
+
+      if (!res.ok) return parseError(res);
+
+      const data = await res.json();
+      applySession(data.access_token, data.user);
+
+      return { ok: true };
+    },
+    [applySession]
+  );
+
   const logout = useCallback(async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     clearSession();
   }, [clearSession]);
 
   return (
-    <AuthContext.Provider value={{ ...state, login, register, logout, authorizedFetch }}>
+    <AuthContext.Provider value={{ ...state, login, register, loginWithGoogle, logout, authorizedFetch }}>
       {children}
     </AuthContext.Provider>
   );

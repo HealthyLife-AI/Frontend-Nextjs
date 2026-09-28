@@ -63,6 +63,8 @@
   --color-mkt-dark-muted: #a0c5c7; /* body text on --color-mkt-dark-bg */
   --color-mkt-forest: #3a8973; /* why-healthylife: "HealthyLife" title highlight, icon accents, chip/number text */
   --color-mkt-forest-bg: #eaf5f2; /* why-healthylife: card/chip/number-badge/eyebrow tint */
+  --color-mkt-night: #071d20; /* closing CTA / footer: the deepest step below --color-mkt-dark-bg */
+  --color-mkt-glow: #5eead4; /* hero + dark-section aurora highlight (a lighter mint than --color-accent) */
 
   --radius-control: 0.5rem; /* 8px — buttons, inputs (PRD 5.1) */
   --radius-card: 0.75rem; /* 12px — cards, panels (PRD 5.1) */
@@ -145,6 +147,27 @@
   --color-mkt-dark-muted: var(--color-mkt-dark-muted);
   --color-mkt-forest: var(--color-mkt-forest);
   --color-mkt-forest-bg: var(--color-mkt-forest-bg);
+  --color-mkt-night: var(--color-mkt-night);
+  --color-mkt-glow: var(--color-mkt-glow);
+
+  /*
+   * Marketing-page motion tokens: `animate-*` utilities for the homepage
+   * (`components/home/*`). The keyframes live at the bottom of this file
+   * under "Homepage motion". Everything here is transform/opacity only —
+   * nothing that triggers layout — and every one of them is switched off
+   * under `prefers-reduced-motion` in that same block.
+   */
+  --animate-aurora-a: aurora-a 18s ease-in-out infinite alternate;
+  --animate-aurora-b: aurora-b 22s ease-in-out infinite alternate;
+  --animate-aurora-c: aurora-c 26s ease-in-out infinite alternate;
+  --animate-float-slow: float-y 7s ease-in-out infinite;
+  --animate-float-slower: float-y 9s ease-in-out 1.5s infinite;
+  --animate-marquee: marquee 48s linear infinite;
+  --animate-shimmer: shimmer 2.6s linear infinite;
+  --animate-pulse-ring: pulse-ring 2.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  --animate-caret: caret 1s steps(2, start) infinite;
+  --animate-orbit: orbit 14s linear infinite;
+  --animate-scroll-hint: scroll-hint 1.8s ease-in-out infinite;
 
   --radius-control: var(--radius-control);
   --radius-card: var(--radius-card);
@@ -184,11 +207,36 @@ html[data-locale="en"] body {
 }
 
 /*
- * Homepage motion — the marketing page only (Reveal.tsx, the hero's
- * floating card). Kept out of `@theme` since these are keyframes/utility
- * classes, not design tokens. `prefers-reduced-motion` is honored twice:
- * Reveal's own JS skips the observer entirely for that preference, and
- * this media guard also disables the float loop, which has no JS gate.
+ * Anchor navigation on the marketing page: smooth scrolling, offset for
+ * the fixed header. `motion-reduce` users get instant jumps.
+ */
+html {
+  scroll-padding-top: 6rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Mirrors direction-sensitive transforms (hero tilt, marquee) for RTL. */
+html {
+  --dir: 1;
+}
+
+html[dir="rtl"] {
+  --dir: -1;
+}
+
+/*
+ * Homepage motion — the marketing page only (`components/home/*`). Kept
+ * out of `@theme` since these are keyframes/utility classes, not design
+ * tokens (the `animate-*` names ARE registered in `@theme inline` above
+ * so Tailwind emits them as utilities). `prefers-reduced-motion` is
+ * honored twice: Reveal's own JS skips the observer entirely for that
+ * preference, and the media guard at the end of this block stops every
+ * loop and reveal that has no JS gate.
  */
 @keyframes float-y {
   0%, 100% { transform: translateY(0); }
@@ -199,9 +247,372 @@ html[data-locale="en"] body {
   animation: float-y 6s ease-in-out infinite;
 }
 
+@keyframes aurora-a {
+  0% { transform: translate3d(-8%, -6%, 0) scale(1); }
+  100% { transform: translate3d(10%, 8%, 0) scale(1.15); }
+}
+
+@keyframes aurora-b {
+  0% { transform: translate3d(6%, 10%, 0) scale(1.1); }
+  100% { transform: translate3d(-10%, -4%, 0) scale(0.95); }
+}
+
+@keyframes aurora-c {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  100% { transform: translate3d(-6%, 12%, 0) rotate(20deg) scale(1.2); }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(var(--marquee-shift, -50%)); }
+}
+
+@keyframes shimmer {
+  from { transform: translateX(-150%) skewX(-18deg); }
+  to { transform: translateX(250%) skewX(-18deg); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+@keyframes caret {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes scroll-hint {
+  0%, 100% { transform: translateY(0); opacity: 0.35; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+
+@keyframes word-in {
+  from { opacity: 0; transform: translateY(0.6em); filter: blur(10px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes draw-line {
+  from { stroke-dashoffset: var(--draw-length, 600); }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/*
+ * Word-by-word headline reveal (SplitWords.tsx). Each word carries its
+ * own `--i`; the whole line resolves in ~1s regardless of word count
+ * because the stagger is short. `inline-block` per word is safe for
+ * Arabic: letters only join inside a word, never across the space.
+ */
+.mkt-word {
+  display: inline-block;
+  animation: word-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i, 0) * 55ms + var(--offset, 0ms));
+}
+
+/*
+ * Hero product visual (HeroVisual.tsx): starts tipped back in 3D and
+ * levels out once it scrolls into view; pointer position then nudges it
+ * by a few degrees (the `--tilt-*` vars are written by JS, clamped to
+ * ±1). `--dir` flips the yaw for RTL so the "lean" always reads the same
+ * relative to the copy.
+ */
+.mkt-stage {
+  perspective: 1600px;
+}
+
+.mkt-tilt {
+  --tilt-x: 0;
+  --tilt-y: 0;
+  transform: rotateX(16deg) scale(0.94) translateY(28px);
+  transform-style: preserve-3d;
+  opacity: 0;
+  transition:
+    transform 1.2s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.9s ease-out;
+  will-change: transform;
+}
+
+.mkt-stage[data-inview] .mkt-tilt {
+  opacity: 1;
+  transform:
+    rotateX(calc(var(--tilt-y) * -4deg))
+    rotateY(calc(var(--tilt-x) * 5deg * var(--dir)))
+    scale(1)
+    translateY(0);
+}
+
+.mkt-stage[data-inview][data-pointer] .mkt-tilt {
+  transition: transform 0.25s ease-out, opacity 0.9s ease-out;
+}
+
+/* Satellites float above the stage and parallax against the pointer. */
+.mkt-satellite {
+  --depth: 1;
+  transform: translate3d(
+    calc(var(--tilt-x, 0) * var(--depth) * 10px * var(--dir)),
+    calc(var(--tilt-y, 0) * var(--depth) * 10px),
+    0
+  );
+  transition: transform 0.35s ease-out;
+}
+
+/* Cursor spotlight for bento cards (SpotlightGrid.tsx writes --mx/--my). */
+.mkt-spot {
+  --mx: 50%;
+  --my: 50%;
+  position: relative;
+  overflow: hidden;
+}
+
+.mkt-spot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    360px circle at var(--mx) var(--my),
+    color-mix(in oklab, var(--color-mkt-glow) 22%, transparent),
+    transparent 60%
+  );
+}
+
+.mkt-spot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  padding: 1px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    300px circle at var(--mx) var(--my),
+    color-mix(in oklab, var(--color-primary) 55%, transparent),
+    transparent 70%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.mkt-spot:hover::before,
+.mkt-spot:hover::after {
+  opacity: 1;
+}
+
+/* Dotted grid backdrop that fades toward the edges (hero, CTA). */
+.mkt-dots {
+  background-image: radial-gradient(color-mix(in oklab, var(--color-ink) 14%, transparent) 1px, transparent 1.2px);
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 75%);
+}
+
+.mkt-dots-light {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1.2px);
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 20%, transparent 75%);
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 20%, transparent 75%);
+}
+
+/*
+ * Infinite ticker (FoodLibraryMarquee.tsx): the track holds the list
+ * twice and slides by half its width, so the loop is seamless. The
+ * track is anchored to the inline-start edge and overflows toward the
+ * inline-end, so the slide must run the other way in RTL — a negative
+ * translate there would carry the whole track out of the container
+ * (`--marquee-shift` flips the sign). The second row runs reversed.
+ */
+.mkt-marquee {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+
+.mkt-marquee-track {
+  --marquee-shift: -50%;
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-duration, 48s) linear infinite;
+}
+
+html[dir="rtl"] .mkt-marquee-track {
+  --marquee-shift: 50%;
+}
+
+.mkt-marquee-track[data-reverse] {
+  animation-direction: reverse;
+}
+
+.mkt-marquee:hover .mkt-marquee-track {
+  animation-play-state: paused;
+}
+
+/*
+ * Reveal-gated micro animations: play once the closest [data-inview]
+ * group is on screen — or, inside the "how it works" scene stack, once
+ * that scene becomes the active one.
+ */
+[data-inview] .mkt-grow,
+.mkt-scene[data-active] .mkt-grow {
+  transform: scaleX(1);
+}
+
+.mkt-grow {
+  transform: scaleX(0);
+  transform-origin: var(--grow-origin, left);
+  transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1) var(--grow-delay, 0.2s);
+}
+
+html[dir="rtl"] .mkt-grow {
+  --grow-origin: right;
+}
+
+.mkt-ring {
+  stroke-dasharray: var(--ring-length);
+  stroke-dashoffset: var(--ring-length);
+  transition: stroke-dashoffset 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.3s;
+}
+
+[data-inview] .mkt-ring {
+  stroke-dashoffset: var(--ring-target);
+}
+
+.mkt-draw {
+  stroke-dasharray: var(--draw-length, 600);
+  stroke-dashoffset: var(--draw-length, 600);
+}
+
+[data-inview] .mkt-draw {
+  animation: draw-line 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
+}
+
+.mkt-rise {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.7s ease-out calc(var(--i, 0) * 90ms + 0.15s),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i, 0) * 90ms + 0.15s);
+}
+
+[data-inview] .mkt-rise,
+.mkt-scene[data-active] .mkt-rise {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Toast cycle inside the hero visual: the active state pops in, others are hidden. */
+.mkt-toast {
+  opacity: 0;
+  transform: translateY(10px) scale(0.97);
+  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mkt-toast[data-active] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Scene stack for the "how it works" scrollytelling panel. */
+.mkt-scene {
+  opacity: 0;
+  transform: translateY(18px) scale(0.985);
+  transition: opacity 0.55s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.mkt-scene[data-active] {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* Fine, readable numerals in mockups regardless of locale font. */
+.mkt-nums {
+  font-variant-numeric: tabular-nums;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-float {
+  .animate-float,
+  .animate-aurora-a,
+  .animate-aurora-b,
+  .animate-aurora-c,
+  .animate-float-slow,
+  .animate-float-slower,
+  .animate-marquee,
+  .animate-shimmer,
+  .animate-pulse-ring,
+  .animate-orbit,
+  .animate-scroll-hint,
+  .mkt-marquee-track {
     animation: none;
+  }
+
+  .mkt-word {
+    animation: none;
+    opacity: 1;
+  }
+
+  .mkt-tilt,
+  .mkt-stage[data-inview] .mkt-tilt {
+    transform: none;
+    opacity: 1;
+    transition: none;
+  }
+
+  .mkt-satellite {
+    transform: none;
+  }
+
+  .mkt-grow,
+  [data-inview] .mkt-grow {
+    transform: scaleX(1);
+    transition: none;
+  }
+
+  .mkt-ring,
+  [data-inview] .mkt-ring {
+    stroke-dashoffset: var(--ring-target);
+    transition: none;
+  }
+
+  .mkt-draw,
+  [data-inview] .mkt-draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .mkt-rise,
+  [data-inview] .mkt-rise {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .mkt-scene,
+  .mkt-toast {
+    transition: none;
   }
 }
 
