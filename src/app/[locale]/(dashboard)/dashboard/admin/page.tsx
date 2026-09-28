@@ -7,6 +7,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { StatTile } from "@/components/clients/StatTile";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { FoodTable } from "@/components/foods/FoodTable";
+import { usePendingFoods } from "@/components/admin/PendingFoodsProvider";
 import { approveFood, getAdminOverview, listAdminFoods, rejectFood, type AdminOverview } from "@/lib/admin/api";
 import type { CatalogFood } from "@/lib/foods/api";
 
@@ -19,6 +20,7 @@ export default function AdminOverviewPage() {
   const t = useTranslations("admin");
   const tFoods = useTranslations("foods");
   const { authorizedFetch } = useAuth();
+  const { refresh: refreshPendingBadge } = usePendingFoods();
 
   const [overview, setOverview] = useState<AdminOverview | null>(null);
   const [pending, setPending] = useState<CatalogFood[] | null>(null);
@@ -38,7 +40,10 @@ export default function AdminOverviewPage() {
     setBusyId(food.id);
     const result = await (action === "approve" ? approveFood : rejectFood)(authorizedFetch, food.id);
     setBusyId(null);
-    if (result.ok) load();
+    if (result.ok) {
+      load();
+      refreshPendingBadge();
+    }
   }
 
   const sources = overview ? overview.foods_by_source : null;

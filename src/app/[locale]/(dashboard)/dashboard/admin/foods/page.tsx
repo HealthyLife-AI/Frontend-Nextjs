@@ -9,6 +9,7 @@ import { Dialog } from "@/components/ui/Dialog";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { FoodForm } from "@/components/foods/FoodForm";
 import { FoodTable, Pager } from "@/components/foods/FoodTable";
+import { usePendingFoods } from "@/components/admin/PendingFoodsProvider";
 import { createAdminFood, deleteAdminFood, listAdminFoods, updateAdminFood, type FoodSource, type FoodUsage } from "@/lib/admin/api";
 import type { CatalogFood, FoodInput, FoodPage, FoodStatus } from "@/lib/foods/api";
 
@@ -24,6 +25,8 @@ export default function AdminFoodsPage() {
   const tFoods = useTranslations("foods");
   const locale = useLocale();
   const { authorizedFetch } = useAuth();
+  // Deleting a pending submission changes the review-queue badge.
+  const { refresh: refreshPendingBadge } = usePendingFoods();
 
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<FoodStatus | "">("");
@@ -59,6 +62,7 @@ export default function AdminFoodsPage() {
     if (result.ok) {
       setDeleting(null);
       load();
+      refreshPendingBadge();
     } else {
       setDeleteError(result.status === 409 ? t("deleteInUse") : result.error.message);
     }

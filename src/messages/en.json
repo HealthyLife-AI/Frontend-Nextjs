@@ -17,7 +17,8 @@
     "adminOverview": "Overview",
     "adminFoods": "Manage foods",
     "adminNutritionists": "Nutritionists",
-    "adminMenu": "Admin panel"
+    "adminMenu": "Admin panel",
+    "pendingFoodsBadge": "{count, plural, one {# food awaiting review} other {# foods awaiting review}}"
   },
   "auth": {
     "login": {

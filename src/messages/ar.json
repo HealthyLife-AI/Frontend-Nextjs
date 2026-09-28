@@ -17,7 +17,8 @@
     "adminOverview": "نظرة عامة",
     "adminFoods": "إدارة الأطعمة",
     "adminNutritionists": "أخصائيو التغذية",
-    "adminMenu": "لوحة الإدارة"
+    "adminMenu": "لوحة الإدارة",
+    "pendingFoodsBadge": "{count, plural, one {طعام واحد بانتظار المراجعة} two {طعامان بانتظار المراجعة} few {# أطعمة بانتظار المراجعة} other {# طعامًا بانتظار المراجعة}}"
   },
   "auth": {
     "login": {

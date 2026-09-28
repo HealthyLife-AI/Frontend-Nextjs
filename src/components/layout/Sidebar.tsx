@@ -6,6 +6,7 @@ import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import type { ComponentType } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import type { AuthUser } from "@/lib/auth/types";
+import { usePendingFoods } from "@/components/admin/PendingFoodsProvider";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 
 type NavItem = {
@@ -60,6 +61,8 @@ export function Sidebar({
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth();
+  // Outside PendingFoodsProvider (nutritionists) this is the context default: null.
+  const { count: pendingFoods } = usePendingFoods();
 
   const items = user?.role === "admin" ? ADMIN_NAV_ITEMS : NAV_ITEMS;
 
@@ -138,7 +141,19 @@ export function Sidebar({
                   >
                     <Icon size={18} strokeWidth={1.9} />
                   </span>
-                  <span>{t(labelKey)}</span>
+                  <span className="flex-1">{t(labelKey)}</span>
+                  {/* The review queue lives on the admin overview. */}
+                  {labelKey === "adminOverview" && !!pendingFoods && (
+                    <span
+                      className={`flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums ${
+                        isActive ? "bg-white text-mkt-teal-deep" : "bg-status-attention text-white"
+                      }`}
+                      aria-label={t("pendingFoodsBadge", { count: pendingFoods })}
+                      title={t("pendingFoodsBadge", { count: pendingFoods })}
+                    >
+                      {pendingFoods > 99 ? "99+" : pendingFoods}
+                    </span>
+                  )}
                 </Link>
               );
             })}

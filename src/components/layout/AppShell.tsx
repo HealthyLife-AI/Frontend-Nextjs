@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
+import { PendingFoodsProvider } from "@/components/admin/PendingFoodsProvider";
 
 /**
  * The one shared shell every dashboard role mounts (dashboard-builder
@@ -58,7 +59,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     );
   }
 
-  return (
+  const shell = (
     <div className="relative min-h-screen bg-canvas">
       {/* Faint brand glow in the content area's top corner — the landing page's mint blobs, toned down for a work surface. */}
       <div
@@ -74,4 +75,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </main>
     </div>
   );
+
+  // The pending-foods badge only exists for admins; nutritionists never
+  // call the admin API (it would 403).
+  return isAdmin ? <PendingFoodsProvider>{shell}</PendingFoodsProvider> : shell;
 }
