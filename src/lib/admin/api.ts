@@ -61,11 +61,19 @@ export function createAdminFood(fetcher: Fetcher, payload: FoodInput) {
   }).then((res) => parseJson<CatalogFood>(res));
 }
 
-export function updateAdminFood(fetcher: Fetcher, id: number, payload: FoodInput) {
+/** How many meal plans and client logs use a food (sent with a 409 `food_in_use_confirm` / `food_in_use`). */
+export type FoodUsage = { meal_plans: number; meal_logs: number };
+
+/**
+ * The first save of a food that plans or logs already use comes back 409
+ * `food_in_use_confirm` with its usage; resend with `confirmInUse` once
+ * the admin has agreed.
+ */
+export function updateAdminFood(fetcher: Fetcher, id: number, payload: FoodInput, confirmInUse = false) {
   return fetcher(`/admin/foods/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(confirmInUse ? { ...payload, confirm_in_use: true } : payload),
   }).then((res) => parseJson<CatalogFood>(res));
 }
 

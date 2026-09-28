@@ -705,7 +705,12 @@
     "colJoined": "Joined",
     "nutritionistsEmpty": "No nutritionists registered yet.",
     "searchNutritionists": "Search by name or email…",
-    "loadFailed": "Couldn't load data. Please try again."
+    "loadFailed": "Couldn't load data. Please try again.",
+    "deleteBodyUsda": "\"{name}\" will be hidden from search, new plans and new logs, and won't come back when the USDA catalog is reseeded. It stays listed here as \"Rejected\".",
+    "inUseTitle": "This food is in use",
+    "inUseBody": "\"{name}\" is used in {plans, plural, one {# meal plan} other {# meal plans}} and {logs, plural, one {# client meal log} other {# client meal logs}}. Saving changes the calories and macros computed for all of them. Continue?",
+    "inUseBack": "Back to editing",
+    "inUseConfirm": "Yes, save changes"
   },
   "clientsDelete": {
     "button": "Delete client",

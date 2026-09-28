@@ -9,13 +9,15 @@ import { Dialog } from "@/components/ui/Dialog";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { FoodForm } from "@/components/foods/FoodForm";
 import { FoodTable, Pager } from "@/components/foods/FoodTable";
-import { createAdminFood, deleteAdminFood, listAdminFoods, updateAdminFood, type FoodSource } from "@/lib/admin/api";
-import type { CatalogFood, FoodPage, FoodStatus } from "@/lib/foods/api";
+import { createAdminFood, deleteAdminFood, listAdminFoods, updateAdminFood, type FoodSource, type FoodUsage } from "@/lib/admin/api";
+import type { CatalogFood, FoodInput, FoodPage, FoodStatus } from "@/lib/foods/api";
 
 /**
  * Admin food catalog manager: filter by status/source, search, add
  * (approved immediately), edit any food, delete foods nothing uses yet
- * (the API refuses one referenced by a plan or a client's log).
+ * (the API refuses one referenced by a plan or a client's log). Editing a
+ * food that plans or logs use asks for confirmation first, with counts.
+ * Deleting a USDA food hides it (so a reseed can't bring it back).
  */
 export default function AdminFoodsPage() {
   const t = useTranslations("admin");
@@ -32,6 +34,9 @@ export default function AdminFoodsPage() {
   const [deleting, setDeleting] = useState<CatalogFood | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deleteBusy, setDeleteBusy] = useState(false);
+  const [confirmEdit, setConfirmEdit] = useState<{ food: CatalogFood; payload: FoodInput; usage: FoodUsage } | null>(null);
+  const [confirmBusy, setConfirmBusy] = useState(false);
+  const [confirmError, setConfirmError] = useState<string | null>(null);
 
   const load = useCallback(() => {
     return listAdminFoods(authorizedFetch, { q: query.trim(), status, source, page }).then((r) => {
@@ -56,6 +61,19 @@ export default function AdminFoodsPage() {
       load();
     } else {
       setDeleteError(result.status === 409 ? t("deleteInUse") : result.error.message);
+    }
+  }
+
+  async function saveConfirmedEdit() {
+    if (!confirmEdit) return;
+    setConfirmBusy(true);
+    const result = await updateAdminFood(authorizedFetch, confirmEdit.food.id, confirmEdit.payload, true);
+    setConfirmBusy(false);
+    if (result.ok) {
+      setConfirmEdit(null);
+      load();
+    } else {
+      setConfirmError(result.error.message);
     }
   }
 
@@ -179,7 +197,16 @@ export default function AdminFoodsPage() {
                 editing === "new"
                   ? await createAdminFood(authorizedFetch, payload)
                   : await updateAdminFood(authorizedFetch, editing.id, payload);
-              if (!result.ok) return { ok: false, error: result.error };
+              if (!result.ok) {
+                const body = result.error as { code?: string; usage?: FoodUsage };
+                if (editing !== "new" && result.status === 409 && body.code === "food_in_use_confirm" && body.usage) {
+                  setConfirmError(null);
+                  setConfirmEdit({ food: editing, payload, usage: body.usage });
+                  setEditing(null);
+                  return { ok: true };
+                }
+                return { ok: false, error: result.error };
+              }
               setEditing(null);
               load();
               return { ok: true };
@@ -191,7 +218,9 @@ export default function AdminFoodsPage() {
       <Dialog open={deleting !== null} onClose={() => setDeleting(null)} title={t("deleteTitle")} busy={deleteBusy}>
         {deleting && (
           <div className="flex flex-col gap-4">
-            <p className="text-sm leading-relaxed text-ink-muted">{t("deleteBody", { name: name(deleting) })}</p>
+            <p className="text-sm leading-relaxed text-ink-muted">
+              {t(deleting.source === "usda" ? "deleteBodyUsda" : "deleteBody", { name: name(deleting) })}
+            </p>
             {deleteError && (
               <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
                 {deleteError}
@@ -215,6 +244,45 @@ export default function AdminFoodsPage() {
         )}
       </Dialog>
 
+      <Dialog
+        open={confirmEdit !== null}
+        onClose={() => setConfirmEdit(null)}
+        title={t("inUseTitle")}
+        busy={confirmBusy}
+      >
+        {confirmEdit && (
+          <div className="flex flex-col gap-4">
+            <p className="text-sm leading-relaxed text-ink-muted">
+              {t("inUseBody", {
+                name: name(confirmEdit.food),
+                plans: confirmEdit.usage.meal_plans,
+                logs: confirmEdit.usage.meal_logs,
+              })}
+            </p>
+            {confirmError && (
+              <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
+                {confirmError}
+              </p>
+            )}
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="ghost"
+                disabled={confirmBusy}
+                onClick={() => {
+                  // Back to the form with the admin's unsaved changes kept.
+                  setEditing({ ...confirmEdit.food, ...confirmEdit.payload } as CatalogFood);
+                  setConfirmEdit(null);
+                }}
+              >
+                {t("inUseBack")}
+              </Button>
+              <Button onClick={saveConfirmedEdit} disabled={confirmBusy}>
+                {t("inUseConfirm")}
+              </Button>
+            </div>
+          </div>
+        )}
+      </Dialog>
     </div>
   );
 }

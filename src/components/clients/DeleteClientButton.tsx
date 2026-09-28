@@ -25,7 +25,10 @@ export function DeleteClientButton({ client }: { client: Client }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const matches = typed.trim() === client.name.trim();
+  // Trimmed and with repeated spaces collapsed on both sides, so a
+  // doubled space (typed or stored) doesn't block a correct name.
+  const squash = (s: string) => s.trim().replace(/\s+/g, " ");
+  const matches = squash(typed) === squash(client.name);
 
   async function handleDelete() {
     setBusy(true);
