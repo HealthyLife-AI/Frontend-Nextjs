@@ -13,9 +13,10 @@ export type { ApiError } from "@/lib/api";
 
 export function listClients(
   fetcher: Fetcher,
-  params: { status?: string; adherence?: string; search?: string; page?: number }
+  params: { status?: string; adherence?: string; search?: string; page?: number; archived?: boolean }
 ) {
   const query = new URLSearchParams();
+  if (params.archived) query.set("archived", "1");
   if (params.status) query.set("status", params.status);
   if (params.adherence) query.set("adherence", params.adherence);
   if (params.search) query.set("search", params.search);
@@ -48,6 +49,21 @@ export function getClient(fetcher: Fetcher, id: number | string) {
 /** Permanently removes the client and everything recorded about them (204). */
 export function deleteClient(fetcher: Fetcher, id: number | string) {
   return fetcher(`/clients/${id}`, { method: "DELETE" }).then((res) => parseJson<null>(res));
+}
+
+/** End follow-up: hidden from the roster and jobs, records kept read-only. */
+export function archiveClient(fetcher: Fetcher, id: number | string) {
+  return fetcher(`/clients/${id}/archive`, { method: "POST" }).then((res) => parseJson<{ client: Client }>(res));
+}
+
+/**
+ * Resume follow-up. A patient who never activated gets a new invite
+ * (their old link was invalidated on archive): `invite_token` is then set.
+ */
+export function resumeClient(fetcher: Fetcher, id: number | string) {
+  return fetcher(`/clients/${id}/resume`, { method: "POST" }).then((res) =>
+    parseJson<{ client: Client; invite_token: string | null; invite_expires_at: string | null }>(res)
+  );
 }
 
 export function getHealthProfile(fetcher: Fetcher, subscriberId: number | string) {

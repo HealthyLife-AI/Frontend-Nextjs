@@ -25,6 +25,8 @@ export type Client = {
   phone: string | null;
   goal: ClientGoal;
   status: ClientStatus;
+  /** Set while follow-up is ended ("إنهاء المتابعة"); records stay, read-only. */
+  archived_at: string | null;
   adherence_status: AdherenceStatus;
   last_logged_at: string | null;
   created_at: string;
@@ -49,6 +51,8 @@ export type DashboardOverview = {
   declining: number;
   stopped_logging: number;
   not_logged_today: number;
+  /** Patients whose follow-up ended — left out of every count above. */
+  archived: number;
 };
 
 export type ActivityLevel = "sedentary" | "light" | "moderate" | "active" | "very_active";

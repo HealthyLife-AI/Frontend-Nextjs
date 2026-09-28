@@ -7,6 +7,7 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { PlanDesigner } from "@/components/mealPlans/PlanDesigner";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { FollowUpGate } from "@/components/clients/FollowUpControls";
 
 export default function PlanDesignerPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -28,7 +29,9 @@ export default function PlanDesignerPage({ params }: { params: Promise<{ id: str
 
       <PageHeader title={t("title")} subtitle={t("subtitle")} />
 
-      <PlanDesigner subscriberId={id} planId={planId} />
+      <FollowUpGate subscriberId={id}>
+        <PlanDesigner subscriberId={id} planId={planId} />
+      </FollowUpGate>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { ClientStatusBadge } from "@/components/clients/ClientStatusBadge";
 import { AdherenceBadge } from "@/components/clients/AdherenceBadge";
+import { FollowUpEndedBadge } from "@/components/clients/FollowUpControls";
 import { DashboardStatTiles } from "@/components/clients/DashboardStatTiles";
 import { getDashboardOverview, listClients } from "@/lib/clients/api";
 import type { Client, DashboardOverview } from "@/lib/clients/types";
@@ -22,12 +23,14 @@ import { PageHeader } from "@/components/ui/PageHeader";
  * leaves `clients` null.
  */
 const STATUS_FILTERS = [
-  { labelKey: "filterAll", status: undefined, adherence: undefined },
-  { labelKey: "filterActive", status: "active", adherence: undefined },
-  { labelKey: "filterPending", status: "pending", adherence: undefined },
-  { labelKey: "filterStable", status: undefined, adherence: "stable" },
-  { labelKey: "filterDeclining", status: undefined, adherence: "declining" },
-  { labelKey: "filterStoppedLogging", status: undefined, adherence: "stopped_logging" },
+  { labelKey: "filterAll", status: undefined, adherence: undefined, archived: false },
+  { labelKey: "filterActive", status: "active", adherence: undefined, archived: false },
+  { labelKey: "filterPending", status: "pending", adherence: undefined, archived: false },
+  { labelKey: "filterStable", status: undefined, adherence: "stable", archived: false },
+  { labelKey: "filterDeclining", status: undefined, adherence: "declining", archived: false },
+  { labelKey: "filterStoppedLogging", status: undefined, adherence: "stopped_logging", archived: false },
+  // Patients whose follow-up ended: a separate list, never mixed into the roster.
+  { labelKey: "filterArchived", status: undefined, adherence: undefined, archived: true },
 ] as const;
 
 /**
@@ -52,6 +55,7 @@ export default function PatientsPage() {
   const status = searchParams.get("status") ?? undefined;
   const adherence = searchParams.get("adherence") ?? undefined;
   const search = searchParams.get("search") ?? "";
+  const archived = searchParams.get("archived") === "1";
   const page = Number(searchParams.get("page") ?? "1");
 
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
@@ -74,7 +78,7 @@ export default function PatientsPage() {
     (async () => {
       const [overviewResult, clientsResult] = await Promise.all([
         getDashboardOverview(authorizedFetch),
-        listClients(authorizedFetch, { status, adherence, search, page }),
+        listClients(authorizedFetch, { status, adherence, search, page, archived }),
       ]);
 
       if (cancelled) return;
@@ -91,10 +95,11 @@ export default function PatientsPage() {
     return () => {
       cancelled = true;
     };
-  }, [authorizedFetch, status, adherence, search, page]);
+  }, [authorizedFetch, status, adherence, search, page, archived]);
 
-  function navigate(next: { status?: string; adherence?: string; search?: string; page?: number }) {
+  function navigate(next: { status?: string; adherence?: string; search?: string; page?: number; archived?: boolean }) {
     const query: Record<string, string> = {};
+    if (next.archived) query.archived = "1";
     if (next.status) query.status = next.status;
     if (next.adherence) query.adherence = next.adherence;
     if (next.search) query.search = next.search;
@@ -104,7 +109,7 @@ export default function PatientsPage() {
   }
 
   function isFilterActive(filter: (typeof STATUS_FILTERS)[number]) {
-    return filter.status === status && filter.adherence === adherence;
+    return filter.status === status && filter.adherence === adherence && filter.archived === archived;
   }
 
   return (
@@ -138,7 +143,7 @@ export default function PatientsPage() {
             <button
               key={filter.labelKey}
               type="button"
-              onClick={() => navigate({ status: filter.status, adherence: filter.adherence })}
+              onClick={() => navigate({ status: filter.status, adherence: filter.adherence, archived: filter.archived })}
               className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
                 isFilterActive(filter)
                   ? "bg-gradient-to-br from-primary to-mkt-teal-deep text-white shadow-brand"
@@ -146,6 +151,7 @@ export default function PatientsPage() {
               }`}
             >
               {t(filter.labelKey)}
+              {filter.archived && !!overview?.archived && <span className="ms-1.5 tabular-nums opacity-80">({overview.archived})</span>}
             </button>
           ))}
         </div>
@@ -154,7 +160,7 @@ export default function PatientsPage() {
           onSubmit={(e) => {
             e.preventDefault();
             const value = new FormData(e.currentTarget).get("search");
-            navigate({ status, adherence, search: typeof value === "string" ? value : "" });
+            navigate({ status, adherence, archived, search: typeof value === "string" ? value : "" });
           }}
           className="relative flex items-center"
         >
@@ -199,7 +205,7 @@ export default function PatientsPage() {
                         <Users size={22} strokeWidth={1.75} />
                       </div>
                       <p className="text-sm text-ink-muted">
-                        {search || status || adherence ? t("noResults") : t("empty")}
+                        {archived ? t("emptyArchived") : search || status || adherence ? t("noResults") : t("empty")}
                       </p>
                     </div>
                   </td>
@@ -227,7 +233,7 @@ export default function PatientsPage() {
               <button
                 type="button"
                 disabled={meta.current_page <= 1}
-                onClick={() => navigate({ status, adherence, search, page: meta.current_page - 1 })}
+                onClick={() => navigate({ status, adherence, archived, search, page: meta.current_page - 1 })}
                 className="rounded-field px-3 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
               >
                 {t("previousPage")}
@@ -235,7 +241,7 @@ export default function PatientsPage() {
               <button
                 type="button"
                 disabled={meta.current_page >= meta.last_page}
-                onClick={() => navigate({ status, adherence, search, page: meta.current_page + 1 })}
+                onClick={() => navigate({ status, adherence, archived, search, page: meta.current_page + 1 })}
                 className="rounded-field px-3 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
               >
                 {t("nextPage")}
@@ -267,7 +273,10 @@ function ClientRow({ client }: { client: Client }) {
       </td>
       <td className="px-5 py-3.5 text-ink-muted">{tGoals(client.goal)}</td>
       <td className="px-5 py-3.5">
-        <ClientStatusBadge status={client.status} />
+        <div className="flex flex-wrap gap-1.5">
+          <ClientStatusBadge status={client.status} />
+          {client.archived_at && <FollowUpEndedBadge />}
+        </div>
       </td>
       <td className="px-5 py-3.5">
         <AdherenceBadge status={client.adherence_status} />

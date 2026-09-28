@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { HealthProfileForm } from "@/components/clients/HealthProfileForm";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { FollowUpGate } from "@/components/clients/FollowUpControls";
 
 export default function HealthProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -25,7 +26,9 @@ export default function HealthProfilePage({ params }: { params: Promise<{ id: st
       <PageHeader title={t("title")} subtitle={t("subtitle")} />
 
       <div className="rounded-panel border border-border/70 bg-card p-6 shadow-panel">
-        <HealthProfileForm subscriberId={id} />
+        <FollowUpGate subscriberId={id}>
+          <HealthProfileForm subscriberId={id} />
+        </FollowUpGate>
       </div>
     </div>
   );

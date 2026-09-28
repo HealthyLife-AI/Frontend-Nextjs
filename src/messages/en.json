@@ -106,7 +106,9 @@
       "noResults": "No clients match this filter or search.",
       "showingRange": "Showing {from}–{to} of {total}",
       "previousPage": "Previous",
-      "nextPage": "Next"
+      "nextPage": "Next",
+      "filterArchived": "Follow-up ended",
+      "emptyArchived": "No patients whose follow-up ended."
     },
     "stats": {
       "total": "Total clients",
@@ -721,5 +723,24 @@
     "confirm": "Delete permanently",
     "cancel": "Cancel",
     "failed": "Couldn't delete the client. Please try again."
+  },
+  "followUp": {
+    "end": "End follow-up",
+    "resume": "Resume follow-up",
+    "endTitle": "End follow-up with {name}",
+    "endBody": "All of {name}'s records are kept and stay viewable, but:",
+    "endPoints": "They leave the active patient list (find them under \"Follow-up ended\")|No daily alerts, evening reminders or weekly summaries|They can't sign in to the app or log meals|No new plans, measurements or profile edits until you resume",
+    "endConfirm": "Yes, end follow-up",
+    "cancel": "Cancel",
+    "failed": "That didn't work. Please try again.",
+    "badge": "Follow-up ended",
+    "bannerTitle": "Follow-up ended on {date}",
+    "bannerBody": "Records are read-only. No alerts, reminders or summaries, and the patient can't sign in to the app.",
+    "resumedInviteTitle": "New activation link",
+    "resumedInviteBody": "{name} never activated their account, and their old link was cancelled when follow-up ended. Send them this new link:",
+    "copy": "Copy link",
+    "copied": "Copied",
+    "done": "Done",
+    "readOnly": "Follow-up has ended — this page is read-only. Resume follow-up from the patient page to make changes."
   }
 }
