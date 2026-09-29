@@ -47,6 +47,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   const t = useTranslations("clients.detail");
   const tProgress = useTranslations("progress");
   const tGoals = useTranslations("goals");
+  const tCommon = useTranslations("common");
   const { authorizedFetch } = useAuth();
 
   const [client, setClient] = useState<Client | null>(null);
@@ -70,14 +71,20 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
     // Fetched alongside the client rather than after it: the two are
     // independent requests and chaining them would serialise two round
     // trips for no reason. A progress failure leaves the header usable.
-    getProgress(authorizedFetch, id).then((result) => {
-      if (cancelled) return;
-      if (result.ok) {
-        setProgress(result.data);
-      } else {
-        setProgressFailed(true);
-      }
-    });
+    getProgress(authorizedFetch, id)
+      .then((result) => {
+        if (cancelled) return;
+        if (result.ok) {
+          setProgress(result.data);
+        } else {
+          setProgressFailed(true);
+        }
+      })
+      // A dropped connection rejects instead of returning a failed result;
+      // without this the header badge would wait on a response that never comes.
+      .catch(() => {
+        if (!cancelled) setProgressFailed(true);
+      });
 
     // Same reasoning: independent of both calls above. No summary yet is
     // a real, expected state (a brand-new client, or before Monday's
@@ -180,8 +187,23 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           </div>
           <div className="flex flex-col gap-1.5 p-5">
             <dt className="text-xs font-semibold text-ink-muted">{t("adherenceLabel")}</dt>
+            {/*
+              The same live classification as the adherence box below
+              (progress.adherence.status), not the stored column: that one is
+              only refreshed when the patient logs and by the 06:00 job, so it
+              can disagree with the box for the rest of the day. The stored
+              value is the fallback only if the progress call failed; a
+              placeholder holds the place while it loads so a stale value is
+              never shown first.
+            */}
             <dd>
-              <AdherenceBadge status={client.adherence_status} />
+              {progress ? (
+                <AdherenceBadge status={progress.adherence.status} />
+              ) : progressFailed ? (
+                <AdherenceBadge status={client.adherence_status} />
+              ) : (
+                <span className="inline-block h-6 w-24 animate-pulse rounded-full bg-ink-muted/10" role="status" aria-label={tCommon("loading")} />
+              )}
             </dd>
           </div>
         </dl>
