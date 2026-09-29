@@ -7,6 +7,8 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { PendingFoodsProvider } from "@/components/admin/PendingFoodsProvider";
+import { NutritionistProfileProvider } from "@/components/nutritionists/NutritionistProfileProvider";
+import { ProfileCompletionBanner } from "@/components/nutritionists/ProfileCompletionBanner";
 
 /**
  * The one shared shell every dashboard role mounts (dashboard-builder
@@ -70,6 +72,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <Header onMenuClick={() => setMobileNavOpen(true)} />
       <main className="relative min-h-screen pt-[72px] lg:ps-72">
         <div key={pathname} className="animate-page-in mx-auto flex w-full max-w-7xl flex-col gap-7 p-4 sm:p-8">
+          {!isAdmin && <ProfileCompletionBanner />}
           {children}
         </div>
       </main>
@@ -77,6 +80,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 
   // The pending-foods badge only exists for admins; nutritionists never
-  // call the admin API (it would 403).
-  return isAdmin ? <PendingFoodsProvider>{shell}</PendingFoodsProvider> : shell;
+  // call the admin API (it would 403). The reverse holds for the profile:
+  // it is a nutritionist endpoint, so only they get the provider.
+  return isAdmin ? (
+    <PendingFoodsProvider>{shell}</PendingFoodsProvider>
+  ) : (
+    <NutritionistProfileProvider>{shell}</NutritionistProfileProvider>
+  );
 }

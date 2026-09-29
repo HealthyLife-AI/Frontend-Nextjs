@@ -5,10 +5,12 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
+import { Select } from "@/components/ui/Select";
+import { useNutritionistProfile } from "@/components/nutritionists/NutritionistProfileProvider";
 import { Badge } from "@/components/ui/Badge";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 import { getNutritionistProfile, saveNutritionistProfile } from "@/lib/nutritionists/api";
-import type { NutritionistProfile } from "@/lib/nutritionists/types";
+import { WHATSAPP_PATTERN, type NutritionistGender, type NutritionistProfile } from "@/lib/nutritionists/types";
 import { PageHeader } from "@/components/ui/PageHeader";
 
 /**
@@ -16,8 +18,9 @@ import { PageHeader } from "@/components/ui/PageHeader";
  * "Settings" nav item, which has linked here since Sprint 1 with no page
  * behind it.
  *
- * Scope is exactly what the API exposes: three editable fields
- * (specialty, clinic name, bio), the account identity read-only from the
+ * Scope is exactly what the API exposes: the editable fields (specialty,
+ * clinic name, gender, WhatsApp number, bio — the gender and WhatsApp
+ * number are what the patient app shows as "my nutritionist"), the account identity read-only from the
  * JWT, and the plan tier read-only because BR-12 keeps it that way — a
  * nutritionist must not be able to promote themselves by editing a form.
  *
@@ -29,10 +32,14 @@ import { PageHeader } from "@/components/ui/PageHeader";
 export default function SettingsPage() {
   const t = useTranslations("settings");
   const { user, authorizedFetch } = useAuth();
+  const { setProfile: shareProfile } = useNutritionistProfile();
 
   const [profile, setProfile] = useState<NutritionistProfile | null>(null);
   const [specialty, setSpecialty] = useState("");
   const [clinicName, setClinicName] = useState("");
+  const [gender, setGender] = useState<NutritionistGender | "">("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [whatsappError, setWhatsappError] = useState<string | null>(null);
   const [bio, setBio] = useState("");
 
   const [loadFailed, setLoadFailed] = useState(false);
@@ -54,6 +61,8 @@ export default function SettingsPage() {
       setProfile(result.data);
       setSpecialty(result.data.specialty ?? "");
       setClinicName(result.data.clinic_name ?? "");
+      setGender(result.data.gender ?? "");
+      setWhatsapp(result.data.whatsapp_number ?? "");
       setBio(result.data.bio ?? "");
     });
 
@@ -64,26 +73,42 @@ export default function SettingsPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSaving(true);
     setError(null);
     setNotice(null);
+
+    // Same rule as the API (E.164), checked first so a typo doesn't cost a
+    // round trip. Spaces and dashes people naturally type are stripped
+    // rather than rejected; the leading + is not guessed at.
+    const whatsappValue = whatsapp.replace(/[\s-]/g, "");
+    if (whatsappValue && !WHATSAPP_PATTERN.test(whatsappValue)) {
+      setWhatsappError(t("whatsappInvalid"));
+      return;
+    }
+    setWhatsappError(null);
+    setSaving(true);
 
     // Empty string means "cleared", which the API models as null — sending
     // "" would store an empty string and read back as a set-but-blank field.
     const result = await saveNutritionistProfile(authorizedFetch, {
       specialty: specialty.trim() || null,
       clinic_name: clinicName.trim() || null,
+      gender: gender || null,
+      whatsapp_number: whatsappValue || null,
       bio: bio.trim() || null,
     });
 
     setSaving(false);
 
     if (!result.ok) {
-      setError(result.error.message || t("saveFailed"));
+      const fieldError = result.error.errors?.whatsapp_number?.[0];
+      if (fieldError) setWhatsappError(t("whatsappInvalid"));
+      else setError(result.error.message || t("saveFailed"));
       return;
     }
 
     setProfile(result.data);
+    setWhatsapp(result.data.whatsapp_number ?? "");
+    shareProfile(result.data);
     setNotice(t("saved"));
   }
 
@@ -147,6 +172,28 @@ export default function SettingsPage() {
           value={clinicName}
           onChange={(e) => setClinicName(e.target.value)}
           maxLength={255}
+        />
+
+        <Select label={t("genderLabel")} value={gender} onChange={(e) => setGender(e.target.value as NutritionistGender | "")}>
+          <option value="">{t("genderNone")}</option>
+          <option value="female">{t("genderFemale")}</option>
+          <option value="male">{t("genderMale")}</option>
+        </Select>
+
+        <TextField
+          label={t("whatsappLabel")}
+          type="tel"
+          inputMode="tel"
+          dir="ltr"
+          placeholder="+970599123456"
+          value={whatsapp}
+          onChange={(e) => {
+            setWhatsapp(e.target.value);
+            setWhatsappError(null);
+          }}
+          error={whatsappError ?? undefined}
+          hint={t("whatsappHint")}
+          maxLength={24}
         />
 
         <div className="flex flex-col gap-1.5">
