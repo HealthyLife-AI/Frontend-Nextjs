@@ -1,4 +1,5 @@
-import { Bluetooth, CalendarDays, CheckCircle2, ShoppingCart, TrendingUp, type LucideIcon } from "lucide-react";
+import type { ReactNode } from "react";
+import { BellRing, CalendarDays, CheckCircle2, ShoppingCart, TrendingUp, type LucideIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { PatientAppPhoneMockup } from "./PatientAppPhoneMockup";
 import { Reveal } from "./Reveal";
@@ -46,7 +47,7 @@ export async function PatientAppSection() {
   }
 
   return (
-    <section id="patient-app" className="relative scroll-mt-24 overflow-hidden bg-canvas px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+    <section id="patient-app" className="relative scroll-mt-24 overflow-hidden bg-canvas px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" aria-hidden="true" />
       <div className="mkt-dots pointer-events-none absolute inset-x-0 top-1/4 -z-10 h-[40rem]" aria-hidden="true" />
 
@@ -87,13 +88,59 @@ export async function PatientAppSection() {
           </div>
         </div>
 
-        <Reveal delayMs={300} className="mt-12 flex justify-center">
-          <span className="inline-flex items-center gap-2.5 rounded-full border border-ink/[0.07] bg-white px-5 py-2.5 text-sm font-medium text-ink shadow-card">
-            <Bluetooth size={16} strokeWidth={2} className="text-primary" />
+        <Reveal delayMs={300} className="mt-12 flex flex-col items-center gap-5">
+          <span className="inline-flex items-center gap-2.5 rounded-full border border-ink/[0.07] bg-white px-5 py-2.5 text-center text-sm font-medium text-ink shadow-card">
+            <BellRing size={16} strokeWidth={2} className="shrink-0 text-primary" />
             {t("trustLine")}
           </span>
+
+          {/* The Flutter app isn't published yet, so these are labelled "soon", not linked. */}
+          <div className="flex flex-col items-center gap-3">
+            <span className="text-xs font-semibold text-ink-muted">{t("storesLabel")}</span>
+            <div className="flex flex-wrap justify-center gap-3" dir="ltr">
+              <StoreBadge icon={<AppleMark />} top="Download on the" name={t("appStore")} soon={t("comingSoon")} />
+              <StoreBadge icon={<PlayMark />} top="GET IT ON" name={t("googlePlay")} soon={t("comingSoon")} />
+            </div>
+          </div>
         </Reveal>
       </div>
     </section>
+  );
+}
+
+/** Store badge in the stores' own dark style, with a "soon" tag until the app is published. */
+function StoreBadge({ icon, top, name, soon }: { icon: ReactNode; top: string; name: string; soon: string }) {
+  return (
+    <span className="relative inline-flex h-14 items-center gap-3 rounded-2xl bg-ink px-5 text-white opacity-90 shadow-card" aria-label={`${name} — ${soon}`}>
+      <span className="h-7 w-7 shrink-0" aria-hidden="true">
+        {icon}
+      </span>
+      <span className="flex flex-col text-start leading-tight" aria-hidden="true">
+        <span className="text-[10px] font-medium tracking-wide text-white/70">{top}</span>
+        <span className="text-lg font-semibold">{name}</span>
+      </span>
+      <span className="absolute -top-2 -end-2 rounded-full bg-mkt-mint px-2 py-0.5 text-[10px] font-bold text-mkt-teal-deep shadow-sm" aria-hidden="true">
+        {soon}
+      </span>
+    </span>
+  );
+}
+
+function AppleMark() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="h-full w-full">
+      <path d="M16.37 12.62c-.02-2.2 1.8-3.26 1.88-3.31-1.03-1.5-2.62-1.7-3.19-1.72-1.36-.14-2.65.8-3.34.8-.69 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.19-1.54 2.67-.39 6.62 1.11 8.79.73 1.06 1.6 2.25 2.75 2.2 1.1-.04 1.52-.71 2.85-.71 1.33 0 1.71.71 2.88.69 1.19-.02 1.94-1.08 2.67-2.14.84-1.23 1.19-2.42 1.21-2.48-.03-.01-2.31-.89-2.33-3.53ZM14.18 6.13c.61-.74 1.02-1.76.91-2.78-.88.04-1.94.59-2.57 1.32-.56.65-1.06 1.69-.93 2.69.98.08 1.98-.5 2.59-1.23Z" />
+    </svg>
+  );
+}
+
+function PlayMark() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-full w-full">
+      <path d="M4.2 2.6 13.9 12l-9.7 9.4c-.3-.2-.5-.6-.5-1V3.6c0-.4.2-.8.5-1Z" fill="#34d399" />
+      <path d="m17.2 8.8-3.3 3.2-9.7-9.4c.3-.2.8-.2 1.2 0l11.8 6.2Z" fill="#60a5fa" />
+      <path d="m17.2 15.2-11.8 6.2c-.4.2-.9.2-1.2 0l9.7-9.4 3.3 3.2Z" fill="#f87171" />
+      <path d="m20.4 13.5-3.2 1.7-3.3-3.2 3.3-3.2 3.2 1.7c.9.5.9 2.5 0 3Z" fill="#fbbf24" />
+    </svg>
   );
 }

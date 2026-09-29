@@ -22,7 +22,7 @@ export async function WhyHealthyLifeSection() {
   const t = await getTranslations("home.why");
 
   return (
-    <section id="why" className="relative isolate scroll-mt-24 overflow-hidden bg-canvas px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+    <section id="why" className="relative isolate scroll-mt-24 overflow-hidden bg-canvas px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
       {/* The designer's section backdrop (corner blobs, leaf, stethoscope), restored at the user's request. */}
       <Image src="/home/why/bg.webp" alt="" fill sizes="100vw" className="-z-20 object-cover opacity-90" />
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" aria-hidden="true" />

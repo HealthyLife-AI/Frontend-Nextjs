@@ -12,7 +12,7 @@ export async function HowItWorksSection() {
   const t = await getTranslations("home.howItWorks");
 
   return (
-    <section id="how-it-works" className="relative scroll-mt-24 bg-canvas px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+    <section id="how-it-works" className="relative scroll-mt-24 bg-canvas px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
       <div className="mx-auto max-w-7xl">
         <SectionHeading eyebrow={t("eyebrow")} title={t("title")} subtitle={t("subtitle")} />
         <HowItWorksSteps />

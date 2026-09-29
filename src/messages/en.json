@@ -102,7 +102,7 @@
     },
     "showcase": {
       "headline": "AI does not replace the nutritionist; it makes them more efficient.",
-      "body": "Independent nutritionists spend 40–60% of their time on admin instead of consultation. HealthyLife AI gives that time back.",
+      "body": "Plans, alternatives and follow-up between visits in one place, so your time goes to your clients, not to spreadsheets.",
       "point1Title": "Every client, one place",
       "point1Body": "Client list, integrated health profile, and adherence status per client.",
       "point2Title": "Your data, fully isolated",
@@ -483,7 +483,15 @@
     "library": {
       "eyebrow": "A local meal library, not a translated one",
       "title": "From kabsa to mujaddara — every dish with its real nutrition values",
-      "kcalUnit": "kcal / 100 g"
+      "kcalUnit": "kcal / 100 g",
+      "stat1Value": "7,800+",
+      "stat1Label": "approved foods with USDA values",
+      "stat2Value": "58",
+      "stat2Label": "local Arabic dishes",
+      "stat3Value": "144",
+      "stat3Label": "everyday ingredients named in Arabic",
+      "stat4Value": "06:00",
+      "stat4Label": "daily adherence check for every client"
     },
     "howItWorks": {
       "eyebrow": "A clinical workflow that just flows",
@@ -605,7 +613,7 @@
         "greeting": "Good morning, Sara",
         "streakBadge": "Amazing!",
         "streakDays": "14-day streak",
-        "streakRank": "Better than 92% of subscribers",
+        "streakRank": "Your personal best",
         "waterLabel": "Water intake",
         "waterCurrent": "1.8 L",
         "waterTarget": "/ 2.5 L",
@@ -624,7 +632,11 @@
         "navPlan": "Plan",
         "navToday": "Today"
       },
-      "trustLine": "Integrates with Bluetooth smart scales and health apps (Apple Health & Google Fit)"
+      "trustLine": "Clients activate their account from an invite link you send, and get an evening reminder if they haven't logged",
+      "storesLabel": "Client app coming soon to",
+      "appStore": "App Store",
+      "googlePlay": "Google Play",
+      "comingSoon": "Soon"
     },
     "principles": {
       "eyebrow": "What we hold ourselves to",
@@ -646,11 +658,11 @@
       "title": "Frequently asked questions",
       "subtitle": "Everything you need to know before bringing the platform into your clinic.",
       "q1Question": "Do I have to drop Excel or paper immediately?",
-      "q1Answer": "Not at all. Start gradually with new clients or the cases that need closer follow-up — our team can also help import your existing client data.",
+      "q1Answer": "Not at all. Start gradually with new clients or the cases that need closer follow-up, and move the rest of your clients over whenever you like.",
       "q2Question": "How exactly does the AI work?",
       "q2Answer": "It reads a client's daily meal logs and energy intake, and suggests alternative plan drafts based on their preferences. Most importantly, it watches logging patterns and alerts you the moment someone's adherence drops, so you can step in at the right time.",
       "q3Question": "Does my client need to install a heavy app?",
-      "q3Answer": "No — a client can open and use the lightweight web app straight from a WhatsApp link, with nothing to install, or download the mobile app if they'd like regular daily reminders.",
+      "q3Answer": "The app is light and built for a quick daily check-in. You send your client an activation link over WhatsApp; they open the app, set a password and see their plan straight away, with an evening reminder if they forget to log.",
       "q4Question": "How do I get started, and how does onboarding work?",
       "q4Answer": "It's simple: create your account, and you'll be ready to add your first client the same day. No sales calls, no setup fees.",
       "moreTitle": "Still have a question?",
@@ -663,10 +675,10 @@
       "subtitle": "Create your account, add your first client today, and let HealthyLife AI watch over adherence between visits.",
       "primary": "Start free",
       "secondary": "Book a free demo",
-      "note": "Free to start · No credit card · Cancel anytime"
+      "note": "Free to start · Arabic and English · Each nutritionist's data kept separate"
     },
     "footer": {
-      "tagline": "The Arabic-first platform for clinical nutritionists to manage clients, medication, and nutritional adherence with precision, powered by AI.",
+      "tagline": "The Arabic-first platform for clinical nutritionists to manage clients and follow their nutritional adherence between visits, powered by AI.",
       "wordmark": "HealthyLife",
       "quickLinks": "Product",
       "supportLinks": "Support & information",

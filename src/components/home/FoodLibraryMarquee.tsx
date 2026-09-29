@@ -48,6 +48,18 @@ export async function FoodLibraryMarquee() {
           </div>
         ))}
       </div>
+
+      {/* Real figures from the shipped catalog and the daily job, not marketing estimates. */}
+      <Reveal delayMs={120} className="mx-4 mt-10 grid max-w-5xl grid-cols-2 gap-px overflow-hidden rounded-3xl border border-ink/[0.07] bg-ink/[0.07] sm:mx-6 sm:grid-cols-4 lg:mx-auto">
+        {(["1", "2", "3", "4"] as const).map((n) => (
+          <div key={n} className="flex flex-col items-center gap-1 bg-white px-4 py-5 text-center">
+            <span className="mkt-nums text-2xl font-extrabold text-mkt-teal-deep sm:text-3xl" dir="ltr">
+              {t(`stat${n}Value`)}
+            </span>
+            <span className="text-xs font-medium text-ink-muted sm:text-sm">{t(`stat${n}Label`)}</span>
+          </div>
+        ))}
+      </Reveal>
     </section>
   );
 }

@@ -26,7 +26,7 @@ export async function PrinciplesSection() {
   const t = await getTranslations("home.principles");
 
   return (
-    <section className="relative isolate overflow-hidden bg-gradient-to-b from-mkt-dark-bg to-mkt-night px-4 py-24 text-white sm:px-6 lg:px-8 lg:py-32">
+    <section className="relative isolate overflow-hidden bg-gradient-to-b from-mkt-dark-bg to-mkt-night px-4 py-20 text-white sm:px-6 lg:px-8 lg:py-24">
       <div className="mkt-dots-light pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />
       <div className="pointer-events-none absolute -top-40 start-[-10%] -z-10 h-[34rem] w-[34rem] rounded-full bg-mkt-glow/15 blur-3xl animate-aurora-a" aria-hidden="true" />
       <div className="pointer-events-none absolute -bottom-40 end-[-10%] -z-10 h-[30rem] w-[30rem] rounded-full bg-primary/30 blur-3xl animate-aurora-b" aria-hidden="true" />

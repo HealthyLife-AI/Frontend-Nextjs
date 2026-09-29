@@ -25,7 +25,7 @@ export function FaqSection() {
   const email = tFooter("email");
 
   return (
-    <section id="faq" className="scroll-mt-24 bg-white px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+    <section id="faq" className="scroll-mt-24 bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
       <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[26rem_1fr] lg:items-start lg:gap-20">
         <Reveal className="text-start lg:sticky lg:top-28">
           <span className="inline-flex items-center gap-2 rounded-full border border-mkt-mint-border bg-mkt-mint-bg px-4 py-1.5 text-sm font-semibold text-mkt-emerald-deep">

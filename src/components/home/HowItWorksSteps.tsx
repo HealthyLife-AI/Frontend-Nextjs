@@ -70,7 +70,9 @@ export function HowItWorksSteps() {
       <div className="order-first lg:order-last">
         <div className="lg:sticky lg:top-28">
           <div className="relative">
-            <div className="pointer-events-none absolute -inset-6 -z-10 rounded-[2.5rem] bg-gradient-to-br from-mkt-glow/25 via-transparent to-mkt-sky/40 blur-2xl" aria-hidden="true" />
+            {/* -inset-3 on mobile, not -inset-6: at the 16px page gutter the wider halo bled past
+                the viewport edge and forced a horizontal scrollbar on the whole page. */}
+            <div className="pointer-events-none absolute -inset-3 -z-10 rounded-[2.5rem] bg-gradient-to-br from-mkt-glow/25 via-transparent to-mkt-sky/40 blur-2xl sm:-inset-6" aria-hidden="true" />
             <div className="relative min-h-[25rem] overflow-hidden rounded-3xl border border-white/80 bg-white/80 p-3 shadow-float ring-1 ring-ink/[0.06] backdrop-blur-xl sm:aspect-[4/3.1] sm:min-h-0 sm:p-4">
               <div className="mkt-dots absolute inset-0 -z-0 opacity-70" aria-hidden="true" />
               <InviteScene active={active === 0} />
