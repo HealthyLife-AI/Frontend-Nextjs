@@ -8,6 +8,7 @@ import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { PendingFoodsProvider } from "@/components/admin/PendingFoodsProvider";
 import { NutritionistProfileProvider } from "@/components/nutritionists/NutritionistProfileProvider";
+import { DeletionNotices } from "@/components/notices/DeletionNotices";
 import { ProfileCompletionBanner } from "@/components/nutritionists/ProfileCompletionBanner";
 
 /**
@@ -73,6 +74,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main className="relative min-h-screen pt-[72px] lg:ps-72">
         <div key={pathname} className="animate-page-in mx-auto flex w-full max-w-7xl flex-col gap-7 p-4 sm:p-8">
           {!isAdmin && <ProfileCompletionBanner />}
+          {!isAdmin && <DeletionNotices />}
           {children}
         </div>
       </main>

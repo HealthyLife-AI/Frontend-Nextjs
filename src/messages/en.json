@@ -706,6 +706,7 @@
       "contactTitle": "Contact us",
       "privacyPolicy": "Privacy & data security policy",
       "terms": "Terms & conditions",
+      "accountDeletion": "Delete your account",
       "supportTechnical": "Technical support",
       "email": "info@healthylife.ai",
       "location": "Palestine",
@@ -919,6 +920,23 @@
       "backHome": "Back to the home page",
       "copyright": "© {year} HealthyLife AI"
     },
+    "accountDeletion": {
+      "title": "Delete your account",
+      "intro": "You can delete your HealthyLife account, and all the data in it, yourself from the app.",
+      "stepsTitle": "How to delete it",
+      "step1": "Open the HealthyLife app and sign in.",
+      "step2": "Go to {path}.",
+      "path": "My profile → Delete account",
+      "step3": "Enter your password to confirm.",
+      "deletedTitle": "What is deleted",
+      "deletedBody": "Your account and everything recorded about you: your health profile, measurements, meal plans, meal logs, alerts, weekly summaries and your consent record. It cannot be undone.",
+      "nutritionistTitle": "What your nutritionist sees",
+      "nutritionistBody": "Your nutritionist is told that an account was deleted, with only your patient code and the date. No name, phone number or health information is kept.",
+      "endedTitle": "If your follow-up has ended",
+      "endedBody": "When your nutritionist has ended your follow-up, the app no longer opens, so you can't delete your account from inside it. Ask your nutritionist to delete it, or contact support.",
+      "supportTitle": "Contact support",
+      "supportBody": "If you can't use the app, write to us and we will help:"
+    },
     "privacy": {
       "title": "Privacy policy",
       "intro": "How HealthyLife AI handles the information of nutritionists and their patients.",
@@ -928,5 +946,12 @@
       "s3Title": "Who can see it",
       "s4Title": "Your choices and how to reach us"
     }
+  },
+  "notices": {
+    "region": "Notices",
+    "message": "Patient <c>{code}</c> deleted their account on {date}.",
+    "detail": "Their records are gone; only the code and date are kept for this notice.",
+    "dismiss": "Dismiss",
+    "dismissFailed": "Could not dismiss this notice. Please try again."
   }
 }

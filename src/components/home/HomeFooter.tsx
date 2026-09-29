@@ -51,6 +51,7 @@ export async function HomeFooter() {
             <div className="flex flex-col gap-2.5">
               <Link href="/privacy" className={link}>{t("privacyPolicy")}</Link>
               <span className="text-sm text-ink-muted">{t("terms")}</span>
+              <Link href="/account-deletion" className={link}>{t("accountDeletion")}</Link>
               <a href={`mailto:${email}`} className={link}>{t("supportTechnical")}</a>
             </div>
           </div>
