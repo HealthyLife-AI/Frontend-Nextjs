@@ -76,7 +76,7 @@ export function BodyCompositionCards({
           <Badge tone={latest.source === "clinic-analyser" ? "primary" : "neutral"}>
             {t(latest.source === "clinic-analyser" ? "sourceClinic" : "sourceSelf")}
           </Badge>
-          <EntryMarkers late={latest.is_late} />
+          <EntryMarkers late={latest.is_late} editedAt={latest.edited_at} />
         </div>
       </div>
 

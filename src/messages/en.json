@@ -282,7 +282,9 @@
       "late": "Entered late",
       "lateHint": "The patient entered this more than 7 days after its date. It counts like any other entry.",
       "legend": "Marked reading",
-      "listLabel": "Marked readings"
+      "listLabel": "Marked readings",
+      "edited": "Edited",
+      "editedHint": "The patient changed this entry after saving it (last on {date})."
     },
     "title": "Progress",
     "loadFailed": "Could not load this client's progress.",

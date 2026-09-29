@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { LineChart } from "lucide-react";
 import type { WeightTrendPoint } from "@/lib/progress/types";
-import { EntryMarkers } from "./EntryMarkers";
+import { EntryMarkers, isMarked } from "./EntryMarkers";
 
 const VIEW_W = 640;
 const VIEW_H = 220;
@@ -156,8 +156,8 @@ export function WeightTrendChart({ points }: { points: WeightTrendPoint[] }) {
                 // take the pointer made the tooltip vanish right over the point.
                 pointerEvents="none"
               />
-              {/* A marked reading (entered late) gets an outer ring, so it shows without hovering. */}
-              {point.is_late && (
+              {/* A marked reading (entered late or edited) gets an outer ring, so it shows without hovering. */}
+              {isMarked(point) && (
                 <circle cx={x(i)} cy={y(point.weight_kg)} r={8} fill="none" stroke="var(--color-status-attention)" strokeWidth={1.5} strokeDasharray="2 2" pointerEvents="none" />
               )}
             </g>
@@ -202,21 +202,22 @@ export function WeightTrendChart({ points }: { points: WeightTrendPoint[] }) {
               {t(points[hovered].source === "clinic-analyser" ? "sourceClinic" : "sourceSelf")}
             </span>
             {points[hovered].is_late && <span className="block text-[10px] font-semibold">{tMarks("late")}</span>}
+            {points[hovered].edited_at !== null && <span className="block text-[10px] font-semibold">{tMarks("edited")}</span>}
           </div>
         )}
       </div>
 
-      <SourceLegend showMarked={points.some((p) => p.is_late)} />
+      <SourceLegend showMarked={points.some(isMarked)} />
 
       {/* The marked readings in words, not only as rings on the plot. */}
-      {points.some((p) => p.is_late) && (
+      {points.some(isMarked) && (
         <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-ink-muted" aria-label={tMarks("listLabel")}>
           {points
-            .filter((p) => p.is_late)
+            .filter(isMarked)
             .map((p) => (
               <li key={p.recorded_at} className="flex items-center gap-1.5">
                 <span className="tabular-nums" dir="ltr">{p.recorded_at}</span>
-                <EntryMarkers late={p.is_late} />
+                <EntryMarkers late={p.is_late} editedAt={p.edited_at} />
               </li>
             ))}
         </ul>

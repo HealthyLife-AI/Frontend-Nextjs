@@ -31,12 +31,17 @@ export type AdherenceSummary = {
 };
 
 /**
- * BR-19: the patient entered this reading more than 7 days after its date
- * (e.g. an offline queue that synced late). Shown as a marker, never as an
- * error: the reading counts like any other. Always false on a clinic reading.
+ * Marks on a reading, shown to the nutritionist, never as an error — the
+ * reading counts like any other.
+ * - `is_late` (BR-19): the patient entered it more than 7 days after its
+ *   date (e.g. an offline queue that synced late). Always false on a clinic
+ *   reading.
+ * - `edited_at` (BR-15): when the patient last changed its figures; null if
+ *   never.
  */
 type EntryMarks = {
   is_late: boolean;
+  edited_at: string | null;
 };
 
 export type WeightTrendPoint = EntryMarks & {
