@@ -30,13 +30,22 @@ export type AdherenceSummary = {
   reference_percent: number;
 };
 
-export type WeightTrendPoint = {
+/**
+ * BR-19: the patient entered this reading more than 7 days after its date
+ * (e.g. an offline queue that synced late). Shown as a marker, never as an
+ * error: the reading counts like any other. Always false on a clinic reading.
+ */
+type EntryMarks = {
+  is_late: boolean;
+};
+
+export type WeightTrendPoint = EntryMarks & {
   recorded_at: string;
   weight_kg: number;
   source: MeasurementSource;
 };
 
-export type CompositionSnapshot = {
+export type CompositionSnapshot = EntryMarks & {
   recorded_at: string;
   source: MeasurementSource;
   weight_kg: number;

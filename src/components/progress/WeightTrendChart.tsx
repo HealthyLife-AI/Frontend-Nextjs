@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { LineChart } from "lucide-react";
 import type { WeightTrendPoint } from "@/lib/progress/types";
+import { EntryMarkers } from "./EntryMarkers";
 
 const VIEW_W = 640;
 const VIEW_H = 220;
@@ -30,6 +31,7 @@ const PAD = { top: 16, right: 16, bottom: 28, left: 44 };
  */
 export function WeightTrendChart({ points }: { points: WeightTrendPoint[] }) {
   const t = useTranslations("progress.weight");
+  const tMarks = useTranslations("progress.markers");
   const [hovered, setHovered] = useState<number | null>(null);
 
   if (points.length === 0) {
@@ -150,7 +152,14 @@ export function WeightTrendChart({ points }: { points: WeightTrendPoint[] }) {
                 fill={point.source === "clinic-analyser" ? "var(--color-primary)" : "var(--color-card)"}
                 stroke="var(--color-primary)"
                 strokeWidth={2}
+                // The visible marks sit on top of the hit target; letting them
+                // take the pointer made the tooltip vanish right over the point.
+                pointerEvents="none"
               />
+              {/* A marked reading (entered late) gets an outer ring, so it shows without hovering. */}
+              {point.is_late && (
+                <circle cx={x(i)} cy={y(point.weight_kg)} r={8} fill="none" stroke="var(--color-status-attention)" strokeWidth={1.5} strokeDasharray="2 2" pointerEvents="none" />
+              )}
             </g>
           ))}
 
@@ -192,18 +201,34 @@ export function WeightTrendChart({ points }: { points: WeightTrendPoint[] }) {
             <span className="block text-[10px] opacity-80">
               {t(points[hovered].source === "clinic-analyser" ? "sourceClinic" : "sourceSelf")}
             </span>
+            {points[hovered].is_late && <span className="block text-[10px] font-semibold">{tMarks("late")}</span>}
           </div>
         )}
       </div>
 
-      <SourceLegend />
+      <SourceLegend showMarked={points.some((p) => p.is_late)} />
+
+      {/* The marked readings in words, not only as rings on the plot. */}
+      {points.some((p) => p.is_late) && (
+        <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-ink-muted" aria-label={tMarks("listLabel")}>
+          {points
+            .filter((p) => p.is_late)
+            .map((p) => (
+              <li key={p.recorded_at} className="flex items-center gap-1.5">
+                <span className="tabular-nums" dir="ltr">{p.recorded_at}</span>
+                <EntryMarkers late={p.is_late} />
+              </li>
+            ))}
+        </ul>
+      )}
     </section>
   );
 }
 
-/** BR-13: which instrument produced a reading, by shape rather than hue. */
-function SourceLegend() {
+/** BR-13: which instrument produced a reading, by shape rather than hue; plus the ring for a marked reading. */
+function SourceLegend({ showMarked }: { showMarked: boolean }) {
   const t = useTranslations("progress.weight");
+  const tMarks = useTranslations("progress.markers");
 
   return (
     <ul className="mt-3 flex flex-wrap gap-4 border-t border-divider pt-3 text-xs text-ink-muted">
@@ -219,6 +244,14 @@ function SourceLegend() {
         </svg>
         {t("sourceSelf")}
       </li>
+      {showMarked && (
+        <li className="flex items-center gap-1.5">
+          <svg width="18" height="18" aria-hidden="true">
+            <circle cx="9" cy="9" r="7" fill="none" stroke="var(--color-status-attention)" strokeWidth="1.5" strokeDasharray="2 2" />
+          </svg>
+          {tMarks("legend")}
+        </li>
+      )}
     </ul>
   );
 }

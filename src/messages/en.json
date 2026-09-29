@@ -278,6 +278,12 @@
     "adherenceLabel": "Stable share"
   },
   "progress": {
+    "markers": {
+      "late": "Entered late",
+      "lateHint": "The patient entered this more than 7 days after its date. It counts like any other entry.",
+      "legend": "Marked reading",
+      "listLabel": "Marked readings"
+    },
     "title": "Progress",
     "loadFailed": "Could not load this client's progress.",
     "weight": {

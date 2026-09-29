@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import type { CompositionMetric, CompositionSnapshot } from "@/lib/progress/types";
+import { EntryMarkers } from "./EntryMarkers";
 
 /** Rendered in this order; each is omitted entirely when not measured. */
 const METRICS: CompositionMetric[] = [
@@ -70,10 +71,13 @@ export function BodyCompositionCards({
           <h2 className="text-base font-bold text-ink">{t("title")}</h2>
           <p className="text-xs text-ink-muted">{t("recordedAt", { date: latest.recorded_at })}</p>
         </div>
-        {/* BR-13: which instrument produced the reading these cards show. */}
-        <Badge tone={latest.source === "clinic-analyser" ? "primary" : "neutral"}>
-          {t(latest.source === "clinic-analyser" ? "sourceClinic" : "sourceSelf")}
-        </Badge>
+        <div className="flex flex-wrap items-center gap-1.5">
+          {/* BR-13: which instrument produced the reading these cards show. */}
+          <Badge tone={latest.source === "clinic-analyser" ? "primary" : "neutral"}>
+            {t(latest.source === "clinic-analyser" ? "sourceClinic" : "sourceSelf")}
+          </Badge>
+          <EntryMarkers late={latest.is_late} />
+        </div>
       </div>
 
       {measured.length === 0 ? (
