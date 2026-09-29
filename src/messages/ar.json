@@ -883,7 +883,11 @@
     "dailyRunFailures": "({count, plural, one {فشل لمريض واحد} other {فشل لـ # مرضى}})",
     "dailyRunStale": "آخر فحص يومي للمرضى كان {when} — لم يعمل فحص الساعة 06:00 اليوم. تحقّق من مهمة cron على الخادم (راجع DEPLOYMENT.md).",
     "dailyRunNever": "لم يُسجَّل أي فحص يومي للمرضى بعد. فحص الساعة 06:00 لم يعمل على هذا الخادم (راجع DEPLOYMENT.md).",
-    "consentNotConfigured": "موافقة المرضى غير مُعدّة: المتغير CONSENT_VERSION فارغ على هذا الخادم، لذا ترفض واجهات بيانات تطبيق المرضى كل الطلبات. اضبطه في متغيرات البيئة (راجع DEPLOYMENT.md)."
+    "consentConfig": {
+      "versionDefault": "المتغير CONSENT_VERSION غير مضبوط على هذا الخادم، لذا يُطلب من المرضى الموافقة على إصدار السياسة الافتراضي {version}. اضبطه صراحةً (راجع DEPLOYMENT.md) ليكون تغيير السياسة خطوة مقصودة.",
+      "urlDerived": "المتغير CONSENT_POLICY_URL غير مضبوط، لذا يوجّه التطبيق المرضى إلى {url} (مشتق من FRONTEND_URL). اضبطه صراحةً (راجع DEPLOYMENT.md).",
+      "urlMissing": "لا CONSENT_POLICY_URL ولا FRONTEND_URL مضبوطان، لذا لا يعرض تطبيق المرضى رابطاً لسياسة الخصوصية. ما زال بإمكان المرضى الموافقة؛ اضبط CONSENT_POLICY_URL (راجع DEPLOYMENT.md)."
+    }
   },
   "clientsDelete": {
     "button": "حذف المريض",

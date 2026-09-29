@@ -8,19 +8,15 @@ import type { ClientConsent } from "@/lib/clients/types";
  * BR-17: whether this patient has accepted the privacy policy, and which
  * version and when — the record a nutritionist may be asked about. Three
  * states, each stated in words as well as colour:
- *  - accepted the current version (or no version is configured yet);
+ *  - accepted the current version;
  *  - accepted an older version — they will be asked again in the app;
  *  - never accepted — the app's data stays locked until they do.
- * Renders nothing when there is nothing to say (never accepted and no
- * version configured, e.g. a development server).
  */
 export function ConsentStatus({ consent }: { consent: ClientConsent }) {
   const t = useTranslations("clients.detail.consent");
   const locale = useLocale();
 
   const accepted = consent.accepted_version !== null && consent.accepted_at !== null;
-  if (!accepted && consent.current_version === null) return null;
-
   const date = accepted
     ? new Intl.DateTimeFormat(locale === "ar" ? "ar-SA-u-ca-gregory-nu-latn" : "en-GB", {
         day: "numeric",
@@ -40,8 +36,8 @@ export function ConsentStatus({ consent }: { consent: ClientConsent }) {
   const message = good
     ? t.rich("accepted", { ...tags, version: consent.accepted_version!, date: date! })
     : outdated
-      ? t.rich("outdated", { ...tags, version: consent.accepted_version!, date: date!, current: consent.current_version! })
-      : t.rich("missing", { ...tags, current: consent.current_version! });
+      ? t.rich("outdated", { ...tags, version: consent.accepted_version!, date: date!, current: consent.current_version })
+      : t.rich("missing", { ...tags, current: consent.current_version });
 
   const Icon = good ? ShieldCheck : AlertTriangle;
 

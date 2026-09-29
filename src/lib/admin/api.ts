@@ -12,6 +12,14 @@ export type DailyRun = {
   stopped_logging: number;
 };
 
+/** A `*_set: false` value is a default the API fell back to; nothing is blocked by it. */
+export type ConsentConfiguration = {
+  version: string;
+  version_set: boolean;
+  policy_url: string | null;
+  policy_url_set: boolean;
+};
+
 export type AdminOverview = {
   nutritionists: number;
   clients: number;
@@ -21,8 +29,8 @@ export type AdminOverview = {
   foods_by_source: { usda: number; admin: number; nutritionist: number };
   /** null until the 06:00 job has run once. */
   last_daily_run: DailyRun | null;
-  /** BR-17: false while CONSENT_VERSION is unset — patient data endpoints refuse in production. */
-  consent_configured: boolean;
+  /** BR-17: the consent values in force and whether each was set in the environment. */
+  consent: ConsentConfiguration;
 };
 
 export type AdminNutritionist = {

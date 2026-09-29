@@ -56,7 +56,7 @@ export default function AdminOverviewPage() {
       <PageHeader eyebrow={t("eyebrow")} title={t("overviewTitle")} subtitle={t("overviewSubtitle")} />
 
       {overview && <DailyRunStatus run={overview.last_daily_run} />}
-      {overview && <ConsentConfigStatus configured={overview.consent_configured} />}
+      {overview && <ConsentConfigStatus consent={overview.consent} />}
 
       {failed && (
         <p role="alert" className="rounded-field bg-status-late-bg px-4 py-3 text-sm text-status-late">

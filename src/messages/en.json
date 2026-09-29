@@ -883,7 +883,11 @@
     "dailyRunFailures": "({count, plural, one {# failure} other {# failures}})",
     "dailyRunStale": "Last daily patient check was {when} — the 06:00 check did not run today. Check the cron job on the server (see DEPLOYMENT.md).",
     "dailyRunNever": "No daily patient check has been recorded yet. The 06:00 check has not run on this server (see DEPLOYMENT.md).",
-    "consentNotConfigured": "Patient consent is not configured: CONSENT_VERSION is empty on this server, so the patient app's data endpoints are refusing every request. Set it in the environment (see DEPLOYMENT.md)."
+    "consentConfig": {
+      "versionDefault": "CONSENT_VERSION isn't set on this server, so patients are asked to accept the default policy version {version}. Set it explicitly (see DEPLOYMENT.md) so a policy change is a deliberate step.",
+      "urlDerived": "CONSENT_POLICY_URL isn't set, so the app links patients to {url} (derived from FRONTEND_URL). Set it explicitly (see DEPLOYMENT.md).",
+      "urlMissing": "Neither CONSENT_POLICY_URL nor FRONTEND_URL is set, so the patient app has no link to the privacy policy. Patients can still accept; set CONSENT_POLICY_URL (see DEPLOYMENT.md)."
+    }
   },
   "clientsDelete": {
     "button": "Delete client",

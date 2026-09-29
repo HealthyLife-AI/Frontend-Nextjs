@@ -26,10 +26,10 @@ export type AdherenceStatus = "stable" | "declining" | "stopped_logging" | null;
 export type ClientConsent = {
   accepted_version: string | null;
   accepted_at: string | null;
-  /** The version in force; null when the server has none configured. */
-  current_version: string | null;
-  /** false when never accepted or the accepted version is old; null when no version is configured. */
-  up_to_date: boolean | null;
+  /** The version in force (always set: the server falls back to a default). */
+  current_version: string;
+  /** false when never accepted or the accepted version is old. */
+  up_to_date: boolean;
 };
 
 export type Client = {
