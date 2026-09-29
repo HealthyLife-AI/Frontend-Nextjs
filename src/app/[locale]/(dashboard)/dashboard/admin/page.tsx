@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { FoodTable } from "@/components/foods/FoodTable";
 import { usePendingFoods } from "@/components/admin/PendingFoodsProvider";
 import { DailyRunStatus } from "@/components/admin/DailyRunStatus";
+import { ConsentConfigStatus } from "@/components/admin/ConsentConfigStatus";
 import { approveFood, getAdminOverview, listAdminFoods, rejectFood, type AdminOverview } from "@/lib/admin/api";
 import type { CatalogFood } from "@/lib/foods/api";
 
@@ -55,6 +56,7 @@ export default function AdminOverviewPage() {
       <PageHeader eyebrow={t("eyebrow")} title={t("overviewTitle")} subtitle={t("overviewSubtitle")} />
 
       {overview && <DailyRunStatus run={overview.last_daily_run} />}
+      {overview && <ConsentConfigStatus configured={overview.consent_configured} />}
 
       {failed && (
         <p role="alert" className="rounded-field bg-status-late-bg px-4 py-3 text-sm text-status-late">

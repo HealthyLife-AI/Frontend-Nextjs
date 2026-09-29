@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Mail, MapPin } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 
 /**
@@ -10,8 +11,9 @@ import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
  * the bottom bar.
  *
  * Not included on purpose: social icons (no accounts behind them yet)
- * and policy links (no pages exist yet — plain text rather than dead
- * links). The year is computed.
+ * and a terms link (no page exists yet — plain text rather than a dead
+ * link). The privacy policy links to /privacy (a draft page until the
+ * final text is provided). The year is computed.
  */
 export async function HomeFooter() {
   const t = await getTranslations("home.footer");
@@ -47,7 +49,7 @@ export async function HomeFooter() {
           <div className="flex flex-col">
             <span className={heading}>{t("supportLinks")}</span>
             <div className="flex flex-col gap-2.5">
-              <span className="text-sm text-ink-muted">{t("privacyPolicy")}</span>
+              <Link href="/privacy" className={link}>{t("privacyPolicy")}</Link>
               <span className="text-sm text-ink-muted">{t("terms")}</span>
               <a href={`mailto:${email}`} className={link}>{t("supportTechnical")}</a>
             </div>
@@ -72,7 +74,7 @@ export async function HomeFooter() {
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-divider pt-6 text-center text-xs text-ink-muted md:flex-row md:text-start">
           <span>{t("copyright", { year })}</span>
           <div className="flex items-center gap-4">
-            <span>{t("privacyShort")}</span>
+            <Link href="/privacy" className="transition-colors hover:text-mkt-teal-deep">{t("privacyShort")}</Link>
             <span>{t("securityShort")}</span>
             <LocaleSwitcher />
           </div>

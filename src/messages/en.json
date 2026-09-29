@@ -190,6 +190,12 @@
     },
     "detail": {
       "backToList": "Back to client list",
+      "consent": {
+        "label": "Privacy policy:",
+        "accepted": "accepted version <v>{version}</v> on {date}.",
+        "outdated": "accepted version <v>{version}</v> on {date}, but the policy is now version <v>{current}</v>. They will be asked again in the app.",
+        "missing": "not accepted yet (current version <v>{current}</v>). Their app stays locked until they accept."
+      },
       "backToPatient": "Back to patient",
       "codeLabel": "Client code",
       "phoneLabel": "Phone",
@@ -875,7 +881,8 @@
     "dailyRunOk": "Last daily patient check: {when} — {patients, plural, one {# patient} other {# patients}}, {changes, plural, =0 {no adherence status changed} one {# adherence status changed} other {# adherence statuses changed}}.",
     "dailyRunFailures": "({count, plural, one {# failure} other {# failures}})",
     "dailyRunStale": "Last daily patient check was {when} — the 06:00 check did not run today. Check the cron job on the server (see DEPLOYMENT.md).",
-    "dailyRunNever": "No daily patient check has been recorded yet. The 06:00 check has not run on this server (see DEPLOYMENT.md)."
+    "dailyRunNever": "No daily patient check has been recorded yet. The 06:00 check has not run on this server (see DEPLOYMENT.md).",
+    "consentNotConfigured": "Patient consent is not configured: CONSENT_VERSION is empty on this server, so the patient app's data endpoints are refusing every request. Set it in the environment (see DEPLOYMENT.md)."
   },
   "clientsDelete": {
     "button": "Delete client",
@@ -904,5 +911,22 @@
     "copied": "Copied",
     "done": "Done",
     "readOnly": "Follow-up has ended — this page is read-only. Resume follow-up from the patient page to make changes."
+  },
+  "legal": {
+    "shell": {
+      "draftTitle": "Draft — placeholder text",
+      "draftBody": "This page is a placeholder. The final text will replace it before launch; nothing on this page is the policy patients agree to.",
+      "backHome": "Back to the home page",
+      "copyright": "© {year} HealthyLife AI"
+    },
+    "privacy": {
+      "title": "Privacy policy",
+      "intro": "How HealthyLife AI handles the information of nutritionists and their patients.",
+      "placeholder": "Placeholder — the final text for this section will be added before launch.",
+      "s1Title": "What information is handled",
+      "s2Title": "How it is used",
+      "s3Title": "Who can see it",
+      "s4Title": "Your choices and how to reach us"
+    }
   }
 }

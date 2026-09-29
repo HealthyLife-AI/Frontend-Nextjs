@@ -21,6 +21,8 @@ export type AdminOverview = {
   foods_by_source: { usda: number; admin: number; nutritionist: number };
   /** null until the 06:00 job has run once. */
   last_daily_run: DailyRun | null;
+  /** BR-17: false while CONSENT_VERSION is unset — patient data endpoints refuse in production. */
+  consent_configured: boolean;
 };
 
 export type AdminNutritionist = {

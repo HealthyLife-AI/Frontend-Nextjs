@@ -18,6 +18,20 @@ export type ClientStatus = "pending" | "active";
  */
 export type AdherenceStatus = "stable" | "declining" | "stopped_logging" | null;
 
+/**
+ * BR-17: what the patient last accepted of the privacy policy, as the
+ * nutritionist sees it (no IP or user agent). Only on the single-patient
+ * response, not the roster.
+ */
+export type ClientConsent = {
+  accepted_version: string | null;
+  accepted_at: string | null;
+  /** The version in force; null when the server has none configured. */
+  current_version: string | null;
+  /** false when never accepted or the accepted version is old; null when no version is configured. */
+  up_to_date: boolean | null;
+};
+
 export type Client = {
   id: number;
   code: string;
@@ -30,6 +44,8 @@ export type Client = {
   adherence_status: AdherenceStatus;
   last_logged_at: string | null;
   created_at: string;
+  /** Present on `GET /clients/{id}` only. */
+  consent?: ClientConsent;
 };
 
 export type ClientListResponse = {

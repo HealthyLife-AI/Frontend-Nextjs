@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ClientStatusBadge } from "@/components/clients/ClientStatusBadge";
 import { AdherenceBadge } from "@/components/clients/AdherenceBadge";
+import { ConsentStatus } from "@/components/clients/ConsentStatus";
 import { getClient } from "@/lib/clients/api";
 import type { Client } from "@/lib/clients/types";
 import { getProgress } from "@/lib/progress/api";
@@ -184,6 +185,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
             </dd>
           </div>
         </dl>
+
+        {client.consent && <ConsentStatus consent={client.consent} />}
       </section>
 
       {client.archived_at && <FollowUpBanner client={client} onChange={setClient} />}
