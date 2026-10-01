@@ -16,6 +16,9 @@ export type NutritionistProfile = {
   gender: NutritionistGender | null;
   /** E.164 with the leading + (e.g. +970599123456); shown to patients as their contact. */
   whatsapp_number: string | null;
+  /** Free text shown to patients, e.g. «الأحد–الخميس 9–5». */
+  reply_hours: string | null;
+  /** Shown to the nutritionist's patients on the app's "my nutritionist" card. */
   bio: string | null;
   /**
    * Read-only here by design (BR-12): the dashboard shows the current
@@ -32,6 +35,7 @@ export type NutritionistProfileInput = {
   clinic_name: string | null;
   gender: NutritionistGender | null;
   whatsapp_number: string | null;
+  reply_hours: string | null;
   bio: string | null;
 };
 

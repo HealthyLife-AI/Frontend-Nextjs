@@ -422,7 +422,7 @@
       "action": "Open settings"
     },
     "bioLabel": "Short bio",
-    "bioHint": "Up to 1000 characters.",
+    "bioHint": "Up to 1000 characters. Your patients see it in the app.",
     "planTierLabel": "Plan",
     "planTierNote": "Set by billing, not editable here.",
     "tier": {
@@ -436,7 +436,10 @@
     "saving": "Saving...",
     "saved": "Changes saved.",
     "saveFailed": "Could not save your profile.",
-    "loadFailed": "Could not load your profile."
+    "loadFailed": "Could not load your profile.",
+    "replyHoursLabel": "Reply hours (optional)",
+    "replyHoursPlaceholder": "Sun–Thu 9–5",
+    "replyHoursHint": "Short text your patients see in the app."
   },
   "aiSummary": {
     "title": "Weekly AI summary",
@@ -965,5 +968,16 @@
     "detail": "Their records are gone; only the code and date are kept for this notice.",
     "dismiss": "Dismiss",
     "dismissFailed": "Could not dismiss this notice. Please try again."
+  },
+  "signInLink": {
+    "button": "Send a new sign-in link",
+    "title": "New sign-in link for {name}",
+    "body": "Send this link to the patient. They open it once and choose a new password, which ends all their earlier sessions. Valid until {date}; any earlier unused link no longer works.",
+    "copy": "Copy",
+    "copied": "Copied",
+    "share": "Send via WhatsApp",
+    "done": "Done",
+    "failed": "Could not create the link. Try again.",
+    "whatsappMessage": "Hello {name}, here is a new sign-in link for the HealthyLife app to set a new password: {link}"
   }
 }

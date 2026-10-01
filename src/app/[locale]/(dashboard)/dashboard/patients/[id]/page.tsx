@@ -19,6 +19,7 @@ import { WeightTrendChart } from "@/components/progress/WeightTrendChart";
 import { AiSummaryCard } from "@/components/aiSummaries/AiSummaryCard";
 import { DeleteClientButton } from "@/components/clients/DeleteClientButton";
 import { FollowUpBanner, FollowUpControls } from "@/components/clients/FollowUpControls";
+import { SignInLinkButton } from "@/components/clients/SignInLinkButton";
 import { listAiSummaries } from "@/lib/aiSummaries/api";
 import type { AiSummary } from "@/lib/aiSummaries/types";
 
@@ -236,6 +237,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
       {/* Kept at the bottom, away from the everyday actions in the header. */}
       <div className="flex flex-wrap justify-end gap-2.5 border-t border-divider pt-6">
+        {!client.archived_at && <SignInLinkButton client={client} />}
         {!client.archived_at && <FollowUpControls client={client} onChange={setClient} />}
         <DeleteClientButton client={client} />
       </div>

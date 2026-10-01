@@ -66,6 +66,13 @@ export function resumeClient(fetcher: Fetcher, id: number | string) {
   );
 }
 
+/** A new one-time sign-in link for a patient who can't sign in; earlier unused links stop working. */
+export function issueSignInLink(fetcher: Fetcher, id: number | string) {
+  return fetcher(`/clients/${id}/sign-in-link`, { method: "POST" }).then((res) =>
+    parseJson<{ token: string; expires_at: string }>(res)
+  );
+}
+
 export function getHealthProfile(fetcher: Fetcher, subscriberId: number | string) {
   return fetcher(`/clients/${subscriberId}/health-profile`).then(async (res) => {
     if (res.status === 204) return { ok: true as const, data: null };

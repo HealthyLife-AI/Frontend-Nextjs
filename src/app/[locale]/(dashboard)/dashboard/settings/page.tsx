@@ -40,6 +40,7 @@ export default function SettingsPage() {
   const [gender, setGender] = useState<NutritionistGender | "">("");
   const [whatsapp, setWhatsapp] = useState("");
   const [whatsappError, setWhatsappError] = useState<string | null>(null);
+  const [replyHours, setReplyHours] = useState("");
   const [bio, setBio] = useState("");
 
   const [loadFailed, setLoadFailed] = useState(false);
@@ -63,6 +64,7 @@ export default function SettingsPage() {
       setClinicName(result.data.clinic_name ?? "");
       setGender(result.data.gender ?? "");
       setWhatsapp(result.data.whatsapp_number ?? "");
+      setReplyHours(result.data.reply_hours ?? "");
       setBio(result.data.bio ?? "");
     });
 
@@ -94,6 +96,7 @@ export default function SettingsPage() {
       clinic_name: clinicName.trim() || null,
       gender: gender || null,
       whatsapp_number: whatsappValue || null,
+      reply_hours: replyHours.trim() || null,
       bio: bio.trim() || null,
     });
 
@@ -194,6 +197,15 @@ export default function SettingsPage() {
           error={whatsappError ?? undefined}
           hint={t("whatsappHint")}
           maxLength={24}
+        />
+
+        <TextField
+          label={t("replyHoursLabel")}
+          placeholder={t("replyHoursPlaceholder")}
+          value={replyHours}
+          onChange={(e) => setReplyHours(e.target.value)}
+          hint={t("replyHoursHint")}
+          maxLength={100}
         />
 
         <div className="flex flex-col gap-1.5">
