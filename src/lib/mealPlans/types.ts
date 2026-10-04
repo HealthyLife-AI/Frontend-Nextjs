@@ -39,6 +39,8 @@ export type MealPlan = {
   subscriber_id: number | null;
   is_template: boolean;
   is_ai_draft: boolean;
+  /** true when the rule-based calorie fit produced this draft, not the model. Nutritionist responses only. */
+  is_ai_fallback?: boolean;
   /**
    * Only ever set on a template — a hand-built client plan has one
    * audience already and doesn't need to be told apart from another
