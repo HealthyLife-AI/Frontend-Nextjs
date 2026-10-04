@@ -20,6 +20,8 @@ import { AiSummaryCard } from "@/components/aiSummaries/AiSummaryCard";
 import { DeleteClientButton } from "@/components/clients/DeleteClientButton";
 import { FollowUpBanner, FollowUpControls } from "@/components/clients/FollowUpControls";
 import { SignInLinkButton } from "@/components/clients/SignInLinkButton";
+import { MealLogSection } from "@/components/followUp/MealLogSection";
+import { ReviewsPanel } from "@/components/followUp/ReviewsPanel";
 import { listAiSummaries } from "@/lib/aiSummaries/api";
 import type { AiSummary } from "@/lib/aiSummaries/types";
 
@@ -215,6 +217,9 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       {client.archived_at && <FollowUpBanner client={client} onChange={setClient} />}
 
       <AiSummaryCard summary={latestSummary} />
+
+      <ReviewsPanel subscriberId={id} readOnly={client.archived_at !== null} />
+      <MealLogSection subscriberId={id} />
 
       {progressFailed && (
         <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
