@@ -926,7 +926,66 @@
     "copy": "Copy link",
     "copied": "Copied",
     "done": "Done",
-    "readOnly": "Follow-up has ended — this page is read-only. Resume follow-up from the patient page to make changes."
+    "readOnly": "Follow-up has ended — this page is read-only. Resume follow-up from the patient page to make changes.",
+    "mealLog": {
+      "title": "Meal log",
+      "subtitle": "What the patient logged, day by day, as it was when logged.",
+      "previous": "Previous week",
+      "next": "Next week",
+      "loading": "Loading",
+      "loadFailed": "Couldn't load the meal log. Refresh and try again.",
+      "calories": "{logged} of {planned} kcal",
+      "caloriesNoPlan": "{logged} kcal (no active plan that day)",
+      "empty": "Nothing logged this day.",
+      "otherMeal": "Meal not set",
+      "logLine": "{grams} g · {kcal} kcal · {time}",
+      "kind": {
+        "planned": "From plan",
+        "alternative": "Alternative",
+        "off_plan": "Off-plan"
+      },
+      "late": "Entered late",
+      "edited": "Edited"
+    },
+    "reviews": {
+      "title": "Follow-up between sessions",
+      "subtitle": "A rating, notes and tasks the patient sees in the app.",
+      "new": "New note",
+      "ratingLabel": "Rating",
+      "ratingNone": "No rating",
+      "rating": {
+        "on_track": "On track",
+        "small_adjustment": "Small adjustment",
+        "review_together": "Let's review together"
+      },
+      "noteLabel": "Note",
+      "noteCount": "{count} / {max}",
+      "keyPointsLabel": "Key points",
+      "keyPointsAdd": "Add a point",
+      "keyPointsItem": "Point {n}",
+      "tasksLabel": "Tasks",
+      "tasksAdd": "Add a task",
+      "tasksItem": "Task {n}",
+      "remove": "Remove",
+      "cancel": "Cancel",
+      "save": "Save and send",
+      "notifyHint": "The patient gets a generic notification with no health details; the content shows only inside the app. Editing after they acknowledge asks them to read it again.",
+      "empty": "No notes yet. Write the first one for this patient.",
+      "loadFailed": "Couldn't load the notes. Refresh and try again.",
+      "edited": "Edited",
+      "acknowledged": "Acknowledged ✓ ({date})",
+      "notAcknowledged": "Not read yet",
+      "edit": "Edit",
+      "delete": "Delete",
+      "taskDone": "done",
+      "taskOpen": "not done",
+      "deleteTitle": "Delete this note?",
+      "deleteBody": "The note and its tasks will be removed from the patient's app for good.",
+      "errorEmpty": "Add a rating, a note, a point or a task before saving.",
+      "errorEnded": "Follow-up with this patient has ended. Resume it to send notes.",
+      "errorNoteLength": "The note is longer than {max} characters. Shorten it and save.",
+      "errorSave": "Couldn't save. Try again."
+    }
   },
   "legal": {
     "shell": {
