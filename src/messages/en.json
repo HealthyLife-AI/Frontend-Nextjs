@@ -795,7 +795,10 @@
       "fiber": "Fiber",
       "fiberValue": "{value} g"
     },
-    "templateNamePrompt": "Name this template (optional):"
+    "templateNamePrompt": "Name this template (optional):",
+    "fallbackDraftTag": "Calorie-based starting draft",
+    "fallbackDraftNote": "An AI suggestion wasn’t available this time, so this draft is based on calories only. Allergies were checked by name only — please review the items carefully.",
+    "fallbackRetry": "Try again with AI"
   },
   "foods": {
     "eyebrow": "Food library",

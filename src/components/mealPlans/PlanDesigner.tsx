@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Bookmark, Sparkles, Verified } from "lucide-react";
+import { Bookmark, Calculator, RotateCcw, Sparkles, Verified } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { getHealthProfile } from "@/lib/clients/api";
@@ -197,10 +197,17 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
               {isActive ? t("statusActive") : t("statusDraft")}
             </span>
           )}
-          {currentPlan?.is_ai_draft && (
+          {/* Only a draft the model actually produced is called "smart"; the rule-based fallback gets a neutral tag. */}
+          {currentPlan?.is_ai_draft && !currentPlan.is_ai_fallback && (
             <span className="inline-flex items-center gap-1.5 rounded-md border border-primary/25 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
               <Sparkles size={14} />
               {t("aiDraftTag")}
+            </span>
+          )}
+          {currentPlan?.is_ai_draft && currentPlan.is_ai_fallback && (
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-border bg-ink-muted/10 px-2.5 py-1 text-xs font-medium text-ink-muted">
+              <Calculator size={14} />
+              {t("fallbackDraftTag")}
             </span>
           )}
         </div>
@@ -223,6 +230,16 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
           </Button>
         </div>
       </div>
+
+      {currentPlan?.is_ai_draft && currentPlan.is_ai_fallback && (
+        <div role="note" className="flex flex-col gap-3 rounded-field border border-status-attention/25 bg-status-attention-bg px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm leading-relaxed text-ink">{t("fallbackDraftNote")}</p>
+          <Button variant="secondary" isLoading={generatingDraft} onClick={handleGenerateDraft} className="shrink-0">
+            <RotateCcw size={16} strokeWidth={1.75} />
+            {t("fallbackRetry")}
+          </Button>
+        </div>
+      )}
 
       {error && (
         <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
