@@ -4,8 +4,9 @@ import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
+import { Select } from "@/components/ui/Select";
 import type { ApiError } from "@/lib/api";
-import type { CatalogFood, FoodInput } from "@/lib/foods/api";
+import { FOOD_ALLERGENS, SHOPPING_SECTIONS, type CatalogFood, type FoodInput } from "@/lib/foods/api";
 
 type Values = Record<
   "name_ar" | "name_en" | "calories_per_100g" | "protein_g_per_100g" | "carbs_g_per_100g" | "fat_g_per_100g" | "fiber_g_per_100g",
@@ -37,13 +38,19 @@ export function FoodForm({
   submitLabel,
   onSubmit,
   onCancel,
+  withTags = false,
 }: {
   food?: CatalogFood | null;
   submitLabel: string;
   onSubmit: (payload: FoodInput) => Promise<{ ok: true } | { ok: false; error: ApiError }>;
   onCancel?: () => void;
+  /** Admin: also edit allergen groups and the shopping-list section. */
+  withTags?: boolean;
 }) {
   const t = useTranslations("foods.form");
+  const tGroup = useTranslations("healthRecords.group");
+  const [allergens, setAllergens] = useState<string[]>(food?.allergens ?? []);
+  const [section, setSection] = useState<string>(food?.shopping_section ?? "other");
   const [values, setValues] = useState<Values>(() => initial(food));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -70,6 +77,7 @@ export function FoodForm({
       carbs_g_per_100g: Number(values.carbs_g_per_100g),
       fat_g_per_100g: Number(values.fat_g_per_100g),
       fiber_g_per_100g: values.fiber_g_per_100g === "" ? null : Number(values.fiber_g_per_100g),
+      ...(withTags ? { allergens, shopping_section: section } : {}),
     };
 
     setBusy(true);
@@ -111,6 +119,35 @@ export function FoodForm({
           />
         ))}
       </div>
+
+      {withTags && (
+        <div className="flex flex-col gap-3 border-t border-divider pt-4">
+          <fieldset className="flex flex-col gap-2">
+            <legend className="mb-1 text-sm font-medium text-ink">{t("allergens")}</legend>
+            <div className="flex flex-wrap gap-2">
+              {FOOD_ALLERGENS.map((g) => (
+                <label key={g} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs text-ink has-[:checked]:border-primary has-[:checked]:bg-primary/10">
+                  <input
+                    type="checkbox"
+                    className="accent-primary"
+                    checked={allergens.includes(g)}
+                    onChange={(e) => setAllergens((prev) => (e.target.checked ? [...prev, g] : prev.filter((x) => x !== g)))}
+                  />
+                  {tGroup(g)}
+                </label>
+              ))}
+            </div>
+            <p className="text-xs text-ink-muted">{t("allergensHint")}</p>
+          </fieldset>
+          <Select label={t("shoppingSection")} value={section} onChange={(e) => setSection(e.target.value)}>
+            {SHOPPING_SECTIONS.map((s) => (
+              <option key={s} value={s}>
+                {t(`section.${s}`)}
+              </option>
+            ))}
+          </Select>
+        </div>
+      )}
 
       {formError && (
         <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">

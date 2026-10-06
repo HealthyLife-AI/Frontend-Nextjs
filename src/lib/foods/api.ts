@@ -19,7 +19,13 @@ export type FoodInput = {
   carbs_g_per_100g: number;
   fat_g_per_100g: number;
   fiber_g_per_100g: number | null;
+  /** Admin only: allergen groups and shopping-list section (never nutrition values). */
+  allergens?: string[];
+  shopping_section?: string;
 };
+
+export const FOOD_ALLERGENS = ["tree_nuts", "peanuts", "milk_lactose", "egg", "wheat_gluten", "sesame", "fish", "shellfish", "soy"] as const;
+export const SHOPPING_SECTIONS = ["produce", "meat_poultry_fish", "dairy_eggs", "grains_starches", "legumes_nuts", "oils_spices", "other"] as const;
 
 /** Approved catalog search (same endpoint the plan designer uses). */
 export function searchCatalog(fetcher: Fetcher, q: string, page = 1) {
