@@ -46,6 +46,8 @@ export type Client = {
   created_at: string;
   /** Present on `GET /clients/{id}` only. */
   consent?: ClientConsent;
+  /** Present on the roster (`GET /clients`) only: proposals awaiting approval. */
+  pending_proposals_count?: number;
 };
 
 export type ClientListResponse = {
@@ -69,6 +71,10 @@ export type DashboardOverview = {
   not_logged_today: number;
   /** Patients whose follow-up ended — left out of every count above. */
   archived: number;
+  /** Booked appointments today (clinic time zone). */
+  appointments_today: number;
+  /** Profile proposals awaiting approval across followed-up patients. */
+  pending_proposals: number;
 };
 
 export type ActivityLevel = "sedentary" | "light" | "moderate" | "active" | "very_active";
@@ -134,4 +140,7 @@ export type Food = {
   carbs_g_per_100g: number;
   fat_g_per_100g: number;
   fiber_g_per_100g: number | null;
+  /** Allergen groups (FoodTagger::GROUPS) and shopping-list section. */
+  allergens?: string[];
+  shopping_section?: string;
 };

@@ -18,7 +18,8 @@
     "adminFoods": "Manage foods",
     "adminNutritionists": "Nutritionists",
     "adminMenu": "Admin panel",
-    "pendingFoodsBadge": "{count, plural, one {# food awaiting review} other {# foods awaiting review}}"
+    "pendingFoodsBadge": "{count, plural, one {# food awaiting review} other {# foods awaiting review}}",
+    "appointments": "Appointments"
   },
   "auth": {
     "common": {
@@ -156,7 +157,8 @@
       "previousPage": "Previous",
       "nextPage": "Next",
       "filterArchived": "Follow-up ended",
-      "emptyArchived": "No patients whose follow-up ended."
+      "emptyArchived": "No patients whose follow-up ended.",
+      "pendingProposals": "{count, plural, one {# change to approve} other {# changes to approve}}"
     },
     "stats": {
       "total": "Total clients",
@@ -275,7 +277,9 @@
     "actionAddPatient": "Add client",
     "actionAlerts": "Review alerts",
     "activeLabel": "Active clients",
-    "adherenceLabel": "Stable share"
+    "adherenceLabel": "Stable share",
+    "appointmentsToday": "Appointments today",
+    "pendingProposals": "Changes awaiting approval"
   },
   "progress": {
     "markers": {
@@ -373,6 +377,10 @@
       "caloriesExceeded": "Daily calorie target exceeded for {days} consecutive days.",
       "milestoneLost": "Milestone: {kg} kg lost over the last {days} days.",
       "milestoneGained": "Milestone: {kg} kg gained over the last {days} days."
+    },
+    "proposals": {
+      "title": "Awaiting approval: changes proposed by patients",
+      "review": "{count, plural, one {Review # change} other {Review # changes}}"
     }
   },
   "plans": {
@@ -798,7 +806,9 @@
     "templateNamePrompt": "Name this template (optional):",
     "fallbackDraftTag": "Calorie-based starting draft",
     "fallbackDraftNote": "An AI suggestion wasn’t available this time, so this draft is based on calories only. Allergies were checked by name only — please review the items carefully.",
-    "fallbackRetry": "Try again with AI"
+    "fallbackRetry": "Try again with AI",
+    "pendingAllergyBanner": "The patient proposed an allergy that is not approved yet; its foods are not excluded from drafts until you approve it.",
+    "pendingAllergyReview": "Review the proposal"
   },
   "foods": {
     "eyebrow": "Food library",
@@ -846,7 +856,19 @@
       "carbs_g_per_100g": "Carbs (g)",
       "fat_g_per_100g": "Fat (g)",
       "fiber_g_per_100g": "Fiber (g)",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "allergens": "Allergens in this food",
+      "allergensHint": "Used to exclude the food from drafts for patients with that allergy and to warn them in the app.",
+      "shoppingSection": "Shopping-list section",
+      "section": {
+        "produce": "Fruit & vegetables",
+        "meat_poultry_fish": "Meat, poultry & fish",
+        "dairy_eggs": "Dairy & eggs",
+        "grains_starches": "Grains & starches",
+        "legumes_nuts": "Legumes & nuts",
+        "oils_spices": "Oils & spices",
+        "other": "Other"
+      }
     }
   },
   "admin": {
@@ -1041,5 +1063,158 @@
     "done": "Done",
     "failed": "Could not create the link. Try again.",
     "whatsappMessage": "Hello {name}, here is a new sign-in link for the HealthyLife app to set a new password: {link}"
+  },
+  "healthRecords": {
+    "loadFailed": "Could not load the goal, medications and allergies.",
+    "saveFailed": "Could not save. Try again.",
+    "saved": "Saved.",
+    "goalTitle": "Goal",
+    "goalType": "Goal type",
+    "targetWeight": "Target weight (kg)",
+    "targetDate": "Target date",
+    "trainingDays": "Training days per week",
+    "saveGoal": "Save goal",
+    "medicationsTitle": "Medications",
+    "medicationsHint": "For follow-up only. The app never gives medication advice.",
+    "none": "Nothing recorded.",
+    "reviewed": "Reviewed: {note}",
+    "reviewPrompt": "Note for the patient (optional):",
+    "markReviewed": "Mark reviewed",
+    "remove": "Remove",
+    "medName": "Medication",
+    "medDose": "Dose",
+    "medFrequency": "Frequency",
+    "medTiming": "Timing",
+    "addMedication": "Add medication",
+    "allergiesTitle": "Allergies and intolerances",
+    "confirmRemoveAllergy": "Remove \"{name}\", a confirmed allergy? Its foods will return to drafts.",
+    "allergyGroup": "Group",
+    "allergyOther": "Describe it",
+    "allergyClass": "Type",
+    "addAllergy": "Add",
+    "alreadyRecorded": "This allergy is already recorded.",
+    "goal": {
+      "weight_loss": "Weight loss",
+      "weight_gain": "Weight gain",
+      "muscle_gain": "Muscle gain",
+      "weight_maintenance": "Weight maintenance",
+      "health_energy": "Health & energy",
+      "medical_condition": "Medical condition",
+      "other": "Other"
+    },
+    "group": {
+      "tree_nuts": "Tree nuts",
+      "peanuts": "Peanuts",
+      "milk_lactose": "Milk & dairy (lactose)",
+      "egg": "Egg",
+      "wheat_gluten": "Wheat & gluten",
+      "sesame": "Sesame",
+      "fish": "Fish",
+      "shellfish": "Shellfish & seafood",
+      "soy": "Soy",
+      "other": "Other"
+    },
+    "class": {
+      "confirmed_allergy": "Confirmed allergy",
+      "intolerance": "Intolerance",
+      "avoid": "Avoids"
+    },
+    "timing": {
+      "before": "Before meals",
+      "with": "With meals",
+      "after": "After meals",
+      "empty_stomach": "Empty stomach",
+      "any": "Any time"
+    },
+    "pendingTitle": "Awaiting approval ({count})",
+    "pendingHint": "Proposed by the patient in the app. Nothing applies until you approve it.",
+    "proposal": {
+      "goal": "Change goal to: {goal}",
+      "medication_add": "Add medication: {name} {dose}",
+      "medication_edit": "Edit medication: {name} {dose}",
+      "medication_remove": "Stop medication: {name}",
+      "allergy_add": "Add: {name} ({class})",
+      "allergy_edit": "Edit: {name} ({class})",
+      "allergy_remove": "Remove: {name}"
+    },
+    "approve": "Approve",
+    "reject": "Reject",
+    "approveTitle": "Approve change",
+    "rejectTitle": "Reject change",
+    "noteOptional": "Note for the patient (optional)",
+    "cancel": "Cancel",
+    "stale": "The record changed after this proposal, so it was not applied. Check with the patient.",
+    "ended": "Follow-up for this patient has ended.",
+    "confirmedRemovalWarning": "This is a confirmed allergy. After approval its foods return to drafts."
+  },
+  "appointments": {
+    "title": "Appointments",
+    "subtitle": "The next two weeks, grouped by day.",
+    "loadFailed": "Could not load appointments.",
+    "empty": "No upcoming appointments.",
+    "setAvailability": "Set your availability",
+    "channel": {
+      "whatsapp": "WhatsApp",
+      "phone": "Phone",
+      "video": "Video"
+    },
+    "type": {
+      "follow_up": "Follow-up",
+      "results_review": "Results review",
+      "quick_consult": "Quick consult"
+    },
+    "topic": {
+      "weight": "Weight",
+      "meals": "Meals",
+      "plan_change": "Plan change",
+      "results": "Results",
+      "medications": "Medications",
+      "other": "Other"
+    },
+    "status": {
+      "booked": "Booked",
+      "cancelled": "Cancelled",
+      "completed": "Done",
+      "no_show": "No-show"
+    },
+    "reason": "Reason: {reason}",
+    "reasonEnded": "follow-up ended",
+    "cancel": "Cancel",
+    "noShow": "No-show",
+    "complete": "Done",
+    "writeReview": "Write follow-up review",
+    "cancelTitle": "Cancel appointment",
+    "cancelBody": "The patient will be notified.",
+    "reasonLabel": "Reason (optional, shown to the patient)",
+    "back": "Back",
+    "confirmCancel": "Cancel appointment",
+    "availability": {
+      "title": "Appointment availability",
+      "hint": "Weekly windows in 15-minute steps, {tz} time. Patients book at least 12 hours ahead.",
+      "day": "Day",
+      "from": "From",
+      "to": "To",
+      "remove": "Remove",
+      "addWindow": "Add window",
+      "daysOff": "Days off",
+      "addDayOff": "Day off",
+      "add": "Add",
+      "meetingLink": "Video call link",
+      "meetingLinkHint": "Without it, video appointments cannot be booked.",
+      "saved": "Availability saved.",
+      "badLink": "Invalid link (must start with https://).",
+      "badWindow": "Each window must end after it starts.",
+      "saveFailed": "Could not save.",
+      "save": "Save availability",
+      "weekday": {
+        "0": "Sunday",
+        "1": "Monday",
+        "2": "Tuesday",
+        "3": "Wednesday",
+        "4": "Thursday",
+        "5": "Friday",
+        "6": "Saturday"
+      }
+    }
   }
 }

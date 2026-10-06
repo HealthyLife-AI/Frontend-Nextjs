@@ -2,14 +2,14 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Flame, Plus, X } from "lucide-react";
+import { Flame } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { TextField } from "@/components/ui/TextField";
 import { Select } from "@/components/ui/Select";
 import { TagInput } from "@/components/ui/TagInput";
 import { Button } from "@/components/ui/Button";
 import { addBodyCompositionReading, getHealthProfile, saveHealthProfile } from "@/lib/clients/api";
-import type { ActivityLevel, Gender, Medication } from "@/lib/clients/types";
+import type { ActivityLevel, Gender } from "@/lib/clients/types";
 
 const ACTIVITY_LEVELS: ActivityLevel[] = ["sedentary", "light", "moderate", "active", "very_active"];
 
@@ -20,8 +20,6 @@ const ACTIVITY_LABEL_KEYS: Record<ActivityLevel, string> = {
   active: "activityActive",
   very_active: "activityVeryActive",
 };
-
-const EMPTY_MEDICATION: Medication = { name: "", dose: "", schedule: "" };
 
 export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
   const t = useTranslations("clients.healthProfile");
@@ -34,8 +32,6 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
   const [gender, setGender] = useState<Gender>("female");
   const [activityLevel, setActivityLevel] = useState<ActivityLevel>("sedentary");
   const [healthConditions, setHealthConditions] = useState<string[]>([]);
-  const [medications, setMedications] = useState<Medication[]>([]);
-  const [allergies, setAllergies] = useState<string[]>([]);
   const [foodPreferences, setFoodPreferences] = useState<string[]>([]);
   const [surgeryHistory, setSurgeryHistory] = useState("");
   const [labNotes, setLabNotes] = useState("");
@@ -70,8 +66,6 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
       setGender(profile.gender);
       setActivityLevel(profile.activity_level);
       setHealthConditions(profile.health_conditions);
-      setMedications(profile.medications.length > 0 ? profile.medications : []);
-      setAllergies(profile.allergies);
       setFoodPreferences(profile.food_preferences);
       setSurgeryHistory(profile.surgery_history ?? "");
       setLabNotes(profile.lab_notes ?? "");
@@ -84,14 +78,6 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
       cancelled = true;
     };
   }, [authorizedFetch, subscriberId]);
-
-  function updateMedication(index: number, field: keyof Medication, value: string) {
-    setMedications((rows) => rows.map((row, i) => (i === index ? { ...row, [field]: value } : row)));
-  }
-
-  function removeMedication(index: number) {
-    setMedications((rows) => rows.filter((_, i) => i !== index));
-  }
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -106,8 +92,6 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
       gender,
       activity_level: activityLevel,
       health_conditions: healthConditions,
-      medications: medications.filter((m) => m.name.trim() !== ""),
-      allergies,
       food_preferences: foodPreferences,
       surgery_history: surgeryHistory || null,
       lab_notes: labNotes || null,
@@ -224,79 +208,6 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
           value={healthConditions}
           onChange={setHealthConditions}
           hint={t("conditionsHint")}
-          placeholder={t("tagPlaceholder")}
-          addLabel={t("addTag")}
-          removeLabel={(v) => t("removeTag", { value: v })}
-        />
-      </section>
-
-      <section className="flex flex-col gap-3 border-t border-divider pt-6">
-        <h2 className="text-sm font-semibold text-ink">{t("sectionMedications")}</h2>
-
-        {/*
-          A 4-column grid (name/dose/schedule/remove) clips the name field
-          at mobile widths — 3 equal text columns plus a remove button
-          leave ~90px per field at 390px, and the browser silently
-          scrolls a too-narrow input to the caret position, showing only
-          the END of whatever was typed (e.g. "Levothyroxine" renders as
-          "vothyroxine"). A stacked layout — name gets the full row, dose
-          and schedule share the row below — has room at every width
-          instead of only above some breakpoint.
-        */}
-        {medications.map((medication, index) => (
-          <div
-            key={index}
-            className="flex flex-col gap-2 rounded-field border border-border p-3 transition-colors hover:border-ink-muted/30"
-          >
-            <div className="flex items-end gap-2">
-              <div className="flex-1">
-                <TextField
-                  label={t("medicationName")}
-                  value={medication.name}
-                  onChange={(e) => updateMedication(index, "name", e.target.value)}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={() => removeMedication(index)}
-                aria-label={t("removeMedication")}
-                className="mb-0.5 flex h-[42px] w-10 shrink-0 items-center justify-center rounded-field text-ink-muted transition-colors hover:bg-status-late-bg hover:text-danger"
-              >
-                <X size={16} />
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <TextField
-                label={t("medicationDose")}
-                value={medication.dose ?? ""}
-                onChange={(e) => updateMedication(index, "dose", e.target.value)}
-              />
-              <TextField
-                label={t("medicationSchedule")}
-                value={medication.schedule ?? ""}
-                onChange={(e) => updateMedication(index, "schedule", e.target.value)}
-              />
-            </div>
-          </div>
-        ))}
-
-        <Button
-          type="button"
-          variant="secondary"
-          className="w-fit"
-          onClick={() => setMedications((rows) => [...rows, { ...EMPTY_MEDICATION }])}
-        >
-          <Plus size={16} />
-          {t("addMedication")}
-        </Button>
-      </section>
-
-      <section className="border-t border-divider pt-6">
-        <TagInput
-          label={t("sectionAllergies")}
-          value={allergies}
-          onChange={setAllergies}
-          hint={t("allergiesHint")}
           placeholder={t("tagPlaceholder")}
           addLabel={t("addTag")}
           removeLabel={(v) => t("removeTag", { value: v })}

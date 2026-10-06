@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { AlertTriangle, ArrowLeft, Bell, CheckCircle2, Plus } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Bell, CalendarClock, CheckCircle2, ClipboardCheck, Plus } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { AdherenceBadge } from "@/components/clients/AdherenceBadge";
 import { DashboardStatTiles } from "@/components/clients/DashboardStatTiles";
@@ -120,6 +120,25 @@ export default function DashboardHomePage() {
       </section>
 
       {overview && <DashboardStatTiles overview={overview} />}
+
+      {overview && (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Link href="/dashboard/appointments" className="flex items-center gap-4 rounded-panel border border-border/70 bg-card p-5 shadow-panel transition-colors hover:border-primary/40">
+            <span className="flex h-11 w-11 items-center justify-center rounded-[12px] bg-mkt-mint-bg text-mkt-teal-deep"><CalendarClock size={20} strokeWidth={1.9} /></span>
+            <span className="flex flex-col">
+              <span className="text-2xl font-extrabold text-ink">{overview.appointments_today}</span>
+              <span className="text-sm text-ink-muted">{t("appointmentsToday")}</span>
+            </span>
+          </Link>
+          <Link href="/dashboard/alerts#proposals" className="flex items-center gap-4 rounded-panel border border-border/70 bg-card p-5 shadow-panel transition-colors hover:border-primary/40">
+            <span className="flex h-11 w-11 items-center justify-center rounded-[12px] bg-status-attention-bg text-status-attention"><ClipboardCheck size={20} strokeWidth={1.9} /></span>
+            <span className="flex flex-col">
+              <span className="text-2xl font-extrabold text-ink">{overview.pending_proposals}</span>
+              <span className="text-sm text-ink-muted">{t("pendingProposals")}</span>
+            </span>
+          </Link>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <section className="flex flex-col gap-2 rounded-panel border border-border/70 bg-card p-5 shadow-panel">

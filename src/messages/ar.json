@@ -18,7 +18,8 @@
     "adminFoods": "إدارة الأطعمة",
     "adminNutritionists": "أخصائيو التغذية",
     "adminMenu": "لوحة الإدارة",
-    "pendingFoodsBadge": "{count, plural, one {طعام واحد بانتظار المراجعة} two {طعامان بانتظار المراجعة} few {# أطعمة بانتظار المراجعة} other {# طعامًا بانتظار المراجعة}}"
+    "pendingFoodsBadge": "{count, plural, one {طعام واحد بانتظار المراجعة} two {طعامان بانتظار المراجعة} few {# أطعمة بانتظار المراجعة} other {# طعامًا بانتظار المراجعة}}",
+    "appointments": "المواعيد"
   },
   "auth": {
     "common": {
@@ -156,7 +157,8 @@
       "previousPage": "السابق",
       "nextPage": "التالي",
       "filterArchived": "المتابعة المنتهية",
-      "emptyArchived": "لا يوجد مرضى انتهت متابعتهم."
+      "emptyArchived": "لا يوجد مرضى انتهت متابعتهم.",
+      "pendingProposals": "{count, plural, one {تعديل بانتظار الاعتماد} two {تعديلان بانتظار الاعتماد} few {# تعديلات بانتظار الاعتماد} other {# تعديلًا بانتظار الاعتماد}}"
     },
     "stats": {
       "total": "إجمالي المرضى",
@@ -275,7 +277,9 @@
     "actionAddPatient": "إضافة مريض",
     "actionAlerts": "مراجعة التنبيهات",
     "activeLabel": "مرضى نشطون",
-    "adherenceLabel": "نسبة الاستقرار"
+    "adherenceLabel": "نسبة الاستقرار",
+    "appointmentsToday": "مواعيد اليوم",
+    "pendingProposals": "تعديلات بانتظار الاعتماد"
   },
   "progress": {
     "markers": {
@@ -373,6 +377,10 @@
       "caloriesExceeded": "تجاوز السعرات اليومية المستهدفة {days} أيام متتالية.",
       "milestoneLost": "إنجاز: خسر {kg} كجم خلال آخر {days} يومًا.",
       "milestoneGained": "إنجاز: اكتسب {kg} كجم خلال آخر {days} يومًا."
+    },
+    "proposals": {
+      "title": "بانتظار الاعتماد: تعديلات اقترحها المرضى",
+      "review": "{count, plural, one {مراجعة تعديل واحد} two {مراجعة تعديلين} few {مراجعة # تعديلات} other {مراجعة # تعديلًا}}"
     }
   },
   "plans": {
@@ -798,7 +806,9 @@
     "templateNamePrompt": "اسم هذا القالب (اختياري):",
     "fallbackDraftTag": "مسودة أولية حسب السعرات",
     "fallbackDraftNote": "لم يتوفّر اقتراح الذكاء الاصطناعي هذه المرة، فاقترحنا مسودة تعتمد على السعرات فقط. الحساسيات فُحصت بالاسم فقط، فيُرجى مراجعة الأصناف بعناية.",
-    "fallbackRetry": "إعادة المحاولة بالذكاء الاصطناعي"
+    "fallbackRetry": "إعادة المحاولة بالذكاء الاصطناعي",
+    "pendingAllergyBanner": "المريض اقترح حساسية لم تُعتمد بعد، ولا تُستبعد أطعمتها من المسودة حتى تعتمدها.",
+    "pendingAllergyReview": "مراجعة الاقتراح"
   },
   "foods": {
     "eyebrow": "مكتبة الأطعمة",
@@ -846,7 +856,19 @@
       "carbs_g_per_100g": "الكربوهيدرات (غ)",
       "fat_g_per_100g": "الدهون (غ)",
       "fiber_g_per_100g": "الألياف (غ)",
-      "cancel": "إلغاء"
+      "cancel": "إلغاء",
+      "allergens": "مسببات الحساسية في هذا الطعام",
+      "allergensHint": "تُستخدم لاستبعاد الطعام من مسودات المرضى الذين لديهم هذه الحساسية، ولتنبيههم في التطبيق.",
+      "shoppingSection": "قسم قائمة التسوق",
+      "section": {
+        "produce": "خضار وفواكه",
+        "meat_poultry_fish": "لحوم ودواجن وأسماك",
+        "dairy_eggs": "ألبان وبيض",
+        "grains_starches": "حبوب ونشويات",
+        "legumes_nuts": "بقوليات ومكسرات",
+        "oils_spices": "زيوت وتوابل",
+        "other": "أخرى"
+      }
     }
   },
   "admin": {
@@ -1041,5 +1063,158 @@
     "done": "تم",
     "failed": "تعذر إنشاء الرابط. حاول مرة أخرى.",
     "whatsappMessage": "مرحبًا {name}، هذا رابط دخول جديد لتطبيق HealthyLife لتعيين كلمة مرور جديدة: {link}"
+  },
+  "healthRecords": {
+    "loadFailed": "تعذّر تحميل الهدف والأدوية والحساسيات.",
+    "saveFailed": "تعذّر الحفظ. حاول مرة أخرى.",
+    "saved": "تم الحفظ.",
+    "goalTitle": "الهدف",
+    "goalType": "نوع الهدف",
+    "targetWeight": "الوزن المستهدف (كغ)",
+    "targetDate": "التاريخ المستهدف",
+    "trainingDays": "أيام التمرين أسبوعيًا",
+    "saveGoal": "حفظ الهدف",
+    "medicationsTitle": "الأدوية",
+    "medicationsHint": "للمتابعة فقط. التطبيق لا يقدّم نصائح دوائية.",
+    "none": "لا شيء مسجّل.",
+    "reviewed": "راجعته: {note}",
+    "reviewPrompt": "ملاحظة للمريض (اختيارية):",
+    "markReviewed": "تمّت المراجعة",
+    "remove": "إزالة",
+    "medName": "اسم الدواء",
+    "medDose": "الجرعة",
+    "medFrequency": "عدد المرات",
+    "medTiming": "التوقيت",
+    "addMedication": "إضافة دواء",
+    "allergiesTitle": "الحساسيات وعدم التحمّل",
+    "confirmRemoveAllergy": "إزالة «{name}» وهي حساسية مؤكدة؟ ستعود أطعمتها إلى المسودات.",
+    "allergyGroup": "المجموعة",
+    "allergyOther": "اكتبها",
+    "allergyClass": "النوع",
+    "addAllergy": "إضافة",
+    "alreadyRecorded": "هذه الحساسية مسجّلة مسبقًا.",
+    "goal": {
+      "weight_loss": "إنقاص الوزن",
+      "weight_gain": "زيادة الوزن",
+      "muscle_gain": "بناء العضل",
+      "weight_maintenance": "تثبيت الوزن",
+      "health_energy": "صحة وطاقة",
+      "medical_condition": "حالة صحية",
+      "other": "أخرى"
+    },
+    "group": {
+      "tree_nuts": "المكسرات",
+      "peanuts": "الفول السوداني",
+      "milk_lactose": "الحليب ومشتقاته (اللاكتوز)",
+      "egg": "البيض",
+      "wheat_gluten": "القمح والجلوتين",
+      "sesame": "السمسم",
+      "fish": "السمك",
+      "shellfish": "القشريات والمأكولات البحرية",
+      "soy": "الصويا",
+      "other": "أخرى"
+    },
+    "class": {
+      "confirmed_allergy": "حساسية مؤكدة",
+      "intolerance": "عدم تحمّل",
+      "avoid": "يتجنبه"
+    },
+    "timing": {
+      "before": "قبل الأكل",
+      "with": "مع الأكل",
+      "after": "بعد الأكل",
+      "empty_stomach": "على معدة فارغة",
+      "any": "في أي وقت"
+    },
+    "pendingTitle": "بانتظار الاعتماد ({count})",
+    "pendingHint": "اقترحها المريض من التطبيق. لا يُطبَّق شيء قبل اعتمادك.",
+    "proposal": {
+      "goal": "تغيير الهدف إلى: {goal}",
+      "medication_add": "إضافة دواء: {name} {dose}",
+      "medication_edit": "تعديل دواء: {name} {dose}",
+      "medication_remove": "إيقاف دواء: {name}",
+      "allergy_add": "إضافة: {name} ({class})",
+      "allergy_edit": "تعديل: {name} ({class})",
+      "allergy_remove": "إزالة: {name}"
+    },
+    "approve": "اعتماد",
+    "reject": "رفض",
+    "approveTitle": "اعتماد التعديل",
+    "rejectTitle": "رفض التعديل",
+    "noteOptional": "ملاحظة للمريض (اختيارية)",
+    "cancel": "إلغاء",
+    "stale": "تغيّر السجل بعد هذا الاقتراح، فلم يُطبَّق. راجعه مع المريض.",
+    "ended": "انتهت متابعة هذا المريض.",
+    "confirmedRemovalWarning": "هذه حساسية مؤكدة. بعد الاعتماد ستعود أطعمتها إلى المسودات."
+  },
+  "appointments": {
+    "title": "المواعيد",
+    "subtitle": "مواعيد الأسبوعين القادمين، مجمّعة حسب اليوم.",
+    "loadFailed": "تعذّر تحميل المواعيد.",
+    "empty": "لا مواعيد قادمة.",
+    "setAvailability": "ضبط أوقات التوفر",
+    "channel": {
+      "whatsapp": "واتساب",
+      "phone": "اتصال",
+      "video": "فيديو"
+    },
+    "type": {
+      "follow_up": "متابعة",
+      "results_review": "مراجعة نتائج",
+      "quick_consult": "استشارة سريعة"
+    },
+    "topic": {
+      "weight": "الوزن",
+      "meals": "الوجبات",
+      "plan_change": "تعديل الخطة",
+      "results": "النتائج",
+      "medications": "الأدوية",
+      "other": "أخرى"
+    },
+    "status": {
+      "booked": "محجوز",
+      "cancelled": "ملغى",
+      "completed": "تمّ",
+      "no_show": "لم يحضر"
+    },
+    "reason": "السبب: {reason}",
+    "reasonEnded": "انتهت المتابعة",
+    "cancel": "إلغاء",
+    "noShow": "لم يحضر",
+    "complete": "تمّ",
+    "writeReview": "كتابة مراجعة المتابعة",
+    "cancelTitle": "إلغاء الموعد",
+    "cancelBody": "سيصل المريض إشعار بالإلغاء.",
+    "reasonLabel": "السبب (اختياري، يراه المريض)",
+    "back": "رجوع",
+    "confirmCancel": "إلغاء الموعد",
+    "availability": {
+      "title": "أوقات التوفر للمواعيد",
+      "hint": "فترات أسبوعية بخطوات 15 دقيقة، بتوقيت {tz}. يحجز المريض قبل 12 ساعة على الأقل.",
+      "day": "اليوم",
+      "from": "من",
+      "to": "إلى",
+      "remove": "حذف",
+      "addWindow": "إضافة فترة",
+      "daysOff": "أيام الإجازة",
+      "addDayOff": "تاريخ الإجازة",
+      "add": "إضافة",
+      "meetingLink": "رابط مكالمة الفيديو",
+      "meetingLinkHint": "بدونه لا يمكن حجز مواعيد الفيديو.",
+      "saved": "تم حفظ أوقات التوفر.",
+      "badLink": "الرابط غير صالح (يجب أن يبدأ بـ https://).",
+      "badWindow": "كل فترة يجب أن تنتهي بعد أن تبدأ.",
+      "saveFailed": "تعذّر الحفظ.",
+      "save": "حفظ أوقات التوفر",
+      "weekday": {
+        "0": "الأحد",
+        "1": "الإثنين",
+        "2": "الثلاثاء",
+        "3": "الأربعاء",
+        "4": "الخميس",
+        "5": "الجمعة",
+        "6": "السبت"
+      }
+    }
   }
 }

@@ -276,6 +276,11 @@ function ClientRow({ client }: { client: Client }) {
         <div className="flex flex-wrap gap-1.5">
           <ClientStatusBadge status={client.status} />
           {client.archived_at && <FollowUpEndedBadge />}
+          {!!client.pending_proposals_count && (
+            <Link href={`/dashboard/patients/${client.id}`} className="rounded-full bg-status-attention-bg px-2.5 py-0.5 text-xs font-bold text-status-attention">
+              {t("pendingProposals", { count: client.pending_proposals_count })}
+            </Link>
+          )}
         </div>
       </td>
       <td className="px-5 py-3.5">
