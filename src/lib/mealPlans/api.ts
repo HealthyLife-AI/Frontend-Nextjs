@@ -44,8 +44,9 @@ export function activateMealPlan(fetcher: Fetcher, subscriberId: number | string
 
 /** F-5 (PRD, P1): "Suggest a starting plan" — rule-based, always returns a draft. */
 export function generateAiDraft(fetcher: Fetcher, subscriberId: number | string) {
+  // `warnings`: "pending_allergy_proposal" while a patient-proposed allergy awaits approval.
   return fetcher(`/clients/${subscriberId}/meal-plans/ai-draft`, { method: "POST" }).then((res) =>
-    parseJson<MealPlan>(res)
+    parseJson<MealPlan & { warnings?: string[] }>(res)
   );
 }
 

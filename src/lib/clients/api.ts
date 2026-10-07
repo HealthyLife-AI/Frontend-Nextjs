@@ -13,10 +13,11 @@ export type { ApiError } from "@/lib/api";
 
 export function listClients(
   fetcher: Fetcher,
-  params: { status?: string; adherence?: string; search?: string; page?: number; archived?: boolean }
+  params: { status?: string; adherence?: string; search?: string; page?: number; archived?: boolean; pendingProposals?: boolean }
 ) {
   const query = new URLSearchParams();
   if (params.archived) query.set("archived", "1");
+  if (params.pendingProposals) query.set("pending_proposals", "1");
   if (params.status) query.set("status", params.status);
   if (params.adherence) query.set("adherence", params.adherence);
   if (params.search) query.set("search", params.search);

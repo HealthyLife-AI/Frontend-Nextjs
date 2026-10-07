@@ -22,6 +22,7 @@ import { FollowUpBanner, FollowUpControls } from "@/components/clients/FollowUpC
 import { SignInLinkButton } from "@/components/clients/SignInLinkButton";
 import { MealLogSection } from "@/components/followUp/MealLogSection";
 import { ReviewsPanel } from "@/components/followUp/ReviewsPanel";
+import { PendingProposals } from "@/components/healthRecords/PendingProposals";
 import { listAiSummaries } from "@/lib/aiSummaries/api";
 import type { AiSummary } from "@/lib/aiSummaries/types";
 
@@ -216,9 +217,13 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
       {client.archived_at && <FollowUpBanner client={client} onChange={setClient} />}
 
+      <PendingProposals subscriberId={id} readOnly={client.archived_at !== null} />
+
       <AiSummaryCard summary={latestSummary} />
 
-      <ReviewsPanel subscriberId={id} readOnly={client.archived_at !== null} />
+      <div id="reviews" className="scroll-mt-24">
+        <ReviewsPanel subscriberId={id} readOnly={client.archived_at !== null} />
+      </div>
       <MealLogSection subscriberId={id} />
 
       {progressFailed && (

@@ -4,13 +4,15 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useFormatter, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { Bell, CalendarX, Flame, Award, Check } from "lucide-react";
+import { Bell, CalendarX, ClipboardCheck, Flame, Award, Check } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Badge } from "@/components/ui/Badge";
 import { listAlerts, markAlertRead } from "@/lib/alerts/api";
 import type { Alert, AlertType } from "@/lib/alerts/types";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { localizedAlertMessage } from "@/lib/alerts/message";
+import { listClients } from "@/lib/clients/api";
+import type { Client } from "@/lib/clients/types";
 
 const FILTERS = [
   { labelKey: "filterAll", is_read: undefined },
@@ -96,6 +98,8 @@ export default function AlertsPage() {
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
       <PageHeader title={t("title")} subtitle={t("subtitle")} />
+
+      <PendingProposalsRow />
 
       <div className="flex gap-2">
         {FILTERS.map((filter) => (
@@ -218,5 +222,45 @@ function AlertRow({ alert, onMarkRead }: { alert: Alert; onMarkRead: (id: number
         </button>
       )}
     </div>
+  );
+}
+
+/**
+ * «بانتظار الاعتماد»: patients whose own goal / medication / allergy changes
+ * wait for the nutritionist. Not an alert row (nothing to mark read): it
+ * disappears once every proposal is approved or rejected on the patient page.
+ */
+function PendingProposalsRow() {
+  const t = useTranslations("alerts.proposals");
+  const { authorizedFetch } = useAuth();
+  const [clients, setClients] = useState<Client[]>([]);
+
+  useEffect(() => {
+    listClients(authorizedFetch, { pendingProposals: true }).then((r) => {
+      if (r.ok) setClients(r.data.data);
+    });
+  }, [authorizedFetch]);
+
+  if (clients.length === 0) return null;
+
+  return (
+    <section id="proposals" className="flex flex-col gap-3 rounded-panel border border-status-attention/30 bg-status-attention-bg p-4">
+      <h2 className="flex items-center gap-2 text-sm font-bold text-ink">
+        <ClipboardCheck size={18} className="text-status-attention" aria-hidden="true" />
+        {t("title")}
+      </h2>
+      <ul className="flex flex-col gap-2">
+        {clients.map((c) => (
+          <li key={c.id} className="flex items-center justify-between gap-3 rounded-field bg-card px-3 py-2">
+            <span className="min-w-0 truncate text-sm">
+              <span className="font-semibold text-ink">{c.name}</span> <span className="text-xs text-ink-muted">{c.code}</span>
+            </span>
+            <Link href={`/dashboard/patients/${c.id}`} className="shrink-0 text-xs font-bold text-mkt-teal-deep hover:underline">
+              {t("review", { count: c.pending_proposals_count ?? 0 })}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }

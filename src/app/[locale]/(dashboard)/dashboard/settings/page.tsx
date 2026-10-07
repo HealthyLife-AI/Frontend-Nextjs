@@ -12,6 +12,7 @@ import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 import { getNutritionistProfile, saveNutritionistProfile } from "@/lib/nutritionists/api";
 import { WHATSAPP_PATTERN, type NutritionistGender, type NutritionistProfile } from "@/lib/nutritionists/types";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { AvailabilitySettings } from "@/components/appointments/AvailabilitySettings";
 
 /**
  * S4-00 / FR-28: the nutritionist's own professional profile — the
@@ -241,6 +242,8 @@ export default function SettingsPage() {
           </Button>
         </div>
       </form>
+
+      <AvailabilitySettings />
 
       <section className="rounded-panel border border-border/70 bg-card p-5 shadow-panel">
         <h2 className="text-base font-bold text-ink">{t("languageSection")}</h2>

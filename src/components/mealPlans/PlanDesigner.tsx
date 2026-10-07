@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Bookmark, Calculator, RotateCcw, Sparkles, Verified } from "lucide-react";
+import { Bookmark, Calculator, RotateCcw, ShieldAlert, Sparkles, Verified } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { getHealthProfile } from "@/lib/clients/api";
+import { Link } from "@/i18n/navigation";
+import { getHealthRecords } from "@/lib/healthRecords/api";
 import {
   activateMealPlan,
   createMealPlan,
@@ -49,17 +51,22 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
   const [savingTemplate, setSavingTemplate] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  // A patient-proposed allergy is not used by the draft (or anywhere) until approved.
+  const [pendingAllergy, setPendingAllergy] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
 
     (async () => {
-      const [plansResult, profileResult] = await Promise.all([
+      const [plansResult, profileResult, recordsResult] = await Promise.all([
         listMealPlans(authorizedFetch, subscriberId),
         getHealthProfile(authorizedFetch, subscriberId),
+        getHealthRecords(authorizedFetch, subscriberId),
       ]);
 
       if (cancelled) return;
+
+      if (recordsResult.ok) setPendingAllergy(recordsResult.data.proposals.some((p) => p.kind === "allergy"));
 
       if (profileResult.ok && profileResult.data) {
         setCalorieTarget(profileResult.data.daily_calorie_needs);
@@ -153,6 +160,7 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
     setSlots(planToSlots(result.data));
     setDirty(false);
     setNotice(null);
+    if (result.data.warnings?.includes("pending_allergy_proposal")) setPendingAllergy(true);
   }
 
   async function handleSaveAsTemplate() {
@@ -186,6 +194,16 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
 
   return (
     <div className="flex flex-col gap-5">
+      {pendingAllergy && (
+        <p role="alert" className="flex flex-wrap items-center gap-2 rounded-field border border-status-attention/30 bg-status-attention-bg px-3.5 py-2.5 text-sm text-ink">
+          <ShieldAlert size={17} className="shrink-0 text-status-attention" aria-hidden="true" />
+          {t("pendingAllergyBanner")}
+          <Link href={`/dashboard/patients/${subscriberId}`} className="font-semibold text-mkt-teal-deep hover:underline">
+            {t("pendingAllergyReview")}
+          </Link>
+        </p>
+      )}
+
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-wrap items-center gap-2">
           {currentPlan && (

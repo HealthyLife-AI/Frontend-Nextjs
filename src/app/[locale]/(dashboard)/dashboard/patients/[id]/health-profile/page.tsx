@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { HealthProfileForm } from "@/components/clients/HealthProfileForm";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { FollowUpGate } from "@/components/clients/FollowUpControls";
+import { HealthRecordsEditor } from "@/components/healthRecords/HealthRecordsEditor";
 
 export default function HealthProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -30,6 +31,10 @@ export default function HealthProfilePage({ params }: { params: Promise<{ id: st
           <HealthProfileForm subscriberId={id} />
         </FollowUpGate>
       </div>
+
+      <FollowUpGate subscriberId={id}>
+        <HealthRecordsEditor subscriberId={id} />
+      </FollowUpGate>
     </div>
   );
 }

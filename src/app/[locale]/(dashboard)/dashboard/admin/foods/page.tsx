@@ -196,6 +196,7 @@ export default function AdminFoodsPage() {
             food={editing === "new" ? null : editing}
             submitLabel={editing === "new" ? t("create") : t("save")}
             onCancel={() => setEditing(null)}
+            withTags
             onSubmit={async (payload) => {
               const result =
                 editing === "new"
