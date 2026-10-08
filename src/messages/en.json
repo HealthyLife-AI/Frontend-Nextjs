@@ -123,7 +123,7 @@
     "health_monitoring": "Health monitoring"
   },
   "clientStatus": {
-    "pending": "Pending",
+    "pending": "Not signed in yet",
     "active": "Active"
   },
   "adherence": {
@@ -170,25 +170,28 @@
     },
     "add": {
       "title": "Add a new client",
-      "subtitle": "Add their name and phone number — an activation link is generated automatically",
+      "subtitle": "Add their name, phone number and a username — the password is generated automatically",
       "name": "Full name",
       "phone": "Phone number",
       "goal": "Health goal",
       "submit": "Add client",
       "submitting": "Adding client...",
       "successTitle": "Client added",
-      "successSubtitle": "Share this activation link with {name} over WhatsApp so they can set a password and get started.",
-      "inviteLinkLabel": "Activation link",
-      "copyLink": "Copy link",
-      "linkCopied": "Copied",
-      "shareWhatsapp": "Share via WhatsApp",
-      "whatsappMessage": "Hi {name}, please activate your HealthyLife AI account using this link: {link}",
+      "successSubtitle": "Send the username and password to {name} on WhatsApp so they can sign in to the app.",
       "addAnother": "Add another client",
       "backToList": "Back to client list",
       "errors": {
-        "phoneTaken": "This phone number is already registered to one of your clients."
+        "phoneTaken": "This phone number is already registered to one of your clients.",
+        "phoneInvalid": "Invalid phone number. Pick the country code and type the number without its leading 0.",
+        "usernameTaken": "This username is taken. Choose another one.",
+        "usernameArabic": "Type the username in English letters, without Arabic letters.",
+        "usernameRequired": "A username is required.",
+        "usernameInvalid": "Use 3 to 30 characters: English letters, digits and . _ -, starting with a letter or digit."
       },
-      "fillHealthProfile": "Fill health profile"
+      "fillHealthProfile": "Fill health profile",
+      "countryCode": "Country code",
+      "username": "Username",
+      "usernameHint": "English letters, digits and . _ - (3 to 30 characters). The patient signs in with it."
     },
     "detail": {
       "backToList": "Back to client list",
@@ -207,7 +210,9 @@
       "healthProfileLink": "Health profile",
       "planLink": "Nutrition plan",
       "noProfileYet": "No health profile on file yet.",
-      "fillProfile": "Fill in health profile"
+      "fillProfile": "Fill in health profile",
+      "usernameLabel": "Username",
+      "noUsername": "No username yet"
     },
     "healthProfile": {
       "title": "Health profile",
@@ -946,11 +951,6 @@
     "badge": "Follow-up ended",
     "bannerTitle": "Follow-up ended on {date}",
     "bannerBody": "Records are read-only. No alerts, reminders or summaries, and the patient can't sign in to the app.",
-    "resumedInviteTitle": "New activation link",
-    "resumedInviteBody": "{name} never activated their account, and their old link was cancelled when follow-up ended. Send them this new link:",
-    "copy": "Copy link",
-    "copied": "Copied",
-    "done": "Done",
     "readOnly": "Follow-up has ended — this page is read-only. Resume follow-up from the patient page to make changes.",
     "mealLog": {
       "title": "Meal log",
@@ -1052,17 +1052,6 @@
     "detail": "Their records are gone; only the code and date are kept for this notice.",
     "dismiss": "Dismiss",
     "dismissFailed": "Could not dismiss this notice. Please try again."
-  },
-  "signInLink": {
-    "button": "Send a new sign-in link",
-    "title": "New sign-in link for {name}",
-    "body": "Send this link to the patient. They open it once and choose a new password, which ends all their earlier sessions. Valid until {date}; any earlier unused link no longer works.",
-    "copy": "Copy",
-    "copied": "Copied",
-    "share": "Send via WhatsApp",
-    "done": "Done",
-    "failed": "Could not create the link. Try again.",
-    "whatsappMessage": "Hello {name}, here is a new sign-in link for the HealthyLife app to set a new password: {link}"
   },
   "healthRecords": {
     "loadFailed": "Could not load the goal, medications and allergies.",
@@ -1215,6 +1204,39 @@
         "5": "Friday",
         "6": "Saturday"
       }
+    }
+  },
+  "credentials": {
+    "username": "Username",
+    "password": "Password",
+    "copy": "Copy",
+    "copied": "Copied",
+    "onceWarning": "The password will not be shown again. Send or copy it now.",
+    "sendWhatsapp": "Send on WhatsApp",
+    "message": {
+      "newGreeting": "Hi {name}, your nutritionist created a HealthyLife account for you.",
+      "username": "Username: {username}",
+      "password": "Password: {password}",
+      "newPassword": "New password: {password}",
+      "app": "Get the app: {url}",
+      "newHint": "You can change the password in the app: Account → Password.",
+      "resetGreeting": "Hi {name}, here are your new HealthyLife sign-in details.",
+      "resetHint": "Your previous password no longer works; you can change this one in the app."
+    },
+    "reset": {
+      "button": "Reset password",
+      "buttonSetUsername": "Set username and password",
+      "title": "Reset the password of {name}",
+      "doneTitle": "New sign-in details for {name}",
+      "body": "A new password is generated and every current session of {name} ends: they will have to sign in again.",
+      "noUsernameHint": "This patient was added before usernames. Choose a username for them to sign in with.",
+      "username": "Username",
+      "usernameKeepHint": "Leave it as it is, or change it.",
+      "confirm": "Reset",
+      "cancel": "Cancel",
+      "close": "Done",
+      "ended": "Follow-up for this patient has ended. Resume it first.",
+      "failed": "Could not reset. Try again."
     }
   }
 }

@@ -37,6 +37,8 @@ export type Client = {
   code: string;
   name: string;
   phone: string | null;
+  /** What the patient signs in with; null for patients added before usernames. */
+  username: string | null;
   goal: ClientGoal;
   status: ClientStatus;
   /** Set while follow-up is ended ("إنهاء المتابعة"); records stay, read-only. */

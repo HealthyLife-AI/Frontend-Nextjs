@@ -19,7 +19,7 @@ import { WeightTrendChart } from "@/components/progress/WeightTrendChart";
 import { AiSummaryCard } from "@/components/aiSummaries/AiSummaryCard";
 import { DeleteClientButton } from "@/components/clients/DeleteClientButton";
 import { FollowUpBanner, FollowUpControls } from "@/components/clients/FollowUpControls";
-import { SignInLinkButton } from "@/components/clients/SignInLinkButton";
+import { ResetPasswordButton } from "@/components/clients/ResetPasswordButton";
 import { MealLogSection } from "@/components/followUp/MealLogSection";
 import { ReviewsPanel } from "@/components/followUp/ReviewsPanel";
 import { PendingProposals } from "@/components/healthRecords/PendingProposals";
@@ -172,11 +172,23 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           </div>
         </div>
 
-        <dl className="grid grid-cols-2 divide-divider text-sm sm:grid-cols-4 sm:divide-x sm:rtl:divide-x-reverse">
+        <dl className="grid grid-cols-2 divide-divider text-sm sm:grid-cols-5 sm:divide-x sm:rtl:divide-x-reverse">
           <div className="flex flex-col gap-1.5 p-5">
             <dt className="text-xs font-semibold text-ink-muted">{t("phoneLabel")}</dt>
             <dd className="font-bold text-ink" dir="ltr">
               {client.phone ?? "—"}
+            </dd>
+          </div>
+          <div className="flex flex-col gap-1.5 p-5">
+            <dt className="text-xs font-semibold text-ink-muted">{t("usernameLabel")}</dt>
+            <dd>
+              {client.username ? (
+                <span className="font-bold text-ink" dir="ltr">
+                  {client.username}
+                </span>
+              ) : (
+                <span className="inline-flex w-fit rounded-full bg-status-attention-bg px-2.5 py-0.5 text-xs font-bold text-status-attention">{t("noUsername")}</span>
+              )}
             </dd>
           </div>
           <div className="flex flex-col gap-1.5 p-5">
@@ -247,7 +259,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
       {/* Kept at the bottom, away from the everyday actions in the header. */}
       <div className="flex flex-wrap justify-end gap-2.5 border-t border-divider pt-6">
-        {!client.archived_at && <SignInLinkButton client={client} />}
+        {!client.archived_at && <ResetPasswordButton client={client} onUsername={(username) => setClient({ ...client, username })} />}
         {!client.archived_at && <FollowUpControls client={client} onChange={setClient} />}
         <DeleteClientButton client={client} />
       </div>

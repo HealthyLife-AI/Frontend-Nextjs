@@ -2,83 +2,73 @@
 
 import { FormEvent, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Check, CheckCircle2, Copy, FileText } from "lucide-react";
+import { CheckCircle2, FileText } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { TextField } from "@/components/ui/TextField";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
-import { createClient } from "@/lib/clients/api";
+import { CredentialsCard } from "@/components/clients/CredentialsCard";
+import { createClient, type PatientCredentials } from "@/lib/clients/api";
+import { COUNTRY_CODES, internationalPhone, usernameErrorKey } from "@/lib/clients/credentials";
 import type { ClientGoal } from "@/lib/clients/types";
 
 const GOALS: ClientGoal[] = ["weight_loss", "weight_gain", "weight_maintenance", "health_monitoring"];
 
-type SuccessState = { id: number; name: string; inviteLink: string };
+type SuccessState = { id: number; name: string; phone: string | null; credentials: PatientCredentials };
 
+/**
+ * Part A: the nutritionist gives the patient a username; the system
+ * generates the password. Both are shown once, to send on WhatsApp.
+ * A 422 keeps every field as typed and shows the error under its field.
+ */
 export function AddClientForm() {
   const t = useTranslations("clients.add");
   const tGoals = useTranslations("goals");
   const { authorizedFetch } = useAuth();
 
   const [name, setName] = useState("");
+  const [countryCode, setCountryCode] = useState<string>(COUNTRY_CODES[0]);
   const [phone, setPhone] = useState("");
+  const [username, setUsername] = useState("");
   const [goal, setGoal] = useState<ClientGoal>("weight_loss");
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
   const [success, setSuccess] = useState<SuccessState | null>(null);
-  const [copied, setCopied] = useState(false);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     setFormError(null);
     setPhoneError(null);
+    setUsernameError(null);
     setSubmitting(true);
 
-    const result = await createClient(authorizedFetch, { name, phone, goal });
+    const result = await createClient(authorizedFetch, { name, phone: internationalPhone(countryCode, phone), username, goal });
+    setSubmitting(false);
 
     if (!result.ok) {
-      if (result.error.errors?.phone) {
-        setPhoneError(t("errors.phoneTaken"));
-      } else {
-        setFormError(result.error.message);
-      }
-      setSubmitting(false);
+      const errors = result.error.errors ?? {};
+      if (errors.phone) setPhoneError(/taken/i.test(errors.phone[0]) ? t("errors.phoneTaken") : t("errors.phoneInvalid"));
+      const usernameKey = usernameErrorKey(errors.username?.[0]);
+      if (usernameKey) setUsernameError(t(`errors.${usernameKey}`));
+      if (!errors.phone && !usernameKey) setFormError(result.error.message);
       return;
     }
 
-    // Custom URL scheme into the Flutter client app — never a web URL.
-    // Activation happens in-app now; there is no web activation page.
-    // "healthylifeai" must match exactly what the Flutter app registers
-    // (iOS CFBundleURLSchemes / Android intent-filter). No cost, no
-    // external service (Branch.io etc.) — a plain scheme registration on
-    // the app side is enough. Known gap: if the client has not installed
-    // the app yet, this link does nothing when tapped (no web fallback by
-    // design) — flagged to the user, accepted for now.
-    const inviteLink = `healthylifeai://activate/${result.data.invite_token}`;
-    setSuccess({ id: result.data.client.id, name: result.data.client.name, inviteLink });
-    setSubmitting(false);
+    setSuccess({ id: result.data.client.id, name: result.data.client.name, phone: result.data.client.phone, credentials: result.data.credentials });
   }
 
   function resetForm() {
     setName("");
     setPhone("");
+    setUsername("");
     setGoal("weight_loss");
     setSuccess(null);
-    setCopied(false);
-  }
-
-  async function copyLink() {
-    if (!success) return;
-    await navigator.clipboard.writeText(success.inviteLink);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   }
 
   if (success) {
-    const whatsappMessage = t("whatsappMessage", { name: success.name, link: success.inviteLink });
-    const whatsappHref = `https://wa.me/?text=${encodeURIComponent(whatsappMessage)}`;
-
     return (
       <div className="flex flex-col gap-5">
         <div className="flex items-start gap-3">
@@ -91,35 +81,9 @@ export function AddClientForm() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-1.5">
-          <span className="text-sm font-medium text-ink">{t("inviteLinkLabel")}</span>
-          <div className="flex items-center gap-2 rounded-field border border-border bg-canvas px-3.5 py-2.5">
-            <span className="min-w-0 flex-1 truncate font-mono text-sm text-ink-muted" dir="ltr">
-              {success.inviteLink}
-            </span>
-            <button
-              type="button"
-              onClick={copyLink}
-              className="flex shrink-0 items-center gap-1.5 text-sm font-medium text-primary hover:underline"
-            >
-              {copied ? <Check size={16} /> : <Copy size={16} />}
-              {copied ? t("linkCopied") : t("copyLink")}
-            </button>
-          </div>
-        </div>
+        <CredentialsCard name={success.name} phone={success.phone} username={success.credentials.username} password={success.credentials.password} kind="new" />
 
-        <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
-          <Button type="button" variant="secondary" className="w-full">
-            {t("shareWhatsapp")}
-          </Button>
-        </a>
-
-        {/*
-          The critical journey is add -> health profile -> plan -> send
-          link, not add -> back to a list to find the client again. This
-          is the primary action; WhatsApp above is how the link actually
-          reaches the client, so it stays first but secondary-styled.
-        */}
+        {/* The critical journey is add -> health profile -> plan, not back to the list. */}
         <Link href={`/dashboard/patients/${success.id}/health-profile`}>
           <Button type="button" className="w-full">
             <FileText size={18} strokeWidth={1.75} />
@@ -141,22 +105,50 @@ export function AddClientForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
-      <TextField
-        label={t("name")}
-        name="name"
-        required
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
+      <TextField label={t("name")} name="name" required value={name} onChange={(e) => setName(e.target.value)} />
+
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-end gap-2" dir="ltr">
+          <div className="w-28 shrink-0">
+            <Select label={t("countryCode")} value={countryCode} onChange={(e) => setCountryCode(e.target.value)}>
+              {COUNTRY_CODES.map((code) => (
+                <option key={code} value={code}>
+                  {code}
+                </option>
+              ))}
+            </Select>
+          </div>
+          <div className="min-w-0 flex-1" dir="auto">
+            <TextField
+              label={t("phone")}
+              name="phone"
+              type="tel"
+              inputMode="tel"
+              dir="ltr"
+              placeholder="599 123 456"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              error={phoneError ?? undefined}
+            />
+          </div>
+        </div>
+      </div>
 
       <TextField
-        label={t("phone")}
-        name="phone"
-        type="tel"
+        label={t("username")}
+        name="username"
+        dir="ltr"
+        autoComplete="off"
+        autoCapitalize="none"
+        spellCheck={false}
         required
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-        error={phoneError ?? undefined}
+        maxLength={30}
+        placeholder="sara.k"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        error={usernameError ?? undefined}
+        hint={t("usernameHint")}
       />
 
       <Select label={t("goal")} value={goal} onChange={(e) => setGoal(e.target.value as ClientGoal)}>

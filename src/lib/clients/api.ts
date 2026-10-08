@@ -32,15 +32,18 @@ export function getDashboardOverview(fetcher: Fetcher) {
   return fetcher("/dashboard/overview").then((res) => parseJson<DashboardOverview>(res));
 }
 
+/** The username and generated password, returned only by the call that made them. */
+export type PatientCredentials = { username: string; password: string };
+
 export function createClient(
   fetcher: Fetcher,
-  payload: { name: string; phone: string; goal: string }
+  payload: { name: string; phone: string; username: string; goal: string }
 ) {
   return fetcher("/clients", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
-  }).then((res) => parseJson<{ client: Client; invite_token: string; invite_expires_at: string }>(res));
+  }).then((res) => parseJson<{ client: Client; credentials: PatientCredentials }>(res));
 }
 
 export function getClient(fetcher: Fetcher, id: number | string) {
@@ -57,21 +60,21 @@ export function archiveClient(fetcher: Fetcher, id: number | string) {
   return fetcher(`/clients/${id}/archive`, { method: "POST" }).then((res) => parseJson<{ client: Client }>(res));
 }
 
-/**
- * Resume follow-up. A patient who never activated gets a new invite
- * (their old link was invalidated on archive): `invite_token` is then set.
- */
+/** Resume follow-up. No invite any more: the patient signs in with the credentials they have. */
 export function resumeClient(fetcher: Fetcher, id: number | string) {
-  return fetcher(`/clients/${id}/resume`, { method: "POST" }).then((res) =>
-    parseJson<{ client: Client; invite_token: string | null; invite_expires_at: string | null }>(res)
-  );
+  return fetcher(`/clients/${id}/resume`, { method: "POST" }).then((res) => parseJson<{ client: Client }>(res));
 }
 
-/** A new one-time sign-in link for a patient who can't sign in; earlier unused links stop working. */
-export function issueSignInLink(fetcher: Fetcher, id: number | string) {
-  return fetcher(`/clients/${id}/sign-in-link`, { method: "POST" }).then((res) =>
-    parseJson<{ token: string; expires_at: string }>(res)
-  );
+/**
+ * A new generated password (and the username, required when the patient has
+ * none yet). Every session of the patient ends.
+ */
+export function resetPatientPassword(fetcher: Fetcher, id: number | string, username?: string) {
+  return fetcher(`/clients/${id}/reset-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(username ? { username } : {}),
+  }).then((res) => parseJson<PatientCredentials>(res));
 }
 
 export function getHealthProfile(fetcher: Fetcher, subscriberId: number | string) {

@@ -1,4 +1,4 @@
-import type { ErrorEvent } from "@sentry/nextjs";
+import type { Breadcrumb, ErrorEvent } from "@sentry/nextjs";
 
 /**
  * Shared Sentry options for the browser and the server. Off unless
@@ -12,7 +12,13 @@ export const sentryOptions = {
   sendDefaultPii: false,
   tracesSampleRate: 0,
   beforeSend: scrub,
+  beforeBreadcrumb: dropCredentials,
 };
+
+/** A patient's generated password only ever sits in a wa.me link: no breadcrumb may carry one. */
+export function dropCredentials(breadcrumb: Breadcrumb): Breadcrumb | null {
+  return /wa\.me|password|reset-password/i.test(JSON.stringify(breadcrumb)) ? null : breadcrumb;
+}
 
 const SECRET = /(token|password|authorization|cookie|secret)/i;
 

@@ -52,7 +52,7 @@ export default function PlansPage() {
     });
 
     // Only active clients can meaningfully receive a plan — a pending
-    // one hasn't accepted their invite yet, so they have no app to see
+    // one hasn't signed in yet, so they have no app to see
     // it in.
     listClients(authorizedFetch, { status: "active" }).then((result) => {
       if (!cancelled && result.ok) setClients(result.data.data);
