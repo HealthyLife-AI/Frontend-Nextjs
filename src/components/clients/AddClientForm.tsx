@@ -146,7 +146,6 @@ export function AddClientForm() {
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         error={usernameError ?? undefined}
-        hint={t("usernameHint")}
       />
 
       <Select label={t("goal")} value={goal} onChange={(e) => setGoal(e.target.value as GoalType)}>
