@@ -6,6 +6,10 @@
 
 export type ClientGoal = "weight_loss" | "weight_gain" | "weight_maintenance" | "health_monitoring";
 
+/** The 7 structured goals (B10): what the nutritionist picks when adding a patient. */
+export const GOAL_TYPES = ["weight_loss", "weight_gain", "muscle_gain", "weight_maintenance", "health_energy", "medical_condition", "other"] as const;
+export type GoalType = (typeof GOAL_TYPES)[number];
+
 export type ClientStatus = "pending" | "active";
 
 /**
@@ -37,7 +41,11 @@ export type Client = {
   code: string;
   name: string;
   phone: string | null;
+  /** What the patient signs in with; null for patients added before usernames. */
+  username: string | null;
   goal: ClientGoal;
+  /** The structured goal (7 types); null for a patient without one yet. */
+  goal_type: GoalType | null;
   status: ClientStatus;
   /** Set while follow-up is ended ("إنهاء المتابعة"); records stay, read-only. */
   archived_at: string | null;

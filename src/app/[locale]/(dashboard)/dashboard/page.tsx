@@ -35,6 +35,8 @@ export default function DashboardHomePage() {
   const tAlertType = useTranslations("alerts.type");
   const tAlertMessage = useTranslations("alerts.message");
   const tGoals = useTranslations("goals");
+  const tGoalType = useTranslations("healthRecords.goal");
+  const goalText = (c: Client) => (c.goal_type ? tGoalType(c.goal_type) : tGoals(c.goal));
   const { authorizedFetch, user } = useAuth();
 
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
@@ -173,7 +175,7 @@ export default function DashboardHomePage() {
                 </div>
                 <div className="flex min-w-0 flex-col">
                   <span className="truncate text-sm font-bold text-ink">{client.name}</span>
-                  <span className="truncate text-xs text-ink-muted">{tGoals(client.goal)}</span>
+                  <span className="truncate text-xs text-ink-muted">{goalText(client)}</span>
                 </div>
               </div>
               <AdherenceBadge status={client.adherence_status} />

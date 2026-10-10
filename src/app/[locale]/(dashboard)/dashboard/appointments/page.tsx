@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Dialog } from "@/components/ui/Dialog";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { RescheduleDialog } from "@/components/appointments/RescheduleDialog";
 import { cancelAppointment, closeAppointment, listAppointments, type Appointment } from "@/lib/appointments/api";
 
 const DAYS = 14;
@@ -29,6 +30,7 @@ export default function AppointmentsPage() {
   const [cancelling, setCancelling] = useState<Appointment | null>(null);
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
+  const [moving, setMoving] = useState<Appointment | null>(null);
 
   async function reload() {
     const from = new Date();
@@ -113,10 +115,18 @@ export default function AppointmentsPage() {
                         <Button variant="ghost" onClick={() => setCancelling(a)}>
                           {t("cancel")}
                         </Button>
-                        <Button variant="secondary" onClick={() => close(a, "no-show")}>
-                          {t("noShow")}
+                        <Button variant="secondary" onClick={() => setMoving(a)}>
+                          {t("rescheduleButton")}
                         </Button>
-                        <Button onClick={() => close(a, "complete")}>{t("complete")}</Button>
+                        {/* B8: done / no-show only once the appointment has started. */}
+                        {new Date(a.starts_at).getTime() <= Date.now() && (
+                          <>
+                            <Button variant="secondary" onClick={() => close(a, "no-show")}>
+                              {t("noShow")}
+                            </Button>
+                            <Button onClick={() => close(a, "complete")}>{t("complete")}</Button>
+                          </>
+                        )}
                       </>
                     )}
                     {a.status === "completed" && (
@@ -131,6 +141,15 @@ export default function AppointmentsPage() {
           </ul>
         </section>
       ))}
+
+      <RescheduleDialog
+        appointment={moving}
+        onClose={() => setMoving(null)}
+        onDone={() => {
+          setMoving(null);
+          reload();
+        }}
+      />
 
       <Dialog open={cancelling !== null} onClose={() => setCancelling(null)} title={t("cancelTitle")} busy={busy}>
         <div className="flex flex-col gap-4">
