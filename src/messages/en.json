@@ -191,7 +191,7 @@
       "fillHealthProfile": "Fill health profile",
       "countryCode": "Country code",
       "username": "Username",
-      "usernameHint": "English letters, digits and . _ - (3 to 30 characters). The patient signs in with it."
+      "usernameHint": "Optional: leave empty to have one generated (like pt104.k7m2), or type English letters, digits and . _ - (3 to 30)."
     },
     "detail": {
       "backToList": "Back to client list",
@@ -1243,14 +1243,15 @@
       "title": "Reset the password of {name}",
       "doneTitle": "New sign-in details for {name}",
       "body": "A new password is generated and every current session of {name} ends: they will have to sign in again.",
-      "noUsernameHint": "This patient was added before usernames. Choose a username for them to sign in with.",
+      "noUsernameHint": "This patient was added before usernames. Leave the field empty to generate one, or type the one they chose.",
       "username": "Username",
       "usernameKeepHint": "Leave it as it is, or change it.",
       "confirm": "Reset",
       "cancel": "Cancel",
       "close": "Done",
       "ended": "Follow-up for this patient has ended. Resume it first.",
-      "failed": "Could not reset. Try again."
+      "failed": "Could not reset. Try again.",
+      "usernameAutoHint": "Leave empty to generate one."
     }
   }
 }

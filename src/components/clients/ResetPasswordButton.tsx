@@ -89,13 +89,12 @@ export function ResetPasswordButton({ client, onUsername }: { client: Client; on
               autoComplete="off"
               autoCapitalize="none"
               spellCheck={false}
-              required={needsUsername}
-              maxLength={30}
+                            maxLength={30}
               placeholder="sara.k"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               error={usernameError ?? undefined}
-              hint={needsUsername ? undefined : t("usernameKeepHint")}
+              hint={needsUsername ? t("usernameAutoHint") : t("usernameKeepHint")}
             />
             {error && (
               <p role="alert" className="text-sm text-status-late">
@@ -106,7 +105,7 @@ export function ResetPasswordButton({ client, onUsername }: { client: Client; on
               <Button type="button" variant="ghost" onClick={close} disabled={busy}>
                 {t("cancel")}
               </Button>
-              <Button type="submit" isLoading={busy} disabled={needsUsername && username.trim() === ""}>
+              <Button type="submit" isLoading={busy}>
                 {t("confirm")}
               </Button>
             </div>
