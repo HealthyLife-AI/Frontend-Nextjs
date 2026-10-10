@@ -37,7 +37,7 @@ export type PatientCredentials = { username: string; password: string };
 
 export function createClient(
   fetcher: Fetcher,
-  payload: { name: string; phone: string; username: string; goal: string }
+  payload: { name: string; phone: string; username?: string; goal: string }
 ) {
   return fetcher("/clients", {
     method: "POST",

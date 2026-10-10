@@ -44,7 +44,7 @@ export function AddClientForm() {
     setUsernameError(null);
     setSubmitting(true);
 
-    const result = await createClient(authorizedFetch, { name, phone: internationalPhone(countryCode, phone), username, goal });
+    const result = await createClient(authorizedFetch, { name, phone: internationalPhone(countryCode, phone), goal, ...(username.trim() ? { username } : {}) });
     setSubmitting(false);
 
     if (!result.ok) {
@@ -141,7 +141,6 @@ export function AddClientForm() {
         autoComplete="off"
         autoCapitalize="none"
         spellCheck={false}
-        required
         maxLength={30}
         placeholder="sara.k"
         value={username}
