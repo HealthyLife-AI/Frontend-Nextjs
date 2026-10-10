@@ -22,6 +22,7 @@ import { FollowUpBanner, FollowUpControls } from "@/components/clients/FollowUpC
 import { ResetPasswordButton } from "@/components/clients/ResetPasswordButton";
 import { MealLogSection } from "@/components/followUp/MealLogSection";
 import { ReviewsPanel } from "@/components/followUp/ReviewsPanel";
+import { PatientAppointmentCard } from "@/components/appointments/PatientAppointmentCard";
 import { PendingProposals } from "@/components/healthRecords/PendingProposals";
 import { listAiSummaries } from "@/lib/aiSummaries/api";
 import type { AiSummary } from "@/lib/aiSummaries/types";
@@ -51,6 +52,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   const t = useTranslations("clients.detail");
   const tProgress = useTranslations("progress");
   const tGoals = useTranslations("goals");
+  const tGoalType = useTranslations("healthRecords.goal");
+  const goalText = (c: Client) => (c.goal_type ? tGoalType(c.goal_type) : tGoals(c.goal));
   const tCommon = useTranslations("common");
   const { authorizedFetch } = useAuth();
 
@@ -193,7 +196,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           </div>
           <div className="flex flex-col gap-1.5 p-5">
             <dt className="text-xs font-semibold text-ink-muted">{t("goalLabel")}</dt>
-            <dd className="font-bold text-ink">{tGoals(client.goal)}</dd>
+            <dd className="font-bold text-ink">{goalText(client)}</dd>
           </div>
           <div className="flex flex-col gap-1.5 p-5">
             <dt className="text-xs font-semibold text-ink-muted">{t("statusLabel")}</dt>
@@ -230,6 +233,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       {client.archived_at && <FollowUpBanner client={client} onChange={setClient} />}
 
       <PendingProposals subscriberId={id} readOnly={client.archived_at !== null} />
+      <PatientAppointmentCard subscriberId={id} readOnly={client.archived_at !== null} />
 
       <AiSummaryCard summary={latestSummary} />
 

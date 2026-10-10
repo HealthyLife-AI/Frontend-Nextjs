@@ -257,6 +257,8 @@ export default function PatientsPage() {
 function ClientRow({ client }: { client: Client }) {
   const t = useTranslations("clients.list");
   const tGoals = useTranslations("goals");
+  const tGoalType = useTranslations("healthRecords.goal");
+  const goalText = (c: Client) => (c.goal_type ? tGoalType(c.goal_type) : tGoals(c.goal));
 
   return (
     <tr className="border-b border-divider transition-colors last:border-0 hover:bg-mkt-mint-bg/40">
@@ -271,7 +273,7 @@ function ClientRow({ client }: { client: Client }) {
           </div>
         </div>
       </td>
-      <td className="px-5 py-3.5 text-ink-muted">{tGoals(client.goal)}</td>
+      <td className="px-5 py-3.5 text-ink-muted">{goalText(client)}</td>
       <td className="px-5 py-3.5">
         <div className="flex flex-wrap gap-1.5">
           <ClientStatusBadge status={client.status} />

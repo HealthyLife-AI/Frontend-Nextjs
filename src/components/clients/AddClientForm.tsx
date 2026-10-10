@@ -11,9 +11,8 @@ import { Button } from "@/components/ui/Button";
 import { CredentialsCard } from "@/components/clients/CredentialsCard";
 import { createClient, type PatientCredentials } from "@/lib/clients/api";
 import { COUNTRY_CODES, internationalPhone, usernameErrorKey } from "@/lib/clients/credentials";
-import type { ClientGoal } from "@/lib/clients/types";
+import { GOAL_TYPES, type GoalType } from "@/lib/clients/types";
 
-const GOALS: ClientGoal[] = ["weight_loss", "weight_gain", "weight_maintenance", "health_monitoring"];
 
 type SuccessState = { id: number; name: string; phone: string | null; credentials: PatientCredentials };
 
@@ -24,14 +23,14 @@ type SuccessState = { id: number; name: string; phone: string | null; credential
  */
 export function AddClientForm() {
   const t = useTranslations("clients.add");
-  const tGoals = useTranslations("goals");
+  const tGoals = useTranslations("healthRecords.goal");
   const { authorizedFetch } = useAuth();
 
   const [name, setName] = useState("");
   const [countryCode, setCountryCode] = useState<string>(COUNTRY_CODES[0]);
   const [phone, setPhone] = useState("");
   const [username, setUsername] = useState("");
-  const [goal, setGoal] = useState<ClientGoal>("weight_loss");
+  const [goal, setGoal] = useState<GoalType>("weight_loss");
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [phoneError, setPhoneError] = useState<string | null>(null);
@@ -151,8 +150,8 @@ export function AddClientForm() {
         hint={t("usernameHint")}
       />
 
-      <Select label={t("goal")} value={goal} onChange={(e) => setGoal(e.target.value as ClientGoal)}>
-        {GOALS.map((g) => (
+      <Select label={t("goal")} value={goal} onChange={(e) => setGoal(e.target.value as GoalType)}>
+        {GOAL_TYPES.map((g) => (
           <option key={g} value={g}>
             {tGoals(g)}
           </option>
