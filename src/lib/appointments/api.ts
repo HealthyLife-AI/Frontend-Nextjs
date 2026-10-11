@@ -35,5 +35,12 @@ export const getRescheduleSlots = (f: Fetcher, id: number) => f(`/appointments/$
 export const rescheduleAppointment = (f: Fetcher, id: number, startsAt: string) => f(`/appointments/${id}`, json("PATCH", { starts_at: startsAt })).then((r) => parseJson<Appointment>(r));
 /** One patient's appointments (patient page). */
 export const listPatientAppointments = (f: Fetcher, subscriberId: number | string, from: string, to: string) => f(`/appointments?subscriber_id=${subscriberId}&from=${from}&to=${to}`).then((r) => parseJson<Appointment[]>(r));
+
+/** Free times to book a NEW appointment with this patient (no 12-hour lead for the nutritionist). */
+export const getNewBookingSlots = (f: Fetcher, subscriberId: number | string, type: AppointmentType) => f(`/clients/${subscriberId}/appointments/slots?type=${type}`).then((r) => parseJson<SlotsResponse>(r));
+
+export type NewAppointmentInput = { type: AppointmentType; starts_at: string; channel: Appointment["channel"]; topics?: string[]; note?: string | null };
+/** The nutritionist books a new appointment for this patient directly (e.g. after a phone call). */
+export const bookAppointment = (f: Fetcher, subscriberId: number | string, data: NewAppointmentInput) => f(`/clients/${subscriberId}/appointments`, json("POST", data)).then((r) => parseJson<Appointment>(r));
 export const getAvailability = (f: Fetcher) => f("/me/availability").then((r) => parseJson<Availability>(r));
 export const saveAvailability = (f: Fetcher, a: Omit<Availability, "timezone">) => f("/me/availability", json("PUT", a)).then((r) => parseJson<Availability>(r));

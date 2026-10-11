@@ -233,7 +233,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       {client.archived_at && <FollowUpBanner client={client} onChange={setClient} />}
 
       <PendingProposals subscriberId={id} readOnly={client.archived_at !== null} />
-      <PatientAppointmentCard subscriberId={id} readOnly={client.archived_at !== null} />
+      <PatientAppointmentCard subscriberId={id} subscriberName={client.name} readOnly={client.archived_at !== null} />
 
       <AiSummaryCard summary={latestSummary} />
 

@@ -5,16 +5,23 @@ import { useLocale, useTranslations } from "next-intl";
 import { CalendarClock } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
+import { BookAppointmentDialog } from "@/components/appointments/BookAppointmentDialog";
 import { RescheduleDialog } from "@/components/appointments/RescheduleDialog";
 import { listPatientAppointments, type Appointment } from "@/lib/appointments/api";
 
-/** The patient's next booked appointment, with «تغيير الموعد» (B9). Nothing is shown without one. */
-export function PatientAppointmentCard({ subscriberId, readOnly }: { subscriberId: string; readOnly: boolean }) {
+/**
+ * The patient's next booked appointment, with «تغيير الموعد» (B9). Without
+ * one, offers «حجز موعد» instead — booking is otherwise only possible from
+ * the patient's own app, so this is the only way to get one on the books
+ * from the dashboard before that app exists.
+ */
+export function PatientAppointmentCard({ subscriberId, subscriberName, readOnly }: { subscriberId: string; subscriberName: string; readOnly: boolean }) {
   const t = useTranslations("appointments");
   const locale = useLocale();
   const { authorizedFetch } = useAuth();
   const [next, setNext] = useState<Appointment | null>(null);
   const [moving, setMoving] = useState<Appointment | null>(null);
+  const [booking, setBooking] = useState(false);
 
   const load = useCallback(async () => {
     const from = new Date();
@@ -28,7 +35,31 @@ export function PatientAppointmentCard({ subscriberId, readOnly }: { subscriberI
     load();
   }, [load]);
 
-  if (!next) return null;
+  if (!next) {
+    if (readOnly) return null;
+
+    return (
+      <section className="flex items-center justify-between gap-3 rounded-panel border border-border/70 bg-card p-5 shadow-panel">
+        <div className="flex items-start gap-3">
+          <CalendarClock size={20} className="mt-0.5 text-ink-muted" aria-hidden="true" />
+          <p className="text-sm text-ink-muted">{t("empty")}</p>
+        </div>
+        <Button variant="secondary" onClick={() => setBooking(true)}>
+          {t("bookButton")}
+        </Button>
+        <BookAppointmentDialog
+          key={booking ? "open" : "closed"}
+          open={booking}
+          subscriber={{ id: subscriberId, name: subscriberName }}
+          onClose={() => setBooking(false)}
+          onDone={() => {
+            setBooking(false);
+            load();
+          }}
+        />
+      </section>
+    );
+  }
 
   const when = new Intl.DateTimeFormat(locale === "ar" ? "ar-SA-u-ca-gregory-nu-latn" : "en-GB", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(new Date(next.starts_at));
 

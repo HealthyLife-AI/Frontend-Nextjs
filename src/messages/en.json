@@ -1218,7 +1218,30 @@
       "confirm": "Confirm change"
     },
     "rescheduleButton": "Reschedule",
-    "nextTitle": "Next appointment"
+    "nextTitle": "Next appointment",
+    "bookButton": "Book appointment",
+    "book": {
+      "title": "Book appointment",
+      "patientLabel": "Patient",
+      "searchPlaceholder": "Search by name or code",
+      "noResults": "No results.",
+      "changePatient": "Change",
+      "typeLabel": "Appointment type",
+      "channelLabel": "Channel",
+      "topicsLabel": "Topics (optional)",
+      "noteLabel": "Note (optional, the patient sees it)",
+      "day": "Day",
+      "time": "Time",
+      "none": "No free times for this type.",
+      "loadFailed": "Could not load the free times.",
+      "taken": "That time is no longer free. Pick another.",
+      "exists": "This patient already has an upcoming appointment.",
+      "videoUnavailable": "Add a video call link in Settings first.",
+      "followUpEnded": "This patient's follow-up has ended.",
+      "failed": "Could not book the appointment. Try again.",
+      "cancel": "Cancel",
+      "confirm": "Confirm booking"
+    }
   },
   "credentials": {
     "username": "Username",
