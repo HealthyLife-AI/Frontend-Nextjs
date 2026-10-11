@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Dialog } from "@/components/ui/Dialog";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { BookAppointmentDialog } from "@/components/appointments/BookAppointmentDialog";
 import { RescheduleDialog } from "@/components/appointments/RescheduleDialog";
 import { cancelAppointment, closeAppointment, listAppointments, type Appointment } from "@/lib/appointments/api";
 
@@ -31,6 +32,7 @@ export default function AppointmentsPage() {
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
   const [moving, setMoving] = useState<Appointment | null>(null);
+  const [booking, setBooking] = useState(false);
 
   async function reload() {
     const from = new Date();
@@ -71,14 +73,23 @@ export default function AppointmentsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title={t("title")} subtitle={t("subtitle")} />
+      <PageHeader
+        title={t("title")}
+        subtitle={t("subtitle")}
+        actions={<Button onClick={() => setBooking(true)}>{t("bookButton")}</Button>}
+      />
       {failed && <p role="alert" className="rounded-field bg-status-late-bg px-4 py-3 text-sm text-status-late">{t("loadFailed")}</p>}
       {items && items.length === 0 && (
-        <div className="rounded-panel border border-border/70 bg-card p-8 text-center text-sm text-ink-muted shadow-panel">
-          {t("empty")}{" "}
-          <Link href="/dashboard/settings" className="font-semibold text-primary hover:underline">
-            {t("setAvailability")}
-          </Link>
+        <div className="flex flex-col items-center gap-3 rounded-panel border border-border/70 bg-card p-8 text-center text-sm text-ink-muted shadow-panel">
+          <p>
+            {t("empty")}{" "}
+            <Link href="/dashboard/settings" className="font-semibold text-primary hover:underline">
+              {t("setAvailability")}
+            </Link>
+          </p>
+          <Button variant="secondary" onClick={() => setBooking(true)}>
+            {t("bookButton")}
+          </Button>
         </div>
       )}
       {[...groups.entries()].map(([label, list]) => (
@@ -141,6 +152,17 @@ export default function AppointmentsPage() {
           </ul>
         </section>
       ))}
+
+      <BookAppointmentDialog
+        key={booking ? "open" : "closed"}
+        open={booking}
+        subscriber={null}
+        onClose={() => setBooking(false)}
+        onDone={() => {
+          setBooking(false);
+          reload();
+        }}
+      />
 
       <RescheduleDialog
         appointment={moving}
