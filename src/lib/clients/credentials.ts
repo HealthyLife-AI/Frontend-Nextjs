@@ -8,7 +8,7 @@ export function usernameErrorKey(message: string | undefined): "usernameTaken" |
 }
 
 /** Country codes offered when adding a patient; +970 first (the default). */
-export const COUNTRY_CODES = ["+970", "+972", "+962", "+966", "+971", "+965", "+974", "+973", "+968", "+961", "+963", "+964", "+20", "+90", "+1", "+44"] as const;
+export const COUNTRY_CODES = ["+970", "+972", "+962", "+966", "+971", "+965", "+974", "+973", "+968", "+967", "+961", "+963", "+964", "+20", "+90", "+1", "+44"] as const;
 
 /** +970 and "0599 123-456" → "+970599123456" (a leading 0 of the local number is dropped). */
 export function internationalPhone(code: string, local: string): string {

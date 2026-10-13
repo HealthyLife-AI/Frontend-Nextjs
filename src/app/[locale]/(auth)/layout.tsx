@@ -1,14 +1,8 @@
 import Image from "next/image";
-import { BellRing, Languages, ShieldCheck, Sparkles, Users, type LucideIcon } from "lucide-react";
+import { BellRing, Sparkles } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
-
-const SHOWCASE_POINTS: { icon: LucideIcon; key: "point1" | "point2" | "point3" }[] = [
-  { icon: Users, key: "point1" },
-  { icon: ShieldCheck, key: "point2" },
-  { icon: Languages, key: "point3" },
-];
 
 /**
  * Auth shell (login, register, forgot/reset password all mount here): one
@@ -18,7 +12,8 @@ const SHOWCASE_POINTS: { icon: LucideIcon; key: "point1" | "point2" | "point3" }
  * Form half: logo and locale switcher on top, the form centered below.
  * Brand half (`lg`+ only, inset inside the card): the nutritionist photo
  * under a deep-teal gradient, two floating product cards that show what
- * the account unlocks, and the value points as a compact list.
+ * the account unlocks, and one headline. Kept sparse on purpose: the
+ * value points live on the landing page.
  */
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("common");
@@ -86,25 +81,9 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
             </div>
           </div>
 
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-3">
-              <h2 className="text-balance text-[28px] font-extrabold leading-[1.25] ltr:tracking-tight">{tShowcase("headline")}</h2>
-              <p className="text-pretty text-[15px] leading-relaxed text-white/75">{tShowcase("body")}</p>
-            </div>
-
-            <ul className="flex flex-col gap-3 border-t border-white/15 pt-5">
-              {SHOWCASE_POINTS.map(({ icon: Icon, key }) => (
-                <li key={key} className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-mkt-glow ring-1 ring-white/15">
-                    <Icon size={17} strokeWidth={1.9} />
-                  </span>
-                  <span className="flex min-w-0 flex-col">
-                    <span className="text-sm font-bold">{tShowcase(`${key}Title`)}</span>
-                    <span className="truncate text-[13px] text-white/65">{tShowcase(`${key}Body`)}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
+          <div className="flex max-w-[30rem] flex-col gap-3">
+            <h2 className="text-balance text-[30px] font-extrabold leading-[1.25] ltr:tracking-tight">{tShowcase("headline")}</h2>
+            <p className="text-pretty text-[15px] leading-relaxed text-white/75">{tShowcase("body")}</p>
           </div>
         </aside>
       </div>
