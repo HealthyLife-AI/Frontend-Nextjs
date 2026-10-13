@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { Plus, Search, Users } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
+import { AddPatientDialog } from "@/components/clients/AddPatientDialog";
 import { ClientStatusBadge } from "@/components/clients/ClientStatusBadge";
 import { AdherenceBadge } from "@/components/clients/AdherenceBadge";
 import { FollowUpEndedBadge } from "@/components/clients/FollowUpControls";
@@ -62,6 +63,26 @@ export default function PatientsPage() {
   const [clients, setClients] = useState<Client[] | null>(null);
   const [meta, setMeta] = useState<{ current_page: number; last_page: number; total: number } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [adding, setAdding] = useState(false);
+  // Guards against a slower, superseded reload() overwriting a faster,
+  // newer one's results (filter clicked twice in a row, or onCreated
+  // firing while a filter-change reload is still in flight).
+  const requestIdRef = useRef(0);
+
+  const reload = useCallback(async () => {
+    const id = ++requestIdRef.current;
+    const [overviewResult, clientsResult] = await Promise.all([
+      getDashboardOverview(authorizedFetch),
+      listClients(authorizedFetch, { status, adherence, search, page, archived }),
+    ]);
+    if (requestIdRef.current !== id) return;
+
+    if (overviewResult.ok) setOverview(overviewResult.data);
+    if (clientsResult.ok) {
+      setClients(clientsResult.data.data);
+      setMeta(clientsResult.data.meta);
+    }
+  }, [authorizedFetch, status, adherence, search, page, archived]);
 
   useEffect(() => {
     let cancelled = false;
@@ -75,27 +96,14 @@ export default function PatientsPage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
 
-    (async () => {
-      const [overviewResult, clientsResult] = await Promise.all([
-        getDashboardOverview(authorizedFetch),
-        listClients(authorizedFetch, { status, adherence, search, page, archived }),
-      ]);
-
-      if (cancelled) return;
-
-      if (overviewResult.ok) setOverview(overviewResult.data);
-      if (clientsResult.ok) {
-        setClients(clientsResult.data.data);
-        setMeta(clientsResult.data.meta);
-      }
-
-      setLoading(false);
-    })();
+    reload().then(() => {
+      if (!cancelled) setLoading(false);
+    });
 
     return () => {
       cancelled = true;
     };
-  }, [authorizedFetch, status, adherence, search, page, archived]);
+  }, [reload]);
 
   function navigate(next: { status?: string; adherence?: string; search?: string; page?: number; archived?: boolean }) {
     const query: Record<string, string> = {};
@@ -117,13 +125,18 @@ export default function PatientsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <PageHeader title={t("title")} subtitle={t("subtitle")} />
 
-        <Link href="/dashboard/patients/new">
-          <Button>
-            <Plus size={18} strokeWidth={1.75} />
-            {t("addButton")}
-          </Button>
-        </Link>
+        <Button onClick={() => setAdding(true)}>
+          <Plus size={18} strokeWidth={1.75} />
+          {t("addButton")}
+        </Button>
       </div>
+
+      <AddPatientDialog
+        key={adding ? "open" : "closed"}
+        open={adding}
+        onClose={() => setAdding(false)}
+        onCreated={reload}
+      />
 
       {/*
         PRD §5: "Overview stat cards: total clients, stable, declining,

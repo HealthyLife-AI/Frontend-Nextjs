@@ -180,6 +180,7 @@
       "successSubtitle": "Send the username and password to {name} on WhatsApp so they can sign in to the app.",
       "addAnother": "Add another client",
       "backToList": "Back to client list",
+      "close": "Close",
       "errors": {
         "phoneTaken": "This phone number is already registered to one of your clients.",
         "phoneInvalid": "Invalid phone number. Pick the country code and type the number without its leading 0.",
