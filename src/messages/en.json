@@ -104,12 +104,6 @@
     "showcase": {
       "headline": "AI does not replace the nutritionist; it makes them more efficient.",
       "body": "Plans, alternatives and follow-up between visits in one place, so your time goes to your clients, not to spreadsheets.",
-      "point1Title": "Every client, one place",
-      "point1Body": "Client list, integrated health profile, and adherence status per client.",
-      "point2Title": "Your data, fully isolated",
-      "point2Body": "No other nutritionist can ever read your clients or their data.",
-      "point3Title": "Full Arabic RTL, side by side",
-      "point3Body": "With English — on every screen, not just this one.",
       "cardAlertTitle": "Adherence alert",
       "cardAlertBody": "Sara hasn't logged a meal in 3 days",
       "cardSummaryTitle": "Weekly AI summary",
