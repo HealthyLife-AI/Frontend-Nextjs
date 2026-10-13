@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { AlertTriangle, ArrowLeft, Bell, CalendarClock, CheckCircle2, ClipboardCheck, Plus } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { AdherenceBadge } from "@/components/clients/AdherenceBadge";
+import { AddPatientDialog } from "@/components/clients/AddPatientDialog";
 import { DashboardStatTiles } from "@/components/clients/DashboardStatTiles";
 import { getDashboardOverview, listClients } from "@/lib/clients/api";
 import { listAlerts } from "@/lib/alerts/api";
@@ -42,6 +43,7 @@ export default function DashboardHomePage() {
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
   const [needsAttention, setNeedsAttention] = useState<Client[] | null>(null);
   const [alerts, setAlerts] = useState<Alert[] | null>(null);
+  const [adding, setAdding] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -103,13 +105,14 @@ export default function DashboardHomePage() {
           </div>
 
           <div className="flex flex-wrap gap-2.5">
-            <Link
-              href="/dashboard/patients/new"
+            <button
+              type="button"
+              onClick={() => setAdding(true)}
               className="inline-flex h-11 items-center gap-2 rounded-field bg-white px-5 text-sm font-bold text-mkt-teal-deep shadow-lg transition-transform hover:-translate-y-0.5"
             >
               <Plus size={18} strokeWidth={2.2} />
               {t("actionAddPatient")}
-            </Link>
+            </button>
             <Link
               href="/dashboard/alerts"
               className="inline-flex h-11 items-center gap-2 rounded-field border border-white/30 bg-white/10 px-5 text-sm font-bold backdrop-blur transition-colors hover:bg-white/20"
@@ -218,6 +221,13 @@ export default function DashboardHomePage() {
           ))}
         </section>
       </div>
+
+      <AddPatientDialog
+        key={adding ? "open" : "closed"}
+        open={adding}
+        onClose={() => setAdding(false)}
+        onCreated={() => getDashboardOverview(authorizedFetch).then((r) => r.ok && setOverview(r.data))}
+      />
     </div>
   );
 }

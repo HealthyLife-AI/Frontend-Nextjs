@@ -20,8 +20,22 @@ type SuccessState = { id: number; name: string; phone: string | null; credential
  * Part A: the nutritionist gives the patient a username; the system
  * generates the password. Both are shown once, to send on WhatsApp.
  * A 422 keeps every field as typed and shows the error under its field.
+ *
+ * Used both standalone (the /patients/new page) and inside
+ * AddPatientDialog. `onClose`/`onCreated`/`onBusyChange` are only passed
+ * by the dialog: with `onClose` given, the success screen's "back to
+ * list" link becomes a "close" button instead (the list is already
+ * right there behind the dialog).
  */
-export function AddClientForm() {
+export function AddClientForm({
+  onClose,
+  onCreated,
+  onBusyChange,
+}: {
+  onClose?: () => void;
+  onCreated?: () => void;
+  onBusyChange?: (busy: boolean) => void;
+} = {}) {
   const t = useTranslations("clients.add");
   const tGoals = useTranslations("healthRecords.goal");
   const { authorizedFetch } = useAuth();
@@ -43,9 +57,11 @@ export function AddClientForm() {
     setPhoneError(null);
     setUsernameError(null);
     setSubmitting(true);
+    onBusyChange?.(true);
 
     const result = await createClient(authorizedFetch, { name, phone: internationalPhone(countryCode, phone), goal, ...(username.trim() ? { username } : {}) });
     setSubmitting(false);
+    onBusyChange?.(false);
 
     if (!result.ok) {
       const errors = result.error.errors ?? {};
@@ -57,6 +73,7 @@ export function AddClientForm() {
     }
 
     setSuccess({ id: result.data.client.id, name: result.data.client.name, phone: result.data.client.phone, credentials: result.data.credentials });
+    onCreated?.();
   }
 
   function resetForm() {
@@ -94,9 +111,15 @@ export function AddClientForm() {
           <button type="button" onClick={resetForm} className="font-medium text-primary hover:underline">
             {t("addAnother")}
           </button>
-          <Link href="/dashboard/patients" className="font-medium text-ink-muted hover:underline">
-            {t("backToList")}
-          </Link>
+          {onClose ? (
+            <button type="button" onClick={onClose} className="font-medium text-ink-muted hover:underline">
+              {t("close")}
+            </button>
+          ) : (
+            <Link href="/dashboard/patients" className="font-medium text-ink-muted hover:underline">
+              {t("backToList")}
+            </Link>
+          )}
         </div>
       </div>
     );
