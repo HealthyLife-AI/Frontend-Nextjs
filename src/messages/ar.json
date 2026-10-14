@@ -795,6 +795,8 @@
       "noTarget": "لا يوجد هدف سعري بعد — أكمل الملف الصحي",
       "percentAchieved": "{value}% من الهدف",
       "overTarget": "زيادة {value} سعرة عن الهدف",
+      "underTarget": "أقل من الهدف بـ {value} سعرة",
+      "onTarget": "ضمن الهدف",
       "macrosTitle": "المغذيات الكبرى",
       "protein": "بروتين",
       "carbs": "كربوهيدرات",
