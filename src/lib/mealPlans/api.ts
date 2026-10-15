@@ -61,6 +61,17 @@ export function updatePlanDecision(
   }).then((res) => parseJson<MealPlan>(res));
 }
 
+/**
+ * Item E: a new DRAFT for the same patient holding this plan's meals and
+ * her decision. The source is untouched, and nothing reaches the patient
+ * until the copy is activated in its own right (BR-6).
+ */
+export function duplicateMealPlan(fetcher: Fetcher, subscriberId: number | string, planId: number | string) {
+  return fetcher(`/clients/${subscriberId}/meal-plans/${planId}/duplicate`, { method: "POST" }).then((res) =>
+    parseJson<MealPlan>(res)
+  );
+}
+
 export type SummarySuggestion = {
   suggested_summary: string;
   suggested_approved_calories: number | null;

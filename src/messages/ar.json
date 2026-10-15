@@ -754,7 +754,9 @@
       "previous": "الخطط السابقة ({count})",
       "neverActivated": "لم تُفعّل",
       "caloriesShort": "{value} سعرة",
-      "view": "عرض"
+      "view": "عرض",
+      "startFrom": "ابدأ من هذه الخطة",
+      "starting": "جارٍ الإنشاء…"
     },
     "decision": {
       "title": "قرار الخطة",

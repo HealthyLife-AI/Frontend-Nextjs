@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ChevronDown, ClipboardList } from "lucide-react";
+import { ChevronDown, ClipboardList, CopyPlus } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { listMealPlans } from "@/lib/mealPlans/api";
+import { duplicateMealPlan, listMealPlans } from "@/lib/mealPlans/api";
+import { useRouter } from "@/i18n/navigation";
 import type { MealPlan } from "@/lib/mealPlans/types";
 
 /**
@@ -23,6 +24,8 @@ export function CurrentPlanCard({ subscriberId }: { subscriberId: string }) {
 
   const [plans, setPlans] = useState<MealPlan[] | null>(null);
   const [showPrevious, setShowPrevious] = useState(false);
+  const [duplicating, setDuplicating] = useState<number | null>(null);
+  const router = useRouter();
 
   const load = useCallback(async () => {
     const result = await listMealPlans(authorizedFetch, subscriberId);
@@ -33,6 +36,14 @@ export function CurrentPlanCard({ subscriberId }: { subscriberId: string }) {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, [load]);
+
+  /** Item E: opens the new draft straight away — it is what she edits next. */
+  async function startFrom(planId: number) {
+    setDuplicating(planId);
+    const result = await duplicateMealPlan(authorizedFetch, subscriberId, planId);
+    setDuplicating(null);
+    if (result.ok) router.push(`/dashboard/patients/${subscriberId}/plan?planId=${result.data.id}`);
+  }
 
   if (!plans) return null;
 
@@ -82,9 +93,20 @@ export function CurrentPlanCard({ subscriberId }: { subscriberId: string }) {
 
           {active.plan_summary && <p className="whitespace-pre-line text-sm leading-relaxed text-ink">{active.plan_summary}</p>}
 
-          <Link href={`/dashboard/patients/${subscriberId}/plan`} className="self-start text-sm font-semibold text-primary hover:underline">
-            {t("openPlan")}
-          </Link>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link href={`/dashboard/patients/${subscriberId}/plan`} className="text-sm font-semibold text-primary hover:underline">
+              {t("openPlan")}
+            </Link>
+            <button
+              type="button"
+              onClick={() => startFrom(active.id)}
+              disabled={duplicating !== null}
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline disabled:opacity-60"
+            >
+              <CopyPlus size={15} strokeWidth={2} aria-hidden="true" />
+              {duplicating === active.id ? t("starting") : t("startFrom")}
+            </button>
+          </div>
         </div>
       ) : (
         <p className="text-sm text-ink-muted">{t("noActivePlan")}</p>
@@ -113,12 +135,22 @@ export function CurrentPlanCard({ subscriberId }: { subscriberId: string }) {
                     </span>
                     {firstLine(plan.plan_summary) && <span className="truncate text-xs text-ink-muted">{firstLine(plan.plan_summary)}</span>}
                   </div>
-                  <Link
-                    href={`/dashboard/patients/${subscriberId}/plan?planId=${plan.id}`}
-                    className="shrink-0 text-xs font-semibold text-primary hover:underline"
-                  >
-                    {t("view")}
-                  </Link>
+                  <div className="flex shrink-0 items-center gap-3">
+                    <Link
+                      href={`/dashboard/patients/${subscriberId}/plan?planId=${plan.id}`}
+                      className="text-xs font-semibold text-primary hover:underline"
+                    >
+                      {t("view")}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => startFrom(plan.id)}
+                      disabled={duplicating !== null}
+                      className="text-xs font-semibold text-primary hover:underline disabled:opacity-60"
+                    >
+                      {duplicating === plan.id ? t("starting") : t("startFrom")}
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>

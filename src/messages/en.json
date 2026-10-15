@@ -754,7 +754,9 @@
       "previous": "Previous plans ({count})",
       "neverActivated": "Never activated",
       "caloriesShort": "{value} kcal",
-      "view": "View"
+      "view": "View",
+      "startFrom": "Start from this plan",
+      "starting": "Creating…"
     },
     "decision": {
       "title": "Plan decision",
