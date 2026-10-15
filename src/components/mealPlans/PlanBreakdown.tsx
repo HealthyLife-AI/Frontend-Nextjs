@@ -3,7 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { Repeat } from "lucide-react";
 import type { MealPlan } from "@/lib/mealPlans/types";
-import { foodName, itemMacros, mealMacros, planMacros, planToSlots } from "./mealSlots";
+import { displayCalories, displayGrams, foodName, itemMacros, mealMacros, planMacros, planToSlots } from "./mealSlots";
 
 /**
  * Read-only view of what a plan actually contains — the foods, their
@@ -41,7 +41,7 @@ export function PlanBreakdown({ plan }: { plan: MealPlan }) {
                 <span className="text-sm font-semibold text-ink">{tSlots(slot.slotKey)}</span>
               </div>
               <span className="text-xs font-medium tabular-nums text-ink-muted">
-                {t("caloriesValue", { value: macros.calories })}
+                {t("caloriesValue", { value: displayCalories(macros.calories) })}
               </span>
             </div>
 
@@ -52,11 +52,11 @@ export function PlanBreakdown({ plan }: { plan: MealPlan }) {
                     <span className="min-w-0 truncate text-sm text-ink">
                       {foodName(item.food, locale)}
                       <span className="ms-1.5 text-xs text-ink-muted tabular-nums">
-                        {t("quantityGrams", { value: item.quantityGrams })}
+                        {t("quantityGrams", { value: displayGrams(item.quantityGrams) })}
                       </span>
                     </span>
                     <span className="shrink-0 text-xs tabular-nums text-ink-muted">
-                      {t("caloriesValue", { value: itemMacros(item).calories })}
+                      {t("caloriesValue", { value: displayCalories(itemMacros(item).calories) })}
                     </span>
                   </div>
 
@@ -71,12 +71,12 @@ export function PlanBreakdown({ plan }: { plan: MealPlan }) {
                         <span className="truncate">
                           {foodName(alt.food, locale)}
                           <span className="ms-1.5 tabular-nums">
-                            {t("quantityGrams", { value: alt.quantityGrams })}
+                            {t("quantityGrams", { value: displayGrams(alt.quantityGrams) })}
                           </span>
                         </span>
                       </span>
                       <span className="shrink-0 tabular-nums">
-                        {t("caloriesValue", { value: itemMacros(alt).calories })}
+                        {t("caloriesValue", { value: displayCalories(itemMacros(alt).calories) })}
                       </span>
                     </div>
                   ))}
@@ -124,7 +124,7 @@ export function PlanMacroSummary({ plan }: { plan: MealPlan }) {
             <div className={`h-full rounded-full ${row.bar}`} style={{ width: `${row.share * 100}%` }} />
           </div>
           <span className="w-36 shrink-0 text-end text-xs tabular-nums text-ink-muted">
-            {t("macroGrams", { value: row.grams, percent: Math.round(row.share * 100) })}
+            {t("macroGrams", { value: displayGrams(row.grams), percent: Math.round(row.share * 100) })}
           </span>
         </div>
       ))}

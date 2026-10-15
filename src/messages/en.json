@@ -824,6 +824,8 @@
       "noTarget": "No calorie target yet — fill in the health profile",
       "percentAchieved": "{value}% of target",
       "overTarget": "{value} kcal over target",
+      "underTarget": "{value} kcal under target",
+      "onTarget": "On target",
       "macrosTitle": "Macronutrients",
       "protein": "Protein",
       "carbs": "Carbohydrates",
