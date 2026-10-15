@@ -763,6 +763,10 @@
       "systemSuggestion": "System suggestion: {value} (Mifflin-St Jeor × activity level)",
       "summary": "Plan summary",
       "belowFloor": "Below the guideline floor ({value} kcal). You can still save — check this is intended.",
+      "suggest": "Suggest a summary",
+      "confirmReplace": "The suggestion will replace what is written now. Continue?",
+      "suggestionReady": "Suggestion ready — review it, then save.",
+      "suggestionFallback": "The model was unavailable — first line only (the plan's own figures).",
       "save": "Save decision",
       "saved": "Plan decision saved."
     },

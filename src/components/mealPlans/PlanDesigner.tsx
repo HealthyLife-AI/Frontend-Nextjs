@@ -14,6 +14,7 @@ import {
   generateAiDraft,
   listMealPlans,
   saveMealPlanAsTemplate,
+  suggestPlanSummary,
   updateMealPlan,
   updatePlanDecision,
 } from "@/lib/mealPlans/api";
@@ -59,6 +60,7 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
   const [generatingDraft, setGeneratingDraft] = useState(false);
   const [savingTemplate, setSavingTemplate] = useState(false);
   const [savingDecision, setSavingDecision] = useState(false);
+  const [suggestingSummary, setSuggestingSummary] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   // A patient-proposed allergy is not used by the draft (or anywhere) until approved.
@@ -140,6 +142,33 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
 
     setCurrentPlan(result.data);
     setNotice(t("decision.saved"));
+  }
+
+  /**
+   * Item D: fills both fields without saving — she reads it, edits it,
+   * then saves with the normal button. Replacing text she already wrote
+   * is confirmed first.
+   */
+  async function handleSuggestSummary() {
+    if (!currentPlan) return;
+    if ((planSummary.trim() || approvedCalories) && !window.confirm(t("decision.confirmReplace"))) return;
+
+    setError(null);
+    setSuggestingSummary(true);
+    const result = await suggestPlanSummary(authorizedFetch, subscriberId, currentPlan.id);
+    setSuggestingSummary(false);
+
+    if (!result.ok) {
+      setError(result.error.message);
+      return;
+    }
+
+    setPlanSummary(result.data.suggested_summary);
+    if (result.data.suggested_approved_calories !== null) {
+      setApprovedCalories(String(result.data.suggested_approved_calories));
+    }
+    setDirty(true);
+    setNotice(result.data.is_fallback ? t("decision.suggestionFallback") : t("decision.suggestionReady"));
   }
 
   async function handleSave(): Promise<MealPlan | null> {
@@ -330,13 +359,17 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
         suggestion={suggestion}
         floor={gender ? CALORIE_FLOOR[gender] : null}
       >
-        {isActive && (
-          <div className="flex justify-end">
+        <div className="flex flex-wrap justify-end gap-2">
+          <Button variant="ghost" isLoading={suggestingSummary} disabled={!hasSavedPlan} onClick={handleSuggestSummary}>
+            <Sparkles size={16} strokeWidth={1.75} />
+            {t("decision.suggest")}
+          </Button>
+          {isActive && (
             <Button variant="secondary" isLoading={savingDecision} onClick={handleSaveDecision}>
               {t("decision.save")}
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </PlanDecisionCard>
 
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-12">

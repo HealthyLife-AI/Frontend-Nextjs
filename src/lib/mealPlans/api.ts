@@ -61,6 +61,24 @@ export function updatePlanDecision(
   }).then((res) => parseJson<MealPlan>(res));
 }
 
+export type SummarySuggestion = {
+  suggested_summary: string;
+  suggested_approved_calories: number | null;
+  /** True when the model was unavailable or its reply was rejected: the first line only. */
+  is_fallback: boolean;
+};
+
+/**
+ * Item D: a suggested summary for her to edit. Saves nothing — the
+ * normal Save button does that. Every number in the text is the
+ * server's own, computed from the plan.
+ */
+export function suggestPlanSummary(fetcher: Fetcher, subscriberId: number | string, planId: number | string) {
+  return fetcher(`/clients/${subscriberId}/meal-plans/${planId}/summary-suggestion`, { method: "POST" }).then((res) =>
+    parseJson<SummarySuggestion>(res)
+  );
+}
+
 /**
  * F-5 (PRD, P1): "Suggest a starting plan" — rule-based, always returns
  * a draft. `approvedCalories` is the figure typed into the decision card
