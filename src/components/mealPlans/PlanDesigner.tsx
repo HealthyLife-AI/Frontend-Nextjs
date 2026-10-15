@@ -15,7 +15,10 @@ import {
   listMealPlans,
   saveMealPlanAsTemplate,
   updateMealPlan,
+  updatePlanDecision,
 } from "@/lib/mealPlans/api";
+import { PlanDecisionCard } from "./PlanDecisionCard";
+import { CALORIE_FLOOR } from "@/lib/mealPlans/decision";
 import type { MealPlan } from "@/lib/mealPlans/types";
 import { DailySummaryPanel } from "./DailySummaryPanel";
 import { MealCard } from "./MealCard";
@@ -43,12 +46,19 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
   const [slots, setSlots] = useState<EditableMeal[]>(emptySlots());
   const [currentPlan, setCurrentPlan] = useState<MealPlan | null>(null);
   const [calorieTarget, setCalorieTarget] = useState<number | null>(null);
+  // Item C: her decision. `suggestion` is the formula's figure, shown
+  // beside the field; `approvedCalories` is what she prescribed.
+  const [suggestion, setSuggestion] = useState<number | null>(null);
+  const [gender, setGender] = useState<"female" | "male" | null>(null);
+  const [approvedCalories, setApprovedCalories] = useState("");
+  const [planSummary, setPlanSummary] = useState("");
   const [dirty, setDirty] = useState(false);
 
   const [saving, setSaving] = useState(false);
   const [activating, setActivating] = useState(false);
   const [generatingDraft, setGeneratingDraft] = useState(false);
   const [savingTemplate, setSavingTemplate] = useState(false);
+  const [savingDecision, setSavingDecision] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   // A patient-proposed allergy is not used by the draft (or anywhere) until approved.
@@ -70,6 +80,8 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
 
       if (profileResult.ok && profileResult.data) {
         setCalorieTarget(profileResult.data.daily_calorie_needs);
+        setSuggestion(profileResult.data.daily_calorie_needs);
+        setGender(profileResult.data.gender);
       }
 
       if (plansResult.ok && plansResult.data.length > 0) {
@@ -86,6 +98,8 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
         if (relevant) {
           setCurrentPlan(relevant);
           setSlots(planToSlots(relevant));
+          setApprovedCalories(relevant.approved_calories ? String(relevant.approved_calories) : "");
+          setPlanSummary(relevant.plan_summary ?? "");
         }
       }
 
@@ -103,11 +117,42 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
     setNotice(null);
   }
 
+  /**
+   * Item C: on the ACTIVE plan the decision is saved on its own, through
+   * the narrow endpoint — the meals are already in force and the patient
+   * is following them, so a decision edit must not touch them.
+   */
+  async function handleSaveDecision() {
+    if (!currentPlan) return;
+
+    setError(null);
+    setSavingDecision(true);
+    const result = await updatePlanDecision(authorizedFetch, subscriberId, currentPlan.id, {
+      approved_calories: approvedCalories ? Number(approvedCalories) : null,
+      plan_summary: planSummary.trim() || null,
+    });
+    setSavingDecision(false);
+
+    if (!result.ok) {
+      setError(result.error.message);
+      return;
+    }
+
+    setCurrentPlan(result.data);
+    setNotice(t("decision.saved"));
+  }
+
   async function handleSave(): Promise<MealPlan | null> {
     setError(null);
     setSaving(true);
 
-    const payload = { meals: slotsToInput(slots) };
+    const payload = {
+      meals: slotsToInput(slots),
+      // Cleared on purpose means "fall back to the system suggestion",
+      // so an empty field is sent as null rather than omitted.
+      approved_calories: approvedCalories ? Number(approvedCalories) : null,
+      plan_summary: planSummary.trim() || null,
+    };
     const result = currentPlan
       ? await updateMealPlan(authorizedFetch, subscriberId, currentPlan.id, payload)
       : await createMealPlan(authorizedFetch, subscriberId, payload);
@@ -148,7 +193,7 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
 
     setError(null);
     setGeneratingDraft(true);
-    const result = await generateAiDraft(authorizedFetch, subscriberId);
+    const result = await generateAiDraft(authorizedFetch, subscriberId, approvedCalories ? Number(approvedCalories) : null);
     setGeneratingDraft(false);
 
     if (!result.ok) {
@@ -158,6 +203,7 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
 
     setCurrentPlan(result.data);
     setSlots(planToSlots(result.data));
+    setApprovedCalories(result.data.approved_calories ? String(result.data.approved_calories) : approvedCalories);
     setDirty(false);
     setNotice(null);
     if (result.data.warnings?.includes("pending_allergy_proposal")) setPendingAllergy(true);
@@ -270,6 +316,29 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
         </p>
       )}
 
+      <PlanDecisionCard
+        approvedCalories={approvedCalories}
+        onApprovedCaloriesChange={(v) => {
+          setApprovedCalories(v);
+          setDirty(true);
+        }}
+        summary={planSummary}
+        onSummaryChange={(v) => {
+          setPlanSummary(v);
+          setDirty(true);
+        }}
+        suggestion={suggestion}
+        floor={gender ? CALORIE_FLOOR[gender] : null}
+      >
+        {isActive && (
+          <div className="flex justify-end">
+            <Button variant="secondary" isLoading={savingDecision} onClick={handleSaveDecision}>
+              {t("decision.save")}
+            </Button>
+          </div>
+        )}
+      </PlanDecisionCard>
+
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-12">
         <div className="flex flex-col gap-4 lg:col-span-8">
           {slots.map((slot, index) => (
@@ -278,7 +347,7 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
         </div>
 
         <div className="lg:col-span-4">
-          <DailySummaryPanel meals={slots} calorieTarget={calorieTarget} />
+          <DailySummaryPanel meals={slots} calorieTarget={approvedCalories ? Number(approvedCalories) : calorieTarget} />
         </div>
       </div>
     </div>
