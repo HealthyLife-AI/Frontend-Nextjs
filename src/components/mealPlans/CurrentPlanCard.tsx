@@ -114,7 +114,7 @@ export function CurrentPlanCard({ subscriberId }: { subscriberId: string }) {
                     {firstLine(plan.plan_summary) && <span className="truncate text-xs text-ink-muted">{firstLine(plan.plan_summary)}</span>}
                   </div>
                   <Link
-                    href={`/dashboard/patients/${subscriberId}/plan?plan=${plan.id}`}
+                    href={`/dashboard/patients/${subscriberId}/plan?planId=${plan.id}`}
                     className="shrink-0 text-xs font-semibold text-primary hover:underline"
                   >
                     {t("view")}
