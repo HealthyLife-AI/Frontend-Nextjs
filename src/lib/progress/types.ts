@@ -54,6 +54,8 @@ export type CompositionSnapshot = EntryMarks & {
   recorded_at: string;
   source: MeasurementSource;
   weight_kg: number;
+  /** The nutritionist's entered BMI (Item B); the patient's own progress never carries it. */
+  bmi?: number | null;
   body_fat_percent: number | null;
   muscle_mass_kg: number | null;
   water_percent: number | null;

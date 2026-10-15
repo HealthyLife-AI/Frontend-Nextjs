@@ -209,6 +209,14 @@
       "usernameLabel": "Username",
       "noUsername": "No username yet"
     },
+    "bmi": {
+      "label": "BMI",
+      "computed": "Computed",
+      "underweight": "Underweight",
+      "normal": "Normal",
+      "overweight": "Overweight",
+      "obesity": "Obesity"
+    },
     "healthProfile": {
       "title": "Health profile",
       "subtitle": "Body data, health background, and today's measurements",
@@ -242,6 +250,9 @@
       "removeTag": "Remove {value}",
       "sectionComposition": "Today's body composition (optional)",
       "compositionHint": "Filling in any field here also logs a new dated reading in the client's history.",
+      "bmi": "BMI",
+      "bmiUseComputed": "Use computed ({value})",
+      "bmiReview": "The entered value is far from the computed one ({value}). Please review — you can still save it as is.",
       "bodyFatPercent": "Body fat (%)",
       "muscleMassKg": "Muscle mass (kg)",
       "waterPercent": "Water (%)",

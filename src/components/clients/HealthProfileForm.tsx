@@ -9,6 +9,7 @@ import { Select } from "@/components/ui/Select";
 import { TagInput } from "@/components/ui/TagInput";
 import { Button } from "@/components/ui/Button";
 import { addBodyCompositionReading, getHealthProfile, saveHealthProfile } from "@/lib/clients/api";
+import { bmiNeedsReview, computeBmi } from "@/lib/clients/bmi";
 import type { ActivityLevel, Gender } from "@/lib/clients/types";
 
 const ACTIVITY_LEVELS: ActivityLevel[] = ["sedentary", "light", "moderate", "active", "very_active"];
@@ -37,6 +38,7 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
   const [labNotes, setLabNotes] = useState("");
   const [nutritionistNotes, setNutritionistNotes] = useState("");
 
+  const [bmi, setBmi] = useState("");
   const [bodyFatPercent, setBodyFatPercent] = useState("");
   const [muscleMassKg, setMuscleMassKg] = useState("");
   const [waterPercent, setWaterPercent] = useState("");
@@ -107,7 +109,7 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
     // Body-composition fields are bundled into this same form (S2-12) but
     // belong to a separate history endpoint (FR-10: one row per visit,
     // never overwritten) — only log a reading if something was entered.
-    const hasCompositionData = [bodyFatPercent, muscleMassKg, waterPercent, waistCm, hipCm, thighCm, armCm].some(
+    const hasCompositionData = [bmi, bodyFatPercent, muscleMassKg, waterPercent, waistCm, hipCm, thighCm, armCm].some(
       (v) => v !== ""
     );
 
@@ -117,6 +119,8 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
       await addBodyCompositionReading(authorizedFetch, subscriberId, {
         recorded_at: new Date().toISOString().slice(0, 10),
         weight_kg: Number(weight),
+        // Hers, not the computed figure: the form only suggests one.
+        bmi: bmi ? Number(bmi) : null,
         body_fat_percent: bodyFatPercent ? Number(bodyFatPercent) : null,
         muscle_mass_kg: muscleMassKg ? Number(muscleMassKg) : null,
         water_percent: waterPercent ? Number(waterPercent) : null,
@@ -135,6 +139,9 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
   if (!loaded) {
     return <div className="py-16 text-center text-sm text-ink-muted">…</div>;
   }
+
+  // Offered beside the field, from what's typed in this form right now.
+  const computedBmi = computeBmi(weight ? Number(weight) : null, height ? Number(height) : null);
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-8">
@@ -231,7 +238,35 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
           <h2 className="text-sm font-semibold text-ink">{t("sectionComposition")}</h2>
           <p className="text-sm text-ink-muted">{t("compositionHint")}</p>
         </div>
+
+        {/* A soft prompt to re-check, never a block: the analyser's figure may legitimately differ. */}
+        {bmiNeedsReview(bmi ? Number(bmi) : null, computedBmi) && (
+          <p role="status" className="rounded-field border border-status-attention/25 bg-status-attention-bg px-3.5 py-2.5 text-sm text-ink">
+            {t("bmiReview", { value: computedBmi ?? 0 })}
+          </p>
+        )}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+          <div className="flex flex-col gap-1.5">
+            <TextField
+              label={t("bmi")}
+              type="number"
+              step="0.1"
+              min="10"
+              max="80"
+              placeholder={computedBmi !== null ? String(computedBmi) : undefined}
+              value={bmi}
+              onChange={(e) => setBmi(e.target.value)}
+            />
+            {computedBmi !== null && (
+              <button
+                type="button"
+                onClick={() => setBmi(String(computedBmi))}
+                className="self-start text-xs font-semibold text-primary hover:underline"
+              >
+                {t("bmiUseComputed", { value: computedBmi })}
+              </button>
+            )}
+          </div>
           <TextField
             label={t("bodyFatPercent")}
             type="number"

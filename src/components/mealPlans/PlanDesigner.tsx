@@ -6,6 +6,9 @@ import { Bookmark, Calculator, RotateCcw, ShieldAlert, Sparkles, Verified } from
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { getHealthProfile } from "@/lib/clients/api";
+import { BmiSummary } from "@/components/clients/BmiSummary";
+import { getProgress } from "@/lib/progress/api";
+import type { CompositionSnapshot } from "@/lib/progress/types";
 import { Link } from "@/i18n/navigation";
 import { getHealthRecords } from "@/lib/healthRecords/api";
 import {
@@ -37,12 +40,16 @@ import { emptySlots, planToSlots, slotsToInput, type EditableMeal } from "./meal
  */
 export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; planId?: string }) {
   const t = useTranslations("planDesigner");
+  const tBmi = useTranslations("clients.bmi");
   const { authorizedFetch } = useAuth();
 
   const [loaded, setLoaded] = useState(false);
   const [slots, setSlots] = useState<EditableMeal[]>(emptySlots());
   const [currentPlan, setCurrentPlan] = useState<MealPlan | null>(null);
   const [calorieTarget, setCalorieTarget] = useState<number | null>(null);
+  // Item B: the BMI line shown while she writes the plan.
+  const [profileBody, setProfileBody] = useState<{ height_cm: number; age: number; weight_kg: number } | null>(null);
+  const [latestReading, setLatestReading] = useState<CompositionSnapshot | null>(null);
   const [dirty, setDirty] = useState(false);
 
   const [saving, setSaving] = useState(false);
@@ -58,18 +65,26 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
     let cancelled = false;
 
     (async () => {
-      const [plansResult, profileResult, recordsResult] = await Promise.all([
+      const [plansResult, profileResult, recordsResult, progressResult] = await Promise.all([
         listMealPlans(authorizedFetch, subscriberId),
         getHealthProfile(authorizedFetch, subscriberId),
         getHealthRecords(authorizedFetch, subscriberId),
+        getProgress(authorizedFetch, subscriberId),
       ]);
 
       if (cancelled) return;
+
+      if (progressResult.ok) setLatestReading(progressResult.data.body_composition.latest);
 
       if (recordsResult.ok) setPendingAllergy(recordsResult.data.proposals.some((p) => p.kind === "allergy"));
 
       if (profileResult.ok && profileResult.data) {
         setCalorieTarget(profileResult.data.daily_calorie_needs);
+        setProfileBody({
+          height_cm: profileResult.data.height_cm,
+          age: profileResult.data.age,
+          weight_kg: profileResult.data.weight_kg,
+        });
       }
 
       if (plansResult.ok && plansResult.data.length > 0) {
@@ -206,6 +221,18 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-wrap items-center gap-2">
+          {(latestReading?.bmi ?? profileBody) && (
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-canvas/60 px-3 py-1 text-xs">
+              <span className="font-semibold text-ink-muted">{tBmi("label")}</span>
+              <BmiSummary
+                enteredBmi={latestReading?.bmi}
+                recordedAt={latestReading?.recorded_at ?? null}
+                weightKg={latestReading?.weight_kg ?? profileBody?.weight_kg ?? null}
+                heightCm={profileBody?.height_cm ?? null}
+                age={profileBody?.age ?? null}
+              />
+            </span>
+          )}
           {currentPlan && (
             <span
               className={`rounded-full px-2.5 py-1 text-xs font-semibold ${

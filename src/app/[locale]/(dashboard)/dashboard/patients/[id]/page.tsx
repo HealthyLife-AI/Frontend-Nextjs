@@ -10,6 +10,9 @@ import { AdherenceBadge } from "@/components/clients/AdherenceBadge";
 import { ConsentStatus } from "@/components/clients/ConsentStatus";
 import { getClient } from "@/lib/clients/api";
 import type { Client } from "@/lib/clients/types";
+import { getHealthProfile } from "@/lib/clients/api";
+import { BmiSummary } from "@/components/clients/BmiSummary";
+import type { HealthProfile } from "@/lib/clients/types";
 import { getProgress } from "@/lib/progress/api";
 import type { ProgressResponse } from "@/lib/progress/types";
 import { AdherenceHeadline } from "@/components/progress/AdherenceHeadline";
@@ -55,6 +58,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   const tGoalType = useTranslations("healthRecords.goal");
   const goalText = (c: Client) => (c.goal_type ? tGoalType(c.goal_type) : tGoals(c.goal));
   const tCommon = useTranslations("common");
+  const tBmi = useTranslations("clients.bmi");
   const { authorizedFetch } = useAuth();
 
   const [client, setClient] = useState<Client | null>(null);
@@ -62,6 +66,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   const [progress, setProgress] = useState<ProgressResponse | null>(null);
   const [progressFailed, setProgressFailed] = useState(false);
   const [latestSummary, setLatestSummary] = useState<AiSummary | null>(null);
+  // Height and age only, for the BMI line's fallback and its band (Item B).
+  const [profile, setProfile] = useState<HealthProfile | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -92,6 +98,15 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       .catch(() => {
         if (!cancelled) setProgressFailed(true);
       });
+
+    // Independent again: without a height there is no BMI to fall back
+    // to, and without an age no band — a missing profile just means the
+    // BMI line shows whatever it can.
+    getHealthProfile(authorizedFetch, id)
+      .then((result) => {
+        if (!cancelled && result.ok) setProfile(result.data);
+      })
+      .catch(() => {});
 
     // Same reasoning: independent of both calls above. No summary yet is
     // a real, expected state (a brand-new client, or before Monday's
@@ -202,6 +217,18 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
             <dt className="text-xs font-semibold text-ink-muted">{t("statusLabel")}</dt>
             <dd>
               <ClientStatusBadge status={client.status} />
+            </dd>
+          </div>
+          <div className="flex flex-col gap-1.5 p-5">
+            <dt className="text-xs font-semibold text-ink-muted">{tBmi("label")}</dt>
+            <dd>
+              <BmiSummary
+                enteredBmi={progress?.body_composition.latest?.bmi}
+                recordedAt={progress?.body_composition.latest?.recorded_at ?? null}
+                weightKg={progress?.body_composition.latest?.weight_kg ?? profile?.weight_kg ?? null}
+                heightCm={profile?.height_cm ?? null}
+                age={profile?.age ?? null}
+              />
             </dd>
           </div>
           <div className="flex flex-col gap-1.5 p-5">
