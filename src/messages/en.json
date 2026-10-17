@@ -253,7 +253,7 @@
       "surgeryHistory": "Surgery history",
       "labNotes": "Lab results / notes",
       "nutritionistNotes": "Nutritionist notes",
-      "dailyCalorieNeeds": "Estimated daily calorie needs",
+      "dailyCalorieNeeds": "System suggestion: daily calories",
       "kcalPerDay": "{value} kcal/day",
       "submit": "Save health profile",
       "submitting": "Saving...",
