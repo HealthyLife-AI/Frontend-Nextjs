@@ -209,6 +209,14 @@
       "usernameLabel": "اسم المستخدم",
       "noUsername": "لا يوجد اسم مستخدم بعد"
     },
+    "bmi": {
+      "label": "مؤشر كتلة الجسم",
+      "computed": "محسوب",
+      "underweight": "نقص وزن",
+      "normal": "طبيعي",
+      "overweight": "زيادة وزن",
+      "obesity": "سمنة"
+    },
     "healthProfile": {
       "title": "الملف الصحي",
       "subtitle": "بيانات الجسم والخلفية الصحية وقياسات اليوم",
@@ -242,6 +250,9 @@
       "removeTag": "حذف {value}",
       "sectionComposition": "قياسات مكوّنات الجسم اليوم (اختياري)",
       "compositionHint": "تعبئة أي حقل هنا تسجّل أيضًا قراءة جديدة بتاريخ اليوم في سجل المريض.",
+      "bmi": "مؤشر كتلة الجسم",
+      "bmiUseComputed": "استخدام المحسوب ({value})",
+      "bmiReview": "القيمة المدخلة تبتعد عن المحسوب ({value}). راجعيها — يمكنك الحفظ كما هي.",
       "bodyFatPercent": "نسبة الدهون (%)",
       "muscleMassKg": "الكتلة العضلية (كجم)",
       "waterPercent": "نسبة الماء (%)",

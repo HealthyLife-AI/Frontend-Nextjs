@@ -129,6 +129,8 @@ export type BodyCompositionReading = {
   recorded_at: string;
   source: MeasurementSource;
   weight_kg: number;
+  /** The nutritionist's entered BMI (Item B). Absent for the patient role. */
+  bmi?: number | null;
   body_fat_percent: number | null;
   muscle_mass_kg: number | null;
   water_percent: number | null;
