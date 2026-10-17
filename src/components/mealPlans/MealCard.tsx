@@ -6,7 +6,7 @@ import { Plus } from "lucide-react";
 import type { Food } from "@/lib/clients/types";
 import { FoodAutocomplete } from "./FoodAutocomplete";
 import { MealItemRow } from "./MealItemRow";
-import { mealMacros, type EditableItem, type EditableMeal } from "./mealSlots";
+import { displayCalories, mealMacros, type EditableItem, type EditableMeal } from "./mealSlots";
 
 /**
  * S3-09: one meal slot — header (icon, name, cosmetic suggested time,
@@ -33,7 +33,7 @@ export function MealCard({ meal, onChange }: { meal: EditableMeal; onChange: (ne
     onChange({ ...meal, items: meal.items.filter((_, i) => i !== index) });
   }
 
-  const totalCalories = mealMacros(meal).calories;
+  const totalCalories = displayCalories(mealMacros(meal).calories);
 
   return (
     <article className="rounded-panel border border-border/70 bg-card shadow-panel transition-shadow hover:shadow-panel-hover">

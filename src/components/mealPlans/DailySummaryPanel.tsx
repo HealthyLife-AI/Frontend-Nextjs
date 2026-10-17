@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Flame, Wheat } from "lucide-react";
-import { fiberGrams, planMacros, type EditableMeal } from "./mealSlots";
+import { TARGET_TOLERANCE, displayCalories, displayGrams, fiberGrams, planMacros, type EditableMeal } from "./mealSlots";
 
 /**
  * S3-09's sticky "live daily summary" (FR-14). The approved Stitch
@@ -28,9 +28,19 @@ export function DailySummaryPanel({
   const macros = planMacros(meals);
   const fiber = fiberGrams(meals);
 
+  const calories = displayCalories(macros.calories);
   const percent = calorieTarget ? Math.round((macros.calories / calorieTarget) * 100) : null;
   const ringPercent = percent === null ? 0 : Math.min(100, percent);
-  const isOverTarget = percent !== null && percent > 100;
+
+  /**
+   * ±TARGET_TOLERANCE around the target reads as "on target": the ring
+   * used to turn red at +1.4%, which flagged a plan that is, in practice,
+   * exactly the one the nutritionist meant to write.
+   */
+  const ratio = calorieTarget ? macros.calories / calorieTarget : null;
+  const state = ratio === null ? null : ratio > 1 + TARGET_TOLERANCE ? "over" : ratio < 1 - TARGET_TOLERANCE ? "under" : "on";
+  const isOverTarget = state === "over";
+  const gap = calorieTarget ? Math.abs(displayCalories(macros.calories - calorieTarget)) : 0;
 
   const circumference = 2 * Math.PI * 50;
   const dashOffset = circumference * (1 - ringPercent / 100);
@@ -70,7 +80,7 @@ export function DailySummaryPanel({
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <span className="text-3xl font-bold tabular-nums text-ink">{macros.calories}</span>
+              <span className="text-3xl font-bold tabular-nums text-ink">{calories}</span>
               {calorieTarget ? (
                 <span className="mt-1 text-xs text-ink-muted">{t("ofTarget", { value: calorieTarget })}</span>
               ) : (
@@ -80,7 +90,7 @@ export function DailySummaryPanel({
           </div>
         </div>
 
-        {percent !== null && (
+        {state !== null && (
           <div
             className={`flex items-start gap-2 rounded-field p-2.5 ${
               isOverTarget ? "bg-status-late-bg" : "bg-status-on-track-bg"
@@ -88,16 +98,16 @@ export function DailySummaryPanel({
           >
             <Flame size={18} className={isOverTarget ? "text-status-late" : "text-status-on-track"} />
             <span className={`text-sm font-medium ${isOverTarget ? "text-status-late" : "text-status-on-track"}`}>
-              {isOverTarget ? t("overTarget", { value: macros.calories - calorieTarget! }) : t("percentAchieved", { value: percent })}
+              {state === "over" ? t("overTarget", { value: gap }) : state === "under" ? t("underTarget", { value: gap }) : t("onTarget")}
             </span>
           </div>
         )}
 
         <div className="mt-4 flex flex-col gap-3">
           <span className="text-sm font-semibold text-ink">{t("macrosTitle")}</span>
-          <MacroBar label={t("protein")} grams={macros.protein_g} sharePercent={(macroCalories.protein / totalMacroCalories) * 100} colorClass="bg-primary" />
-          <MacroBar label={t("carbs")} grams={macros.carbs_g} sharePercent={(macroCalories.carbs / totalMacroCalories) * 100} colorClass="bg-accent" />
-          <MacroBar label={t("fat")} grams={macros.fat_g} sharePercent={(macroCalories.fat / totalMacroCalories) * 100} colorClass="bg-status-attention" />
+          <MacroBar label={t("protein")} grams={displayGrams(macros.protein_g)} sharePercent={(macroCalories.protein / totalMacroCalories) * 100} colorClass="bg-primary" />
+          <MacroBar label={t("carbs")} grams={displayGrams(macros.carbs_g)} sharePercent={(macroCalories.carbs / totalMacroCalories) * 100} colorClass="bg-accent" />
+          <MacroBar label={t("fat")} grams={displayGrams(macros.fat_g)} sharePercent={(macroCalories.fat / totalMacroCalories) * 100} colorClass="bg-status-attention" />
         </div>
 
         <div className="mt-4 flex items-center justify-between rounded-field border-t border-divider pt-3 text-sm">
@@ -105,7 +115,7 @@ export function DailySummaryPanel({
             <Wheat size={15} />
             {t("fiber")}
           </span>
-          <span className="font-semibold text-ink">{t("fiberValue", { value: fiber })}</span>
+          <span className="font-semibold text-ink">{t("fiberValue", { value: displayGrams(fiber) })}</span>
         </div>
       </div>
     </aside>

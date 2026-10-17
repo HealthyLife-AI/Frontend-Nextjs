@@ -42,12 +42,67 @@ export function activateMealPlan(fetcher: Fetcher, subscriberId: number | string
   );
 }
 
-/** F-5 (PRD, P1): "Suggest a starting plan" — rule-based, always returns a draft. */
-export function generateAiDraft(fetcher: Fetcher, subscriberId: number | string) {
-  // `warnings`: "pending_allergy_proposal" while a patient-proposed allergy awaits approval.
-  return fetcher(`/clients/${subscriberId}/meal-plans/ai-draft`, { method: "POST" }).then((res) =>
-    parseJson<MealPlan & { warnings?: string[] }>(res)
+/**
+ * Item C: her approved target and summary alone, without resubmitting
+ * the meals and without re-activating. Valid on the ACTIVE plan too —
+ * neither field reaches the patient, so BR-6 is not in play. Sending
+ * approved_calories: null clears it back to the system suggestion.
+ */
+export function updatePlanDecision(
+  fetcher: Fetcher,
+  subscriberId: number | string,
+  planId: number | string,
+  payload: { approved_calories?: number | null; plan_summary?: string | null }
+) {
+  return fetcher(`/clients/${subscriberId}/meal-plans/${planId}/decision`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  }).then((res) => parseJson<MealPlan>(res));
+}
+
+/**
+ * Item E: a new DRAFT for the same patient holding this plan's meals and
+ * her decision. The source is untouched, and nothing reaches the patient
+ * until the copy is activated in its own right (BR-6).
+ */
+export function duplicateMealPlan(fetcher: Fetcher, subscriberId: number | string, planId: number | string) {
+  return fetcher(`/clients/${subscriberId}/meal-plans/${planId}/duplicate`, { method: "POST" }).then((res) =>
+    parseJson<MealPlan>(res)
   );
+}
+
+export type SummarySuggestion = {
+  suggested_summary: string;
+  suggested_approved_calories: number | null;
+  /** True when the model was unavailable or its reply was rejected: the first line only. */
+  is_fallback: boolean;
+};
+
+/**
+ * Item D: a suggested summary for her to edit. Saves nothing — the
+ * normal Save button does that. Every number in the text is the
+ * server's own, computed from the plan.
+ */
+export function suggestPlanSummary(fetcher: Fetcher, subscriberId: number | string, planId: number | string) {
+  return fetcher(`/clients/${subscriberId}/meal-plans/${planId}/summary-suggestion`, { method: "POST" }).then((res) =>
+    parseJson<SummarySuggestion>(res)
+  );
+}
+
+/**
+ * F-5 (PRD, P1): "Suggest a starting plan" — rule-based, always returns
+ * a draft. `approvedCalories` is the figure typed into the decision card
+ * but not saved yet, so the draft is built to the number she is
+ * deciding on rather than the one already stored.
+ */
+export function generateAiDraft(fetcher: Fetcher, subscriberId: number | string, approvedCalories?: number | null) {
+  // `warnings`: "pending_allergy_proposal" while a patient-proposed allergy awaits approval.
+  return fetcher(`/clients/${subscriberId}/meal-plans/ai-draft`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(approvedCalories ? { approved_calories: approvedCalories } : {}),
+  }).then((res) => parseJson<MealPlan & { warnings?: string[] }>(res));
 }
 
 /** `name` is optional — see `MealPlan.name`'s note on why only a template ever has one. */

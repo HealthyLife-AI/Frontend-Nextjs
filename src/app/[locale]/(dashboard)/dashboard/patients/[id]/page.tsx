@@ -23,6 +23,7 @@ import { ResetPasswordButton } from "@/components/clients/ResetPasswordButton";
 import { MealLogSection } from "@/components/followUp/MealLogSection";
 import { ReviewsPanel } from "@/components/followUp/ReviewsPanel";
 import { PatientAppointmentCard } from "@/components/appointments/PatientAppointmentCard";
+import { CurrentPlanCard } from "@/components/mealPlans/CurrentPlanCard";
 import { PendingProposals } from "@/components/healthRecords/PendingProposals";
 import { listAiSummaries } from "@/lib/aiSummaries/api";
 import type { AiSummary } from "@/lib/aiSummaries/types";
@@ -231,6 +232,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       </section>
 
       {client.archived_at && <FollowUpBanner client={client} onChange={setClient} />}
+
+      <CurrentPlanCard subscriberId={id} />
 
       <PendingProposals subscriberId={id} readOnly={client.archived_at !== null} />
       <PatientAppointmentCard subscriberId={id} subscriberName={client.name} readOnly={client.archived_at !== null} />

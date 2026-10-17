@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Bookmark, Calculator, RotateCcw, ShieldAlert, Sparkles, Verified } from "lucide-react";
+import { Bookmark, Calculator, Printer, RotateCcw, ShieldAlert, Sparkles, Verified } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { getHealthProfile } from "@/lib/clients/api";
@@ -14,8 +14,12 @@ import {
   generateAiDraft,
   listMealPlans,
   saveMealPlanAsTemplate,
+  suggestPlanSummary,
   updateMealPlan,
+  updatePlanDecision,
 } from "@/lib/mealPlans/api";
+import { PlanDecisionCard } from "./PlanDecisionCard";
+import { CALORIE_FLOOR } from "@/lib/mealPlans/decision";
 import type { MealPlan } from "@/lib/mealPlans/types";
 import { DailySummaryPanel } from "./DailySummaryPanel";
 import { MealCard } from "./MealCard";
@@ -37,18 +41,27 @@ import { emptySlots, planToSlots, slotsToInput, type EditableMeal } from "./meal
  */
 export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; planId?: string }) {
   const t = useTranslations("planDesigner");
+  const tPrint = useTranslations("planPrint");
   const { authorizedFetch } = useAuth();
 
   const [loaded, setLoaded] = useState(false);
   const [slots, setSlots] = useState<EditableMeal[]>(emptySlots());
   const [currentPlan, setCurrentPlan] = useState<MealPlan | null>(null);
   const [calorieTarget, setCalorieTarget] = useState<number | null>(null);
+  // Item C: her decision. `suggestion` is the formula's figure, shown
+  // beside the field; `approvedCalories` is what she prescribed.
+  const [suggestion, setSuggestion] = useState<number | null>(null);
+  const [gender, setGender] = useState<"female" | "male" | null>(null);
+  const [approvedCalories, setApprovedCalories] = useState("");
+  const [planSummary, setPlanSummary] = useState("");
   const [dirty, setDirty] = useState(false);
 
   const [saving, setSaving] = useState(false);
   const [activating, setActivating] = useState(false);
   const [generatingDraft, setGeneratingDraft] = useState(false);
   const [savingTemplate, setSavingTemplate] = useState(false);
+  const [savingDecision, setSavingDecision] = useState(false);
+  const [suggestingSummary, setSuggestingSummary] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   // A patient-proposed allergy is not used by the draft (or anywhere) until approved.
@@ -68,9 +81,18 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
 
       if (recordsResult.ok) setPendingAllergy(recordsResult.data.proposals.some((p) => p.kind === "allergy"));
 
+      const formula = profileResult.ok && profileResult.data ? profileResult.data.daily_calorie_needs : null;
       if (profileResult.ok && profileResult.data) {
-        setCalorieTarget(profileResult.data.daily_calorie_needs);
+        setSuggestion(formula);
+        setGender(profileResult.data.gender);
       }
+
+      // Item C: mirrors CalorieTarget::effective() on the server — the
+      // ACTIVE plan's approved figure if she set one, else the formula.
+      // Computed from data already loaded, so there is no extra call.
+      const effective =
+        (plansResult.ok ? plansResult.data.find((p) => p.status === "active")?.approved_calories : null) ?? formula;
+      setCalorieTarget(effective ?? null);
 
       if (plansResult.ok && plansResult.data.length > 0) {
         // An explicitly requested plan wins over both (see the prop's
@@ -86,7 +108,22 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
         if (relevant) {
           setCurrentPlan(relevant);
           setSlots(planToSlots(relevant));
+          // A draft with no figure of its own starts from the effective
+          // target (she may overwrite it); the ACTIVE plan is shown as
+          // stored, so an empty field there honestly means "uses the
+          // system suggestion".
+          setApprovedCalories(
+            relevant.approved_calories
+              ? String(relevant.approved_calories)
+              : relevant.status === "draft" && effective
+                ? String(effective)
+                : ""
+          );
+          setPlanSummary(relevant.plan_summary ?? "");
         }
+      } else if (effective) {
+        // A brand-new plan: pre-filled with the effective target.
+        setApprovedCalories(String(effective));
       }
 
       setLoaded(true);
@@ -103,11 +140,69 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
     setNotice(null);
   }
 
+  /**
+   * Item C: on the ACTIVE plan the decision is saved on its own, through
+   * the narrow endpoint — the meals are already in force and the patient
+   * is following them, so a decision edit must not touch them.
+   */
+  async function handleSaveDecision() {
+    if (!currentPlan) return;
+
+    setError(null);
+    setSavingDecision(true);
+    const result = await updatePlanDecision(authorizedFetch, subscriberId, currentPlan.id, {
+      approved_calories: approvedCalories ? Number(approvedCalories) : null,
+      plan_summary: planSummary.trim() || null,
+    });
+    setSavingDecision(false);
+
+    if (!result.ok) {
+      setError(result.error.message);
+      return;
+    }
+
+    setCurrentPlan(result.data);
+    setNotice(t("decision.saved"));
+  }
+
+  /**
+   * Item D: fills both fields without saving — she reads it, edits it,
+   * then saves with the normal button. Replacing text she already wrote
+   * is confirmed first.
+   */
+  async function handleSuggestSummary() {
+    if (!currentPlan) return;
+    if ((planSummary.trim() || approvedCalories) && !window.confirm(t("decision.confirmReplace"))) return;
+
+    setError(null);
+    setSuggestingSummary(true);
+    const result = await suggestPlanSummary(authorizedFetch, subscriberId, currentPlan.id);
+    setSuggestingSummary(false);
+
+    if (!result.ok) {
+      setError(result.error.message);
+      return;
+    }
+
+    setPlanSummary(result.data.suggested_summary);
+    if (result.data.suggested_approved_calories !== null) {
+      setApprovedCalories(String(result.data.suggested_approved_calories));
+    }
+    setDirty(true);
+    setNotice(result.data.is_fallback ? t("decision.suggestionFallback") : t("decision.suggestionReady"));
+  }
+
   async function handleSave(): Promise<MealPlan | null> {
     setError(null);
     setSaving(true);
 
-    const payload = { meals: slotsToInput(slots) };
+    const payload = {
+      meals: slotsToInput(slots),
+      // Cleared on purpose means "fall back to the system suggestion",
+      // so an empty field is sent as null rather than omitted.
+      approved_calories: approvedCalories ? Number(approvedCalories) : null,
+      plan_summary: planSummary.trim() || null,
+    };
     const result = currentPlan
       ? await updateMealPlan(authorizedFetch, subscriberId, currentPlan.id, payload)
       : await createMealPlan(authorizedFetch, subscriberId, payload);
@@ -148,7 +243,7 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
 
     setError(null);
     setGeneratingDraft(true);
-    const result = await generateAiDraft(authorizedFetch, subscriberId);
+    const result = await generateAiDraft(authorizedFetch, subscriberId, approvedCalories ? Number(approvedCalories) : null);
     setGeneratingDraft(false);
 
     if (!result.ok) {
@@ -158,6 +253,7 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
 
     setCurrentPlan(result.data);
     setSlots(planToSlots(result.data));
+    setApprovedCalories(result.data.approved_calories ? String(result.data.approved_calories) : approvedCalories);
     setDirty(false);
     setNotice(null);
     if (result.data.warnings?.includes("pending_allergy_proposal")) setPendingAllergy(true);
@@ -235,6 +331,15 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
             <Sparkles size={16} strokeWidth={1.75} />
             {t("suggestPlan")}
           </Button>
+          {currentPlan && (
+            <Link
+              href={`/dashboard/patients/${subscriberId}/plan/print?planId=${currentPlan.id}`}
+              className="inline-flex h-11 items-center gap-2 rounded-field px-5 text-sm font-semibold text-ink-muted transition-colors hover:bg-ink-muted/[0.08] hover:text-ink"
+            >
+              <Printer size={16} strokeWidth={1.75} />
+              {tPrint("print")}
+            </Link>
+          )}
           <Button variant="ghost" isLoading={savingTemplate} disabled={!hasSavedPlan} onClick={handleSaveAsTemplate}>
             <Bookmark size={16} strokeWidth={1.75} />
             {t("saveAsTemplate")}
@@ -270,6 +375,33 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
         </p>
       )}
 
+      <PlanDecisionCard
+        approvedCalories={approvedCalories}
+        onApprovedCaloriesChange={(v) => {
+          setApprovedCalories(v);
+          setDirty(true);
+        }}
+        summary={planSummary}
+        onSummaryChange={(v) => {
+          setPlanSummary(v);
+          setDirty(true);
+        }}
+        suggestion={suggestion}
+        floor={gender ? CALORIE_FLOOR[gender] : null}
+      >
+        <div className="flex flex-wrap justify-end gap-2">
+          <Button variant="ghost" isLoading={suggestingSummary} disabled={!hasSavedPlan} onClick={handleSuggestSummary}>
+            <Sparkles size={16} strokeWidth={1.75} />
+            {t("decision.suggest")}
+          </Button>
+          {isActive && (
+            <Button variant="secondary" isLoading={savingDecision} onClick={handleSaveDecision}>
+              {t("decision.save")}
+            </Button>
+          )}
+        </div>
+      </PlanDecisionCard>
+
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-12">
         <div className="flex flex-col gap-4 lg:col-span-8">
           {slots.map((slot, index) => (
@@ -278,7 +410,7 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
         </div>
 
         <div className="lg:col-span-4">
-          <DailySummaryPanel meals={slots} calorieTarget={calorieTarget} />
+          <DailySummaryPanel meals={slots} calorieTarget={approvedCalories ? Number(approvedCalories) : calorieTarget} />
         </div>
       </div>
     </div>
