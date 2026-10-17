@@ -253,7 +253,7 @@
       "surgeryHistory": "تاريخ الجراحات",
       "labNotes": "نتائج التحاليل / ملاحظات",
       "nutritionistNotes": "ملاحظات الأخصائي",
-      "dailyCalorieNeeds": "الاحتياج التقديري اليومي من السعرات",
+      "dailyCalorieNeeds": "اقتراح النظام للسعرات اليومية",
       "kcalPerDay": "{value} سعرة/يوم",
       "submit": "حفظ الملف الصحي",
       "submitting": "جارٍ الحفظ...",
