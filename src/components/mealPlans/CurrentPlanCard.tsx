@@ -19,6 +19,7 @@ import type { MealPlan } from "@/lib/mealPlans/types";
  */
 export function CurrentPlanCard({ subscriberId }: { subscriberId: string }) {
   const t = useTranslations("planDesigner.currentPlan");
+  const tPrint = useTranslations("planPrint");
   const locale = useLocale();
   const { authorizedFetch } = useAuth();
 
@@ -141,6 +142,12 @@ export function CurrentPlanCard({ subscriberId }: { subscriberId: string }) {
                       className="text-xs font-semibold text-primary hover:underline"
                     >
                       {t("view")}
+                    </Link>
+                    <Link
+                      href={`/dashboard/patients/${subscriberId}/plan/print?planId=${plan.id}`}
+                      className="text-xs font-semibold text-primary hover:underline"
+                    >
+                      {tPrint("print")}
                     </Link>
                     <button
                       type="button"

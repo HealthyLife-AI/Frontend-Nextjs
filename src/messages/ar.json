@@ -738,6 +738,19 @@
       "faq": "الأسئلة الشائعة"
     }
   },
+  "planPrint": {
+    "print": "طباعة / حفظ PDF",
+    "includePrivate": "تضمين الملاحظات الخاصة",
+    "nutritionistCopy": "نسخة الأخصائي — تحتوي ملاحظات خاصة",
+    "printedOn": "تاريخ الطباعة: {date}",
+    "activatedOn": "فُعّلت في {date}",
+    "columnFood": "الطعام",
+    "columnQuantity": "الكمية (جم)",
+    "columnCalories": "السعرات",
+    "alternative": "بديل",
+    "dailyTotal": "المجموع اليومي",
+    "noPlan": "لا توجد خطة لطباعتها."
+  },
   "planDesigner": {
     "title": "مصمم الخطة الغذائية",
     "subtitle": "بناء الخطة وجبة بوجبة، مع بدائل — المجاميع تتحدث فورًا مع كل تعديل.",

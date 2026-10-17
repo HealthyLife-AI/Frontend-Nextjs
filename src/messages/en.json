@@ -738,6 +738,19 @@
       "faq": "FAQ"
     }
   },
+  "planPrint": {
+    "print": "Print / Save PDF",
+    "includePrivate": "Include private notes",
+    "nutritionistCopy": "Nutritionist copy — contains private notes",
+    "printedOn": "Printed on {date}",
+    "activatedOn": "Activated {date}",
+    "columnFood": "Food",
+    "columnQuantity": "Quantity (g)",
+    "columnCalories": "Calories",
+    "alternative": "Alternative",
+    "dailyTotal": "Daily total",
+    "noPlan": "No plan to print."
+  },
   "planDesigner": {
     "title": "Nutrition plan designer",
     "subtitle": "Build the plan meal by meal, with alternatives — live totals update as you go.",

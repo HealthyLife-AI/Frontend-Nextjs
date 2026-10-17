@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Bookmark, Calculator, RotateCcw, ShieldAlert, Sparkles, Verified } from "lucide-react";
+import { Bookmark, Calculator, Printer, RotateCcw, ShieldAlert, Sparkles, Verified } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { getHealthProfile } from "@/lib/clients/api";
@@ -41,6 +41,7 @@ import { emptySlots, planToSlots, slotsToInput, type EditableMeal } from "./meal
  */
 export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; planId?: string }) {
   const t = useTranslations("planDesigner");
+  const tPrint = useTranslations("planPrint");
   const { authorizedFetch } = useAuth();
 
   const [loaded, setLoaded] = useState(false);
@@ -310,6 +311,15 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
             <Sparkles size={16} strokeWidth={1.75} />
             {t("suggestPlan")}
           </Button>
+          {currentPlan && (
+            <Link
+              href={`/dashboard/patients/${subscriberId}/plan/print?planId=${currentPlan.id}`}
+              className="inline-flex h-11 items-center gap-2 rounded-field px-5 text-sm font-semibold text-ink-muted transition-colors hover:bg-ink-muted/[0.08] hover:text-ink"
+            >
+              <Printer size={16} strokeWidth={1.75} />
+              {tPrint("print")}
+            </Link>
+          )}
           <Button variant="ghost" isLoading={savingTemplate} disabled={!hasSavedPlan} onClick={handleSaveAsTemplate}>
             <Bookmark size={16} strokeWidth={1.75} />
             {t("saveAsTemplate")}
