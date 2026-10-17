@@ -81,11 +81,18 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
 
       if (recordsResult.ok) setPendingAllergy(recordsResult.data.proposals.some((p) => p.kind === "allergy"));
 
+      const formula = profileResult.ok && profileResult.data ? profileResult.data.daily_calorie_needs : null;
       if (profileResult.ok && profileResult.data) {
-        setCalorieTarget(profileResult.data.daily_calorie_needs);
-        setSuggestion(profileResult.data.daily_calorie_needs);
+        setSuggestion(formula);
         setGender(profileResult.data.gender);
       }
+
+      // Item C: mirrors CalorieTarget::effective() on the server — the
+      // ACTIVE plan's approved figure if she set one, else the formula.
+      // Computed from data already loaded, so there is no extra call.
+      const effective =
+        (plansResult.ok ? plansResult.data.find((p) => p.status === "active")?.approved_calories : null) ?? formula;
+      setCalorieTarget(effective ?? null);
 
       if (plansResult.ok && plansResult.data.length > 0) {
         // An explicitly requested plan wins over both (see the prop's
@@ -101,9 +108,22 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
         if (relevant) {
           setCurrentPlan(relevant);
           setSlots(planToSlots(relevant));
-          setApprovedCalories(relevant.approved_calories ? String(relevant.approved_calories) : "");
+          // A draft with no figure of its own starts from the effective
+          // target (she may overwrite it); the ACTIVE plan is shown as
+          // stored, so an empty field there honestly means "uses the
+          // system suggestion".
+          setApprovedCalories(
+            relevant.approved_calories
+              ? String(relevant.approved_calories)
+              : relevant.status === "draft" && effective
+                ? String(effective)
+                : ""
+          );
           setPlanSummary(relevant.plan_summary ?? "");
         }
+      } else if (effective) {
+        // A brand-new plan: pre-filled with the effective target.
+        setApprovedCalories(String(effective));
       }
 
       setLoaded(true);
