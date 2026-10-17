@@ -30,7 +30,11 @@ export function PlanDecisionCard({
   onSummaryChange: (value: string) => void;
   /** The formula's figure, shown beside her field. Null when there's no health profile yet. */
   suggestion: number | null;
-  /** config('nutrition.calorie_floor.*) for this patient's gender; null when unknown. */
+  /**
+   * This patient's gender's floor from `calorie_floor` on the health-profile
+   * response (backend config/nutrition.php, the only source). Null when the
+   * profile or gender is unknown, and then no warning shows.
+   */
   floor: number | null;
   /** The "suggest a summary" action (Item D) sits in this card's footer. */
   children?: React.ReactNode;

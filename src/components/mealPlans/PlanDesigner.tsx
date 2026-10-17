@@ -22,7 +22,6 @@ import {
   updatePlanDecision,
 } from "@/lib/mealPlans/api";
 import { PlanDecisionCard } from "./PlanDecisionCard";
-import { CALORIE_FLOOR } from "@/lib/mealPlans/decision";
 import type { MealPlan } from "@/lib/mealPlans/types";
 import { DailySummaryPanel } from "./DailySummaryPanel";
 import { MealCard } from "./MealCard";
@@ -56,6 +55,8 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
   // beside the field; `approvedCalories` is what she prescribed.
   const [suggestion, setSuggestion] = useState<number | null>(null);
   const [gender, setGender] = useState<"female" | "male" | null>(null);
+  // From the API (config/nutrition.php); null until the profile loads.
+  const [calorieFloor, setCalorieFloor] = useState<Record<"female" | "male", number> | null>(null);
   const [approvedCalories, setApprovedCalories] = useState("");
   const [planSummary, setPlanSummary] = useState("");
   // Item B: the BMI line shown while she writes the plan.
@@ -95,6 +96,7 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
       if (profileResult.ok && profileResult.data) {
         setSuggestion(formula);
         setGender(profileResult.data.gender);
+        setCalorieFloor(profileResult.data.calorie_floor ?? null);
         setCalorieTarget(profileResult.data.daily_calorie_needs);
         setProfileBody({
           height_cm: profileResult.data.height_cm,
@@ -415,7 +417,7 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
           setDirty(true);
         }}
         suggestion={suggestion}
-        floor={gender ? CALORIE_FLOOR[gender] : null}
+        floor={gender && calorieFloor ? calorieFloor[gender] : null}
       >
         <div className="flex flex-wrap justify-end gap-2">
           <Button variant="ghost" isLoading={suggestingSummary} disabled={!hasSavedPlan} onClick={handleSuggestSummary}>

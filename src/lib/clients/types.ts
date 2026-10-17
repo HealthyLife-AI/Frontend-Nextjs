@@ -109,6 +109,12 @@ export type HealthProfile = {
   lab_notes: string | null;
   nutritionist_notes: string | null;
   daily_calorie_needs: number | null;
+  /**
+   * The soft floor the plan designer warns below, per gender. Served from
+   * the backend's config/nutrition.php — the only place the numbers live.
+   * Nutritionist responses only.
+   */
+  calorie_floor?: Record<Gender, number>;
   updated_at: string;
 };
 
