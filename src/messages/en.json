@@ -760,6 +760,8 @@
     "columnCalories": "Calories",
     "alternative": "Alternative",
     "dailyTotal": "Daily total",
+    "unsavedNote": "Showing the values typed on screen (not saved yet).",
+    "unsavedMeals": "Meal edits are not saved and will not appear in the print. Continue?",
     "noPlan": "No plan to print."
   },
   "planDesigner": {

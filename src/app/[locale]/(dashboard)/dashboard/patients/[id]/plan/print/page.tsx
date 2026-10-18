@@ -36,6 +36,8 @@ export default function PlanPrintPage({ params }: { params: Promise<{ id: string
   const [plan, setPlan] = useState<MealPlan | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [includePrivate, setIncludePrivate] = useState(true);
+  // The designer's typed-but-unsaved decision, handed over for a few minutes (see PlanDesigner).
+  const [unsaved, setUnsaved] = useState<{ approved_calories: number | null; plan_summary: string | null } | null>(null);
 
   const load = useCallback(async () => {
     const [clientResult, plansResult] = await Promise.all([
@@ -55,8 +57,19 @@ export default function PlanPrintPage({ params }: { params: Promise<{ id: string
       plansResult.data.find((p) => p.status === "active") ??
       null;
 
-    if (chosen) setPlan(chosen);
-    else setNotFound(true);
+    if (chosen) {
+      setPlan(chosen);
+      try {
+        const raw = sessionStorage.getItem(`planPrintDraft:${chosen.id}`);
+        const draft = raw ? JSON.parse(raw) : null;
+        // Only a recent hand-off: an old one would print a decision since changed elsewhere.
+        if (draft && Date.now() - draft.at < 10 * 60 * 1000) {
+          setUnsaved({ approved_calories: draft.approved_calories ?? null, plan_summary: draft.plan_summary ?? null });
+        }
+      } catch {
+        // Unreadable: print what is saved.
+      }
+    } else setNotFound(true);
   }, [authorizedFetch, id, planId]);
 
   useEffect(() => {
@@ -67,6 +80,9 @@ export default function PlanPrintPage({ params }: { params: Promise<{ id: string
   if (notFound) return <p className="py-16 text-center text-sm text-ink-muted">{t("noPlan")}</p>;
   if (!plan) return <p className="py-16 text-center text-sm text-ink-muted">…</p>;
 
+  // What the sheet shows for the decision: the typed values if handed over, else the saved ones.
+  const approvedCalories = unsaved ? unsaved.approved_calories : plan.approved_calories;
+  const planSummary = unsaved ? unsaved.plan_summary : plan.plan_summary;
   const slots = planToSlots(plan).filter((slot) => slot.items.length > 0);
   const totals = planMacros(slots);
   const dateFmt = new Intl.DateTimeFormat(locale === "ar" ? "ar-SA-u-ca-gregory-nu-latn" : "en-GB", {
@@ -88,6 +104,7 @@ export default function PlanPrintPage({ params }: { params: Promise<{ id: string
           />
           {t("includePrivate")}
         </label>
+        {unsaved && <p className="basis-full text-xs text-ink-muted">{t("unsavedNote")}</p>}
         <Button onClick={() => window.print()}>
           <Printer size={16} strokeWidth={1.75} />
           {t("print")}
@@ -114,18 +131,18 @@ export default function PlanPrintPage({ params }: { params: Promise<{ id: string
           {includePrivate && <p className="text-sm font-bold text-status-attention">{t("nutritionistCopy")}</p>}
         </header>
 
-        {includePrivate && (plan.approved_calories || plan.plan_summary) && (
+        {includePrivate && (approvedCalories || planSummary) && (
           <section className="flex flex-col gap-2 rounded-field border border-border p-4 print:break-inside-avoid">
             <h2 className="text-sm font-bold text-ink">{tPlan("decision.title")}</h2>
-            {plan.approved_calories && (
+            {approvedCalories && (
               <p className="text-sm text-ink">
-                {tPlan("decision.approvedCalories")}: <span className="font-bold tabular-nums">{plan.approved_calories}</span>
+                {tPlan("decision.approvedCalories")}: <span className="font-bold tabular-nums">{approvedCalories}</span>
                 {plan.suggested_calories != null && (
                   <span className="text-ink-muted"> · {tPlan("currentPlan.versusSuggestion", { value: plan.suggested_calories })}</span>
                 )}
               </p>
             )}
-            {plan.plan_summary && <p className="whitespace-pre-line text-sm leading-relaxed text-ink">{plan.plan_summary}</p>}
+            {planSummary && <p className="whitespace-pre-line text-sm leading-relaxed text-ink">{planSummary}</p>}
           </section>
         )}
 

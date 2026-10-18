@@ -63,6 +63,8 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
   const [profileBody, setProfileBody] = useState<{ height_cm: number; age: number; weight_kg: number } | null>(null);
   const [latestReading, setLatestReading] = useState<CompositionSnapshot | null>(null);
   const [dirty, setDirty] = useState(false);
+  // Meal edits specifically: the print sheet carries the typed decision, but meals come from the saved plan.
+  const [mealsDirty, setMealsDirty] = useState(false);
 
   const [saving, setSaving] = useState(false);
   const [activating, setActivating] = useState(false);
@@ -155,6 +157,7 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
   function updateSlot(index: number, next: EditableMeal) {
     setSlots((prev) => prev.map((slot, i) => (i === index ? next : slot)));
     setDirty(true);
+    setMealsDirty(true);
     setNotice(null);
   }
 
@@ -210,6 +213,37 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
     setNotice(result.data.is_fallback ? t("decision.suggestionFallback") : t("decision.suggestionReady"));
   }
 
+  /**
+   * The print sheet reads the plan from the server, so a summary or target
+   * typed but not yet saved would silently be missing from it. Hand the
+   * on-screen values over for the next few minutes instead: nothing is
+   * written, and the patient is not notified of anything.
+   *
+   * Meal edits are different — they are the plan itself, and the sheet
+   * prints the saved meals — so unsaved ones are confirmed first.
+   */
+  function rememberForPrint(event: React.MouseEvent) {
+    if (!currentPlan) return;
+
+    if (mealsDirty && !window.confirm(tPrint("unsavedMeals"))) {
+      event.preventDefault();
+      return;
+    }
+
+    try {
+      sessionStorage.setItem(
+        `planPrintDraft:${currentPlan.id}`,
+        JSON.stringify({
+          at: Date.now(),
+          approved_calories: approvedCalories ? Number(approvedCalories) : null,
+          plan_summary: planSummary.trim() || null,
+        })
+      );
+    } catch {
+      // Storage blocked: the sheet just prints what is saved.
+    }
+  }
+
   async function handleSave(): Promise<MealPlan | null> {
     setError(null);
     setSaving(true);
@@ -234,6 +268,7 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
 
     setCurrentPlan(result.data);
     setDirty(false);
+    setMealsDirty(false);
     setNotice(t("saved"));
     return result.data;
   }
@@ -273,6 +308,7 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
     setSlots(planToSlots(result.data));
     setApprovedCalories(result.data.approved_calories ? String(result.data.approved_calories) : approvedCalories);
     setDirty(false);
+    setMealsDirty(false);
     setNotice(null);
     if (result.data.warnings?.includes("pending_allergy_proposal")) setPendingAllergy(true);
   }
@@ -364,6 +400,7 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
           {currentPlan && (
             <Link
               href={`/dashboard/patients/${subscriberId}/plan/print?planId=${currentPlan.id}`}
+              onClick={rememberForPrint}
               className="inline-flex h-11 items-center gap-2 rounded-field px-5 text-sm font-semibold text-ink-muted transition-colors hover:bg-ink-muted/[0.08] hover:text-ink"
             >
               <Printer size={16} strokeWidth={1.75} />
