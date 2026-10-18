@@ -145,6 +145,31 @@ function round1(n: number): number {
 }
 
 /**
+ * How far the day's calories may sit from the target before the summary
+ * calls it off-target. A plan is a prescription in whole foods, not a
+ * dosage: 2,029 against a 2,000 target is the same plan.
+ */
+export const TARGET_TOLERANCE = 0.05;
+
+/**
+ * Display rounding, applied at render only — every total above stays at
+ * the backend's one decimal so the designer and the API can't disagree
+ * about what a plan sums to.
+ *
+ * Calories are whole numbers (no plan is accurate to a tenth of a kcal,
+ * and subtracting two one-decimal floats produced things like "زيادة
+ * 28.800000000000182 سعرة"); grams keep the single decimal the backend
+ * stores.
+ */
+export function displayCalories(value: number): number {
+  return Math.round(value);
+}
+
+export function displayGrams(value: number): number {
+  return round1(value);
+}
+
+/**
  * A food's display name for the active locale, falling back to the other
  * language rather than rendering blank — the USDA import fills `name_en`
  * while the curated Arabic layer fills `name_ar`, so a given food may

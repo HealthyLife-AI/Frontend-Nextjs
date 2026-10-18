@@ -109,6 +109,12 @@ export type HealthProfile = {
   lab_notes: string | null;
   nutritionist_notes: string | null;
   daily_calorie_needs: number | null;
+  /**
+   * The soft floor the plan designer warns below, per gender. Served from
+   * the backend's config/nutrition.php — the only place the numbers live.
+   * Nutritionist responses only.
+   */
+  calorie_floor?: Record<Gender, number>;
   updated_at: string;
 };
 
@@ -129,6 +135,8 @@ export type BodyCompositionReading = {
   recorded_at: string;
   source: MeasurementSource;
   weight_kg: number;
+  /** The nutritionist's entered BMI (Item B). Absent for the patient role. */
+  bmi?: number | null;
   body_fat_percent: number | null;
   muscle_mass_kg: number | null;
   water_percent: number | null;

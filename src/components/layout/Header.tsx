@@ -65,7 +65,7 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
   }).format(new Date());
 
   return (
-    <header className="fixed inset-x-0 top-0 z-20 flex h-[72px] items-center justify-between gap-3 border-b border-border/60 bg-white/80 px-4 backdrop-blur-xl sm:px-8 lg:start-72">
+    <header data-app-header className="fixed inset-x-0 top-0 z-20 flex h-[72px] items-center justify-between gap-3 border-b border-border/60 bg-white/80 px-4 backdrop-blur-xl sm:px-8 lg:start-72">
       <div className="flex min-w-0 flex-1 items-center gap-3">
         <button
           type="button"

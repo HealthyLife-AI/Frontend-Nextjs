@@ -88,6 +88,8 @@ export function Sidebar({
       )}
 
       <aside
+        // Item F: dropped when printing a plan — the sheet is the document.
+        data-app-nav
         className={`fixed inset-y-0 start-0 z-40 flex w-72 flex-col border-e border-border/70 bg-card transition-transform duration-300 ${
           open ? "translate-x-0" : "max-lg:rtl:translate-x-full max-lg:ltr:-translate-x-full"
         }`}

@@ -56,6 +56,16 @@ export type MealPlan = {
    * in force in the plan-vs-actual series.
    */
   activated_at: string | null;
+  /**
+   * Item C, nutritionist responses only — the patient's own
+   * GET /me/meal-plan carries none of these four. `plan_summary` is
+   * sensitive health data: never log it, never send it onward.
+   */
+  approved_calories?: number | null;
+  /** What the formula said when this plan was activated, frozen for the history. */
+  suggested_calories?: number | null;
+  plan_summary?: string | null;
+  summary_updated_at?: string | null;
   meals: Meal[];
   summary_by_day: Record<string, Macros>;
   created_at: string;
@@ -78,5 +88,8 @@ export type MealInput = {
 
 export type MealPlanInput = {
   start_date?: string | null;
+  /** Item C: sent with the plan so one save records the meals and the decision together. */
+  approved_calories?: number | null;
+  plan_summary?: string | null;
   meals: MealInput[];
 };

@@ -635,3 +635,55 @@ html[dir="rtl"] .mkt-grow {
     animation: none;
   }
 }
+
+/*
+ * Item F: printing a meal plan (the print view calls window.print();
+ * "Save as PDF" is the browser's own). A4 portrait with a margin box
+ * that leaves room for the page number; direction and font come from
+ * <html>, so the Arabic sheet prints RTL in the app's own typeface
+ * without a second set of rules.
+ *
+ * Everything that is not the plan — the shell's navigation, the header
+ * bar, and the view's own controls (print:hidden) — is dropped, so the
+ * sheet is the document and nothing else.
+ */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 14mm 12mm 16mm;
+
+    @bottom-center {
+      /* Only some engines honour this; where they don't, the sheet simply has no page number. */
+      content: counter(page) " / " counter(pages);
+      font-size: 9pt;
+      color: #6b7280;
+    }
+  }
+
+  html,
+  body {
+    background: #fff !important;
+  }
+
+  /* The dashboard chrome: sidebar, top bar, floating widgets. */
+  aside[data-app-nav],
+  header[data-app-header],
+  [data-print-hide] {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  /* A meal, its alternatives and the totals should not be split across a page. */
+  .print\:break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Keep ink off the paper that only existed to separate things on screen. */
+  * {
+    box-shadow: none !important;
+  }
+}
