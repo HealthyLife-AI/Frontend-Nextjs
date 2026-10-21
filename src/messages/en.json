@@ -865,7 +865,8 @@
     "fallbackDraftNote": "An AI suggestion wasn’t available this time, so this draft is based on calories only. Allergies were checked by name only — please review the items carefully.",
     "fallbackRetry": "Try again with AI",
     "pendingAllergyBanner": "The patient proposed an allergy that is not approved yet; its foods are not excluded from drafts until you approve it.",
-    "pendingAllergyReview": "Review the proposal"
+    "pendingAllergyReview": "Review the proposal",
+    "allergenAcknowledged": "Conflict review recorded."
   },
   "foods": {
     "eyebrow": "Food library",
@@ -1328,5 +1329,57 @@
       "failed": "Could not reset. Try again.",
       "usernameAutoHint": "Leave empty to generate one."
     }
+  },
+  "allergenWarning": {
+    "contains": "Contains: {groups}",
+    "otherMatch": "May conflict with a recorded allergy (name match)",
+    "confirmed_allergy": "confirmed allergy",
+    "intolerance": "intolerance",
+    "avoid": "better avoided",
+    "unverified": "Allergens have not been verified for this food"
+  },
+  "allergenDialog": {
+    "titleActivate": "Review before approving the plan",
+    "titleAcknowledge": "Review allergen conflict",
+    "bodyConfirmed": "This plan has foods that conflict with a confirmed allergy. Review them before continuing.",
+    "bodySoft": "This plan has foods that may not suit the patient (intolerance or avoid). For your information.",
+    "tick": "I reviewed the conflict and I accept the decision to keep it",
+    "cancel": "Back",
+    "confirmActivate": "Approve plan",
+    "confirmAcknowledge": "Confirm review",
+    "alternative": "alternative",
+    "review": "Review",
+    "newConflictBanner": "This plan now has a food that conflicts with a confirmed allergy that has not been reviewed.",
+    "meal": {
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "dinner": "Dinner",
+      "snack": "Snack"
+    }
+  },
+  "medicationNotice": {
+    "takes": "Patient takes: {names}.",
+    "review": "Review food–drug interactions before approving the plan."
+  },
+  "alertSettings": {
+    "title": "Alert settings",
+    "helper": "Set alert thresholds for this patient. Leave a field empty to use the default.",
+    "example": "Example: diabetic patient 1 day, maintenance patient 5 days",
+    "field": {
+      "no_log_days": "Alert when not logging for",
+      "calorie_exceeded_streak_days": "Alert when calories exceeded for",
+      "milestone_weight_change_kg": "Milestone: weight change",
+      "milestone_window_days": "Milestone: within"
+    },
+    "unit": {
+      "days": "days",
+      "kg": "kg"
+    },
+    "default": "Default",
+    "defaultIs": "Default: {value}",
+    "usingDefault": "Using default ({value})",
+    "range": "Value between {min} and {max}",
+    "save": "Save",
+    "saved": "Alert settings saved"
   }
 }

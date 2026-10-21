@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Repeat, Trash2 } from "lucide-react";
 import type { Food } from "@/lib/clients/types";
+import { AllergenNotice, useAllergenChecks } from "./AllergenChecks";
 import { FoodAutocomplete } from "./FoodAutocomplete";
 import { displayCalories, displayGrams, foodName, itemMacros, type EditableItem } from "./mealSlots";
 
@@ -30,6 +31,7 @@ export function MealItemRow({
   const t = useTranslations("planDesigner");
   const locale = useLocale();
   const [addingAlternative, setAddingAlternative] = useState(false);
+  const { checks } = useAllergenChecks();
 
   function addAlternative(food: Food, quantityGrams: number) {
     onChange({ ...item, alternatives: [...item.alternatives, { food, quantityGrams, alternatives: [] }] });
@@ -76,6 +78,11 @@ export function MealItemRow({
         </div>
       </div>
 
+      {/* Pilot feedback 2, A5: the planned item's own warning, shown as soon as the food is in the row, saved or not. */}
+      <div className="px-1 empty:hidden">
+        <AllergenNotice check={checks[item.food.id]} compact />
+      </div>
+
       {item.alternatives.length > 0 && (
         <div className="ms-6 flex flex-col gap-1.5 rounded-field bg-canvas/40 p-2">
           {item.alternatives.map((alt, index) => {
@@ -90,6 +97,10 @@ export function MealItemRow({
                     {foodName(alt.food, locale)}
                   </span>
                   <span className="shrink-0 text-xs tabular-nums text-ink-muted">{t("quantityGrams", { value: displayGrams(alt.quantityGrams) })}</span>
+                  {/* An alternative is a food the patient may be handed instead: it is checked like the item. */}
+                  <div className="basis-full empty:hidden">
+                    <AllergenNotice check={checks[alt.food.id]} compact />
+                  </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-2 sm:gap-3">
                   <span className="text-sm font-medium tabular-nums text-ink">{t("caloriesValue", { value: displayCalories(altMacros.calories) })}</span>

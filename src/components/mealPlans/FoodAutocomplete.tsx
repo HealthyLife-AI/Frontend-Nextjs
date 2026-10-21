@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Loader2, Search, X } from "lucide-react";
+import { AlertTriangle, Loader2, Search, ShieldAlert, X } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { searchFoods } from "@/lib/mealPlans/api";
 import type { Food } from "@/lib/clients/types";
+import { AllergenNotice, useAllergenChecks } from "./AllergenChecks";
 import { foodName } from "./mealSlots";
 
 const DEBOUNCE_MS = 300;
@@ -34,6 +35,7 @@ export function FoodAutocomplete({
   const t = useTranslations("planDesigner.foodPicker");
   const locale = useLocale();
   const { authorizedFetch } = useAuth();
+  const { checks, request } = useAllergenChecks();
 
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Food[]>([]);
@@ -64,15 +66,26 @@ export function FoodAutocomplete({
     const timer = setTimeout(async () => {
       const result = await searchFoods(authorizedFetch, query.trim());
       if (cancelled) return;
-      setResults(result.ok ? result.data.data : []);
+      const found = result.ok ? result.data.data : [];
+      setResults(found);
       setLoading(false);
+      // Ask the server which of these conflict with the patient's approved
+      // allergies. The list is usable straight away; the marks fill in.
+      void request(found.map((f) => f.id));
     }, DEBOUNCE_MS);
 
     return () => {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [query, authorizedFetch]);
+  }, [query, authorizedFetch, request]);
+
+  /**
+   * Conflicting foods are marked and sunk below the clean ones — never hidden:
+   * a nutritionist may have a reason to use one, and a missing result is worse
+   * than a flagged one. Within each group the server's own order (relevance) holds.
+   */
+  const ordered = [...results].sort((a, b) => Number(Boolean(checks[a.id]?.conflict)) - Number(Boolean(checks[b.id]?.conflict)));
 
   if (selected) {
     const qty = Number(quantity);
@@ -86,6 +99,8 @@ export function FoodAutocomplete({
             <X size={16} />
           </button>
         </div>
+        {/* The warning is here, before "add": the choice is made with it in view. */}
+        <AllergenNotice check={checks[selected.id]} compact />
         <div className="flex items-center gap-2">
           <input
             type="number"
@@ -143,17 +158,34 @@ export function FoodAutocomplete({
           )}
 
           {!loading &&
-            results.map((food) => (
-              <button
-                key={food.id}
-                type="button"
-                onClick={() => setSelected(food)}
-                className="flex w-full items-center justify-between border-b border-divider px-3 py-2 text-start text-sm last:border-0 hover:bg-canvas"
-              >
-                <span className="text-ink">{foodName(food, locale)}</span>
-                <span className="text-xs text-ink-muted">{t("caloriesPer100g", { value: food.calories_per_100g })}</span>
-              </button>
-            ))}
+            ordered.map((food) => {
+              const conflict = checks[food.id]?.conflict;
+              const Icon = conflict?.severity === "confirmed_allergy" ? ShieldAlert : AlertTriangle;
+
+              return (
+                <button
+                  key={food.id}
+                  type="button"
+                  onClick={() => setSelected(food)}
+                  className="flex w-full flex-col items-stretch gap-0.5 border-b border-divider px-3 py-2 text-start text-sm last:border-0 hover:bg-canvas"
+                >
+                  <span className="flex items-center justify-between gap-2">
+                    <span className="flex min-w-0 items-center gap-1.5 text-ink">
+                      {conflict && (
+                        <Icon
+                          size={14}
+                          aria-hidden="true"
+                          className={`shrink-0 ${conflict.severity === "confirmed_allergy" ? "text-status-late" : "text-status-attention"}`}
+                        />
+                      )}
+                      <span className="truncate">{foodName(food, locale)}</span>
+                    </span>
+                    <span className="shrink-0 text-xs text-ink-muted">{t("caloriesPer100g", { value: food.calories_per_100g })}</span>
+                  </span>
+                  {(conflict || checks[food.id]?.unverified) && <AllergenNotice check={checks[food.id]} compact />}
+                </button>
+              );
+            })}
         </div>
       )}
     </div>

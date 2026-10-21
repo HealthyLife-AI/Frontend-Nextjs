@@ -9,6 +9,37 @@ export type MealName = "breakfast" | "snack" | "lunch" | "dinner";
 
 export type MealPlanStatus = "draft" | "active" | "archived";
 
+/**
+ * Pilot feedback 2, A. How strongly a food conflicts with what the patient
+ * is APPROVED to avoid: only a confirmed allergy blocks an activation.
+ */
+export type AllergenSeverity = "confirmed_allergy" | "intolerance" | "avoid";
+
+export type AllergenConflict = {
+  meal_id: number;
+  meal_name: string;
+  day_index: number | null;
+  item_id: number;
+  /** Set when this is an ALTERNATIVE of that planned item. */
+  parent_item_id: number | null;
+  food_id: number;
+  food_name_ar: string | null;
+  groups: string[];
+  /** "tag": the food's own allergen tags; "text": an "other" allergy's wording found in its name (a hint, not a proof). */
+  match: "tag" | "text";
+  severity: AllergenSeverity;
+};
+
+/** A food whose allergens were never tagged: unknown, which is not the same as safe. */
+export type UnverifiedItem = { item_id: number; food_id: number; food_name_ar: string | null };
+
+/** One food against the patient's approved allergies (POST …/allergen-check). */
+export type FoodAllergenCheck = {
+  food_id: number;
+  conflict: { groups: string[]; match: "tag" | "text"; severity: AllergenSeverity } | null;
+  unverified: boolean;
+};
+
 export type Macros = {
   calories: number;
   protein_g: number;
@@ -66,6 +97,16 @@ export type MealPlan = {
   suggested_calories?: number | null;
   plan_summary?: string | null;
   summary_updated_at?: string | null;
+  /**
+   * Pilot feedback 2, A. Nutritionist responses only — the patient's own
+   * GET /me/meal-plan carries none of these. Absent on a template or an
+   * archived plan, which are not checked.
+   */
+  allergen_conflicts?: AllergenConflict[];
+  unverified_items?: UnverifiedItem[];
+  /** An ACTIVE plan holds a confirmed-allergy conflict its acknowledgement does not cover. */
+  new_unacknowledged_conflicts?: boolean;
+  allergen_ack_at?: string | null;
   meals: Meal[];
   summary_by_day: Record<string, Macros>;
   created_at: string;

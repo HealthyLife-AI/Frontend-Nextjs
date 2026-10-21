@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ChevronDown, ClipboardList, CopyPlus } from "lucide-react";
+import { ChevronDown, ClipboardList, CopyPlus, ShieldAlert } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { duplicateMealPlan, listMealPlans } from "@/lib/mealPlans/api";
@@ -20,6 +20,7 @@ import type { MealPlan } from "@/lib/mealPlans/types";
 export function CurrentPlanCard({ subscriberId }: { subscriberId: string }) {
   const t = useTranslations("planDesigner.currentPlan");
   const tPrint = useTranslations("planPrint");
+  const tAllergen = useTranslations("allergenDialog");
   const locale = useLocale();
   const { authorizedFetch } = useAuth();
 
@@ -91,6 +92,14 @@ export function CurrentPlanCard({ subscriberId }: { subscriberId: string }) {
             )}
             {date(active.activated_at) && <span className="text-xs text-ink-muted">{t("since", { date: date(active.activated_at)! })}</span>}
           </div>
+
+          {/* Pilot feedback 2, A3: an allergy approved after activation now conflicts with this plan. */}
+          {active.new_unacknowledged_conflicts && (
+            <p role="alert" className="flex items-start gap-2 rounded-field border border-status-late/30 bg-status-late-bg px-3.5 py-2.5 text-sm font-medium text-status-late">
+              <ShieldAlert size={17} className="mt-0.5 shrink-0" aria-hidden="true" />
+              {tAllergen("newConflictBanner")}
+            </p>
+          )}
 
           {active.plan_summary && <p className="whitespace-pre-line text-sm leading-relaxed text-ink">{active.plan_summary}</p>}
 
