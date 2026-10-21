@@ -599,7 +599,8 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
         }}
         suggestion={suggestion}
         breakdown={breakdown}
-        floor={gender && calorieFloor ? calorieFloor[gender] : null}
+        // The floor is an adult figure: no warning without a known gender and an age of 18 or more.
+        floor={gender && calorieFloor && profileBody && profileBody.age >= 18 ? calorieFloor[gender] : null}
       >
         <div className="flex flex-wrap justify-end gap-2">
           <Button variant="ghost" isLoading={suggestingSummary} disabled={!hasSavedPlan} onClick={handleSuggestSummary}>
