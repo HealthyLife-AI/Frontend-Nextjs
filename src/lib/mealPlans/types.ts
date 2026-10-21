@@ -3,7 +3,7 @@
  * Backend/HealthyLife-Laravel/API_CONTRACT.md ("Meal Plans (Sprint 3)"
  * section) — keep in sync with that file, not the other way around.
  */
-import type { Food } from "@/lib/clients/types";
+import type { CalorieSuggestion, Food } from "@/lib/clients/types";
 
 export type MealName = "breakfast" | "snack" | "lunch" | "dinner";
 
@@ -33,11 +33,31 @@ export type AllergenConflict = {
 /** A food whose allergens were never tagged: unknown, which is not the same as safe. */
 export type UnverifiedItem = { item_id: number; food_id: number; food_name_ar: string | null };
 
+/**
+ * Clinical batch 1, E4: a glycemic or sodium warning for a REVIEWED food.
+ * Amber, never blocking. `gi_gl` = both the index and the load are high.
+ */
+export type NutritionWarning = {
+  type: "gi" | "gl" | "gi_gl" | "sodium";
+  item_id: number;
+  parent_item_id: number | null;
+  food_id: number;
+  food_name_ar: string | null;
+  quantity_grams: number;
+  gi?: number;
+  gl?: number | null;
+  sodium_mg_per_100g?: number;
+};
+
+/** The food-level part of the same warnings (the picker has no quantity yet). */
+export type FoodNutritionWarning = { type: "gi"; gi: number } | { type: "sodium"; sodium_mg_per_100g: number };
+
 /** One food against the patient's approved allergies (POST …/allergen-check). */
 export type FoodAllergenCheck = {
   food_id: number;
   conflict: { groups: string[]; match: "tag" | "text"; severity: AllergenSeverity } | null;
   unverified: boolean;
+  nutrition_warnings?: FoodNutritionWarning[];
 };
 
 export type Macros = {
@@ -97,6 +117,10 @@ export type MealPlan = {
   suggested_calories?: number | null;
   plan_summary?: string | null;
   summary_updated_at?: string | null;
+  /** Clinical batch 1, B5: how the system's suggestion was reached. Null on an archived plan or a template. */
+  calorie_suggestion?: CalorieSuggestion | null;
+  /** Clinical batch 1, E4: glycemic / sodium warnings, reviewed foods only. */
+  nutrition_warnings?: NutritionWarning[];
   /**
    * Pilot feedback 2, A. Nutritionist responses only — the patient's own
    * GET /me/meal-plan carries none of these. Absent on a template or an
@@ -107,6 +131,11 @@ export type MealPlan = {
   /** An ACTIVE plan holds a confirmed-allergy conflict its acknowledgement does not cover. */
   new_unacknowledged_conflicts?: boolean;
   allergen_ack_at?: string | null;
+  /**
+   * Clinical batch 1, D: written FOR the patient, so — unlike plan_summary
+   * above — the patient's own GET /me/meal-plan carries it, and it prints.
+   */
+  patient_instructions?: string | null;
   meals: Meal[];
   summary_by_day: Record<string, Macros>;
   created_at: string;
@@ -132,5 +161,6 @@ export type MealPlanInput = {
   /** Item C: sent with the plan so one save records the meals and the decision together. */
   approved_calories?: number | null;
   plan_summary?: string | null;
+  patient_instructions?: string | null;
   meals: MealInput[];
 };

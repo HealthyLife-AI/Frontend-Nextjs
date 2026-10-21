@@ -92,7 +92,7 @@ export function updatePlanDecision(
   fetcher: Fetcher,
   subscriberId: number | string,
   planId: number | string,
-  payload: { approved_calories?: number | null; plan_summary?: string | null }
+  payload: { approved_calories?: number | null; plan_summary?: string | null; patient_instructions?: string | null }
 ) {
   return fetcher(`/clients/${subscriberId}/meal-plans/${planId}/decision`, {
     method: "PATCH",

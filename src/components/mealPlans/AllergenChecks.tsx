@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { AlertTriangle, HelpCircle, ShieldAlert } from "lucide-react";
+import { Activity, AlertTriangle, HelpCircle, ShieldAlert } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { checkFoodAllergens } from "@/lib/mealPlans/api";
 import type { AllergenSeverity, FoodAllergenCheck } from "@/lib/mealPlans/types";
@@ -85,6 +85,39 @@ export function worstSeverity(checks: Checks, foodIds: number[]): AllergenSeveri
  * unknown, not safe, and saying nothing would read as safe.
  */
 export function AllergenNotice({ check, compact = false }: { check: FoodAllergenCheck | undefined; compact?: boolean }) {
+  return (
+    <>
+      <AllergenLine check={check} compact={compact} />
+      <NutritionLines check={check} compact={compact} />
+    </>
+  );
+}
+
+/**
+ * Clinical batch 1, E4: amber GI / sodium notes for a REVIEWED food, only for
+ * the patient's matching condition (the server decides; an unreviewed food
+ * arrives with none). Never blocking, and no "unknown" noise.
+ */
+function NutritionLines({ check, compact }: { check: FoodAllergenCheck | undefined; compact: boolean }) {
+  const t = useTranslations("nutritionWarning");
+
+  return (
+    <>
+      {(check?.nutrition_warnings ?? []).map((w) => (
+        <p
+          key={w.type}
+          role="note"
+          className={`flex items-start gap-1.5 rounded-md bg-status-attention-bg px-2 py-1 text-xs font-medium text-status-attention ${compact ? "" : "mt-1"}`}
+        >
+          <Activity size={13} className="mt-px shrink-0" aria-hidden="true" />
+          <span>{w.type === "gi" ? t("gi", { gi: w.gi }) : t("sodium", { value: w.sodium_mg_per_100g })}</span>
+        </p>
+      ))}
+    </>
+  );
+}
+
+function AllergenLine({ check, compact = false }: { check: FoodAllergenCheck | undefined; compact?: boolean }) {
   const t = useTranslations("allergenWarning");
   const tGroup = useTranslations("healthRecords.group");
 

@@ -2,6 +2,7 @@
 
 import { Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
+import type { CalorieSuggestion } from "@/lib/clients/types";
 
 /**
  * Item C: the nutritionist's decision about this plan — the calorie
@@ -21,6 +22,7 @@ export function PlanDecisionCard({
   summary,
   onSummaryChange,
   suggestion,
+  breakdown,
   floor,
   children,
 }: {
@@ -30,6 +32,8 @@ export function PlanDecisionCard({
   onSummaryChange: (value: string) => void;
   /** The formula's figure, shown beside her field. Null when there's no health profile yet. */
   suggestion: number | null;
+  /** Clinical batch 1, B6: how that suggestion was reached (maintenance minus a deficit, or why not). Null when unknown. */
+  breakdown?: CalorieSuggestion | null;
   /**
    * This patient's gender's floor from `calorie_floor` on the health-profile
    * response (backend config/nutrition.php, the only source). Null when the
@@ -40,6 +44,7 @@ export function PlanDecisionCard({
   children?: React.ReactNode;
 }) {
   const t = useTranslations("planDesigner.decision");
+  const tB = useTranslations("calorieBreakdown");
 
   const entered = approvedCalories ? Number(approvedCalories) : null;
   // Soft only: approving a lower target is a clinical call (a short
@@ -75,6 +80,25 @@ export function PlanDecisionCard({
           />
           {suggestion !== null && (
             <p className="text-xs text-ink-muted">{t("systemSuggestion", { value: suggestion })}</p>
+          )}
+          {breakdown && breakdown.maintenance !== null && breakdown.suggested !== null && (
+            <div className="flex flex-col gap-0.5 text-xs text-ink-muted" data-testid="calorie-breakdown">
+              {breakdown.adjustment !== null && breakdown.adjustment !== 0 && breakdown.bmi_class ? (
+                <p className="tabular-nums">
+                  {tB("formula", {
+                    maintenance: breakdown.maintenance,
+                    deficit: Math.abs(breakdown.adjustment),
+                    sign: breakdown.adjustment < 0 ? "−" : "+",
+                    bmiClass: tB(`class.${breakdown.bmi_class}`),
+                    suggested: breakdown.suggested,
+                  })}
+                </p>
+              ) : (
+                <p className="tabular-nums">{tB("maintenanceOnly", { suggested: breakdown.suggested })}</p>
+              )}
+              {breakdown.reason && <p>{tB(`reason.${breakdown.reason}`)}</p>}
+              {breakdown.clamped_to_floor && <p className="font-semibold text-status-attention">{tB("clamped")}</p>}
+            </div>
           )}
         </div>
 

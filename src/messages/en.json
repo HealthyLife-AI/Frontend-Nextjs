@@ -271,7 +271,8 @@
       "saved": "Health profile saved.",
       "errors": {
         "generic": "Couldn't save the health profile. Please check the form and try again."
-      }
+      },
+      "conditionsStructuredHint": "Conditions recorded earlier as free text (not mapped yet). Add conditions in the “Medical conditions” card below."
     }
   },
   "dashboardHome": {
@@ -762,7 +763,8 @@
     "dailyTotal": "Daily total",
     "unsavedNote": "Showing the values typed on screen (not saved yet).",
     "unsavedMeals": "Meal edits are not saved and will not appear in the print. Continue?",
-    "noPlan": "No plan to print."
+    "noPlan": "No plan to print.",
+    "patientInstructions": "Instructions for the patient"
   },
   "planDesigner": {
     "title": "Nutrition plan designer",
@@ -1381,5 +1383,52 @@
     "range": "Value between {min} and {max}",
     "save": "Save",
     "saved": "Alert settings saved"
+  },
+  "conditionsCard": {
+    "title": "Medical conditions",
+    "helper": "Tick the patient's documented conditions. They save at once and feed the AI draft and plan warnings.",
+    "other": "Other",
+    "otherPlaceholder": "Type another condition…",
+    "add": "Add",
+    "notePlaceholder": "Note (optional)",
+    "noteFor": "Note for {name}",
+    "remove": "Remove {name}",
+    "loadFailed": "Could not load the medical conditions.",
+    "saveFailed": "Could not save. Try again."
+  },
+  "patientInstructions": {
+    "title": "Instructions for the patient",
+    "visibleTag": "Visible to the patient",
+    "visibleNote": "Shown to the patient in the app and on the printout",
+    "placeholder": "Write instructions for the patient, or click a suggestion above to add it…",
+    "tipsHint": "Ready-made tips for this patient's conditions — click to add a line, then edit it as you wish.",
+    "general": "General",
+    "save": "Save instructions"
+  },
+  "calorieBreakdown": {
+    "formula": "Needs {maintenance} {sign} {deficit} ({bmiClass}) = {suggested} kcal suggested",
+    "maintenanceOnly": "{suggested} kcal suggested (needs, no adjustment)",
+    "clamped": "Raised to the minimum",
+    "class": {
+      "underweight": "underweight",
+      "normal": "normal weight",
+      "overweight": "overweight",
+      "obesity_1": "obesity class 1",
+      "obesity_2": "obesity class 2",
+      "obesity_3": "obesity class 3"
+    },
+    "reason": {
+      "clinical_judgement_required": "Clinical judgement: the patient has an associated medical condition",
+      "type1_no_deficit": "Type 1 diabetes: no automatic calorie deficit",
+      "bmi_not_above_normal": "BMI is normal or below: no automatic deficit",
+      "surplus_not_configured": "The surplus has not been set yet"
+    }
+  },
+  "nutritionWarning": {
+    "title": "Nutrition warnings for this plan",
+    "gi": "High glycemic index ({gi})",
+    "glOnly": "High glycemic load for this amount ({gl}) — index {gi}",
+    "giGl": "High glycemic index ({gi}) and high glycemic load for this amount ({gl})",
+    "sodium": "High in sodium ({value} mg/100 g)"
   }
 }

@@ -209,17 +209,20 @@ export function HealthProfileForm({ subscriberId }: { subscriberId: string }) {
         )}
       </section>
 
-      <section className="border-t border-divider pt-6">
-        <TagInput
-          label={t("sectionConditions")}
-          value={healthConditions}
-          onChange={setHealthConditions}
-          hint={t("conditionsHint")}
-          placeholder={t("tagPlaceholder")}
-          addLabel={t("addTag")}
-          removeLabel={(v) => t("removeTag", { value: v })}
-        />
-      </section>
+      {/* Clinical batch 1, C5: conditions are recorded as structured items in the card below; the old free-text input is gone. Values not mapped yet stay visible. */}
+      {healthConditions.length > 0 && (
+        <section className="border-t border-divider pt-6">
+          <h2 className="text-sm font-semibold text-ink">{t("sectionConditions")}</h2>
+          <p className="mb-2 text-sm text-ink-muted">{t("conditionsStructuredHint")}</p>
+          <ul className="flex flex-wrap gap-2">
+            {healthConditions.map((c) => (
+              <li key={c} className="rounded-full border border-border bg-canvas/60 px-3 py-1 text-sm text-ink">
+                {c}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="border-t border-divider pt-6">
         <TagInput
