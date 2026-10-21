@@ -24,6 +24,9 @@ import {
 } from "@/lib/mealPlans/api";
 import type { AllergenRefusal } from "@/lib/mealPlans/api";
 import { PlanDecisionCard } from "./PlanDecisionCard";
+import { PatientInstructionsCard } from "./PatientInstructionsCard";
+import { getPatientTips, type PatientTips } from "@/lib/conditions/api";
+import type { CalorieSuggestion } from "@/lib/clients/types";
 import type { AllergenConflict, MealPlan } from "@/lib/mealPlans/types";
 import { AllergenChecksProvider, useAllergenChecks } from "./AllergenChecks";
 import { AllergenConfirmDialog, MedicationNotice, type DialogConflict } from "./AllergenDialog";
@@ -59,6 +62,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
   const t = useTranslations("planDesigner");
   const tSlots = useTranslations("planDesigner.mealSlots");
   const tAllergen = useTranslations("allergenDialog");
+  const tNutrition = useTranslations("nutritionWarning");
   const locale = useLocale();
   const { checks, request: requestChecks } = useAllergenChecks();
   const tPrint = useTranslations("planPrint");
@@ -77,6 +81,10 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
   const [calorieFloor, setCalorieFloor] = useState<Record<"female" | "male", number> | null>(null);
   const [approvedCalories, setApprovedCalories] = useState("");
   const [planSummary, setPlanSummary] = useState("");
+  // Clinical batch 1: text for the patient (visible in the app and on the printout), the tips offered for it, and how the suggestion was reached.
+  const [patientInstructions, setPatientInstructions] = useState("");
+  const [tips, setTips] = useState<PatientTips | null>(null);
+  const [breakdown, setBreakdown] = useState<CalorieSuggestion | null>(null);
   // Item B: the BMI line shown while she writes the plan.
   const [profileBody, setProfileBody] = useState<{ height_cm: number; age: number; weight_kg: number } | null>(null);
   const [latestReading, setLatestReading] = useState<CompositionSnapshot | null>(null);
@@ -121,8 +129,16 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
         setMedicationNames(recordsResult.data.medications.map((m) => m.name).filter(Boolean));
       }
 
-      const formula = profileResult.ok && profileResult.data ? profileResult.data.daily_calorie_needs : null;
+      const tipsResult = await getPatientTips(authorizedFetch, subscriberId);
+      if (tipsResult.ok) setTips(tipsResult.data);
+
+      // Clinical batch 1, B: the system's suggestion is the goal-adjusted
+      // figure (maintenance minus the clinic's deficit), not bare maintenance.
+      const detail = profileResult.ok && profileResult.data ? (profileResult.data.calorie_suggestion ?? null) : null;
+      const formula =
+        profileResult.ok && profileResult.data ? (detail?.suggested ?? profileResult.data.daily_calorie_needs) : null;
       if (profileResult.ok && profileResult.data) {
+        setBreakdown(detail);
         setSuggestion(formula);
         setGender(profileResult.data.gender);
         setCalorieFloor(profileResult.data.calorie_floor ?? null);
@@ -167,6 +183,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
                 : ""
           );
           setPlanSummary(relevant.plan_summary ?? "");
+          setPatientInstructions(relevant.patient_instructions ?? "");
         }
       } else if (effective) {
         // A brand-new plan: pre-filled with the effective target.
@@ -208,6 +225,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
     const result = await updatePlanDecision(authorizedFetch, subscriberId, currentPlan.id, {
       approved_calories: approvedCalories ? Number(approvedCalories) : null,
       plan_summary: planSummary.trim() || null,
+      patient_instructions: patientInstructions.trim() || null,
     });
     setSavingDecision(false);
 
@@ -271,6 +289,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
           at: Date.now(),
           approved_calories: approvedCalories ? Number(approvedCalories) : null,
           plan_summary: planSummary.trim() || null,
+          patient_instructions: patientInstructions.trim() || null,
         })
       );
     } catch {
@@ -288,6 +307,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
       // so an empty field is sent as null rather than omitted.
       approved_calories: approvedCalories ? Number(approvedCalories) : null,
       plan_summary: planSummary.trim() || null,
+      patient_instructions: patientInstructions.trim() || null,
     };
     const result = currentPlan
       ? await updateMealPlan(authorizedFetch, subscriberId, currentPlan.id, payload)
@@ -578,7 +598,9 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
           setDirty(true);
         }}
         suggestion={suggestion}
-        floor={gender && calorieFloor ? calorieFloor[gender] : null}
+        breakdown={breakdown}
+        // The floor is an adult figure: no warning without a known gender and an age of 18 or more.
+        floor={gender && calorieFloor && profileBody && profileBody.age >= 18 ? calorieFloor[gender] : null}
       >
         <div className="flex flex-wrap justify-end gap-2">
           <Button variant="ghost" isLoading={suggestingSummary} disabled={!hasSavedPlan} onClick={handleSuggestSummary}>
@@ -592,6 +614,39 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
           )}
         </div>
       </PlanDecisionCard>
+
+      <PatientInstructionsCard
+        value={patientInstructions}
+        onChange={(v) => {
+          setPatientInstructions(v);
+          setDirty(true);
+        }}
+        tips={tips}
+        onSave={isActive ? handleSaveDecision : undefined}
+        saving={savingDecision}
+      />
+
+      {/* Clinical batch 1, E4: glycemic load / sodium of the SAVED plan, reviewed foods only. */}
+      {(currentPlan?.nutrition_warnings ?? []).length > 0 && (
+        <div role="note" className="flex flex-col gap-1.5 rounded-field border border-status-attention/25 bg-status-attention-bg px-4 py-3">
+          <p className="text-sm font-semibold text-status-attention">{tNutrition("title")}</p>
+          <ul className="flex flex-col gap-1 text-sm text-ink">
+            {(currentPlan?.nutrition_warnings ?? []).map((w) => (
+              <li key={`${w.item_id}-${w.type}`}>
+                <span className="font-semibold">{w.food_name_ar}</span>
+                {" — "}
+                {w.type === "sodium"
+                  ? tNutrition("sodium", { value: w.sodium_mg_per_100g ?? 0 })
+                  : w.type === "gl"
+                    ? tNutrition("glOnly", { gi: w.gi ?? 0, gl: w.gl ?? 0 })
+                    : w.type === "gi"
+                      ? tNutrition("gi", { gi: w.gi ?? 0 })
+                      : tNutrition("giGl", { gi: w.gi ?? 0, gl: w.gl ?? 0 })}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-12">
         <div className="flex flex-col gap-4 lg:col-span-8">

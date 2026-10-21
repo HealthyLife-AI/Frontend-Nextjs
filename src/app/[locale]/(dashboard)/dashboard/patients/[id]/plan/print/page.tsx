@@ -37,7 +37,7 @@ export default function PlanPrintPage({ params }: { params: Promise<{ id: string
   const [notFound, setNotFound] = useState(false);
   const [includePrivate, setIncludePrivate] = useState(true);
   // The designer's typed-but-unsaved decision, handed over for a few minutes (see PlanDesigner).
-  const [unsaved, setUnsaved] = useState<{ approved_calories: number | null; plan_summary: string | null } | null>(null);
+  const [unsaved, setUnsaved] = useState<{ approved_calories: number | null; plan_summary: string | null; patient_instructions: string | null } | null>(null);
 
   const load = useCallback(async () => {
     const [clientResult, plansResult] = await Promise.all([
@@ -64,7 +64,11 @@ export default function PlanPrintPage({ params }: { params: Promise<{ id: string
         const draft = raw ? JSON.parse(raw) : null;
         // Only a recent hand-off: an old one would print a decision since changed elsewhere.
         if (draft && Date.now() - draft.at < 10 * 60 * 1000) {
-          setUnsaved({ approved_calories: draft.approved_calories ?? null, plan_summary: draft.plan_summary ?? null });
+          setUnsaved({
+            approved_calories: draft.approved_calories ?? null,
+            plan_summary: draft.plan_summary ?? null,
+            patient_instructions: draft.patient_instructions ?? null,
+          });
         }
       } catch {
         // Unreadable: print what is saved.
@@ -83,6 +87,8 @@ export default function PlanPrintPage({ params }: { params: Promise<{ id: string
   // What the sheet shows for the decision: the typed values if handed over, else the saved ones.
   const approvedCalories = unsaved ? unsaved.approved_calories : plan.approved_calories;
   const planSummary = unsaved ? unsaved.plan_summary : plan.plan_summary;
+  // Written for the patient, so it prints whatever the private box is set to.
+  const patientInstructions = unsaved ? unsaved.patient_instructions : plan.patient_instructions;
   const slots = planToSlots(plan).filter((slot) => slot.items.length > 0);
   const totals = planMacros(slots);
   const dateFmt = new Intl.DateTimeFormat(locale === "ar" ? "ar-SA-u-ca-gregory-nu-latn" : "en-GB", {
@@ -143,6 +149,13 @@ export default function PlanPrintPage({ params }: { params: Promise<{ id: string
               </p>
             )}
             {planSummary && <p className="whitespace-pre-line text-sm leading-relaxed text-ink">{planSummary}</p>}
+          </section>
+        )}
+
+        {patientInstructions && patientInstructions.trim() !== "" && (
+          <section className="flex flex-col gap-2 rounded-field border border-border p-4 print:break-inside-avoid">
+            <h2 className="text-sm font-bold text-ink">{t("patientInstructions")}</h2>
+            <p className="whitespace-pre-line text-sm leading-relaxed text-ink">{patientInstructions}</p>
           </section>
         )}
 

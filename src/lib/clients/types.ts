@@ -95,6 +95,22 @@ export type Medication = {
   schedule?: string;
 };
 
+/**
+ * Clinical batch 1, B: how the system's calorie suggestion was reached.
+ * `maintenance` is the Mifflin figure; `adjustment` is negative for a
+ * deficit. `reason` says why NO adjustment was made. Nutritionist
+ * responses only.
+ */
+export type CalorieSuggestion = {
+  maintenance: number | null;
+  adjustment: number | null;
+  suggested: number | null;
+  bmi: number | null;
+  bmi_class: "underweight" | "normal" | "overweight" | "obesity_1" | "obesity_2" | "obesity_3" | null;
+  reason: "clinical_judgement_required" | "type1_no_deficit" | "bmi_not_above_normal" | "surplus_not_configured" | null;
+  clamped_to_floor: boolean | null;
+};
+
 export type HealthProfile = {
   weight_kg: number;
   height_cm: number;
@@ -115,6 +131,7 @@ export type HealthProfile = {
    * Nutritionist responses only.
    */
   calorie_floor?: Record<Gender, number>;
+  calorie_suggestion?: CalorieSuggestion | null;
   updated_at: string;
 };
 

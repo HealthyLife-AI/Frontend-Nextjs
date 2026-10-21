@@ -182,7 +182,7 @@ export function FoodAutocomplete({
                     </span>
                     <span className="shrink-0 text-xs text-ink-muted">{t("caloriesPer100g", { value: food.calories_per_100g })}</span>
                   </span>
-                  {(conflict || checks[food.id]?.unverified) && <AllergenNotice check={checks[food.id]} compact />}
+                  {(conflict || checks[food.id]?.unverified || (checks[food.id]?.nutrition_warnings?.length ?? 0) > 0) && <AllergenNotice check={checks[food.id]} compact />}
                 </button>
               );
             })}
