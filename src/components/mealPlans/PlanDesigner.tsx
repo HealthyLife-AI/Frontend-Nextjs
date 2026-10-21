@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Bookmark, Calculator, Printer, RotateCcw, ShieldAlert, Sparkles, Verified } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
@@ -12,6 +12,7 @@ import type { CompositionSnapshot } from "@/lib/progress/types";
 import { Link } from "@/i18n/navigation";
 import { getHealthRecords } from "@/lib/healthRecords/api";
 import {
+  acknowledgeAllergens,
   activateMealPlan,
   createMealPlan,
   generateAiDraft,
@@ -21,11 +22,14 @@ import {
   updateMealPlan,
   updatePlanDecision,
 } from "@/lib/mealPlans/api";
+import type { AllergenRefusal } from "@/lib/mealPlans/api";
 import { PlanDecisionCard } from "./PlanDecisionCard";
-import type { MealPlan } from "@/lib/mealPlans/types";
+import type { AllergenConflict, MealPlan } from "@/lib/mealPlans/types";
+import { AllergenChecksProvider, useAllergenChecks } from "./AllergenChecks";
+import { AllergenConfirmDialog, MedicationNotice, type DialogConflict } from "./AllergenDialog";
 import { DailySummaryPanel } from "./DailySummaryPanel";
 import { MealCard } from "./MealCard";
-import { emptySlots, planToSlots, slotsToInput, type EditableMeal } from "./mealSlots";
+import { emptySlots, foodName, planToSlots, slotsToInput, type EditableMeal } from "./mealSlots";
 
 /**
  * S3-09/S3-11: the plan designer — orchestrates loading the client's
@@ -42,7 +46,21 @@ import { emptySlots, planToSlots, slotsToInput, type EditableMeal } from "./meal
  * just created.
  */
 export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; planId?: string }) {
+  // One allergen-check cache for the whole designer (rows, alternatives and
+  // the food search all read and fill it).
+  return (
+    <AllergenChecksProvider subscriberId={subscriberId}>
+      <PlanDesignerInner subscriberId={subscriberId} planId={planId} />
+    </AllergenChecksProvider>
+  );
+}
+
+function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; planId?: string }) {
   const t = useTranslations("planDesigner");
+  const tSlots = useTranslations("planDesigner.mealSlots");
+  const tAllergen = useTranslations("allergenDialog");
+  const locale = useLocale();
+  const { checks, request: requestChecks } = useAllergenChecks();
   const tPrint = useTranslations("planPrint");
   const tBmi = useTranslations("clients.bmi");
   const { authorizedFetch } = useAuth();
@@ -76,6 +94,12 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
   const [notice, setNotice] = useState<string | null>(null);
   // A patient-proposed allergy is not used by the draft (or anywhere) until approved.
   const [pendingAllergy, setPendingAllergy] = useState(false);
+  // Pilot feedback 2, C1: the patient's current medications, names only.
+  const [medicationNames, setMedicationNames] = useState<string[]>([]);
+  // Pilot feedback 2, A5: the activation / acknowledgement dialog. A fresh `key`
+  // per open remounts it, so its tick never carries over from a previous one.
+  const [allergenDialog, setAllergenDialog] = useState<{ key: number; mode: "activate" | "acknowledge"; conflicts: DialogConflict[] } | null>(null);
+  const [acknowledging, setAcknowledging] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -92,7 +116,10 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
 
       if (progressResult.ok) setLatestReading(progressResult.data.body_composition.latest);
 
-      if (recordsResult.ok) setPendingAllergy(recordsResult.data.proposals.some((p) => p.kind === "allergy"));
+      if (recordsResult.ok) {
+        setPendingAllergy(recordsResult.data.proposals.some((p) => p.kind === "allergy"));
+        setMedicationNames(recordsResult.data.medications.map((m) => m.name).filter(Boolean));
+      }
 
       const formula = profileResult.ok && profileResult.data ? profileResult.data.daily_calorie_needs : null;
       if (profileResult.ok && profileResult.data) {
@@ -153,6 +180,13 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
       cancelled = true;
     };
   }, [authorizedFetch, subscriberId, planId]);
+
+  // Every food on screen (planned and alternative, saved or just picked) is
+  // checked by the server, so the warning appears before the save.
+  useEffect(() => {
+    const ids = slots.flatMap((slot) => slot.items.flatMap((item) => [item.food.id, ...item.alternatives.map((a) => a.food.id)]));
+    if (ids.length > 0) void requestChecks(ids);
+  }, [slots, requestChecks]);
 
   function updateSlot(index: number, next: EditableMeal) {
     setSlots((prev) => prev.map((slot, i) => (i === index ? next : slot)));
@@ -273,22 +307,93 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
     return result.data;
   }
 
-  async function handleActivate() {
+  /** The conflicts the designer can already see, for the dialog: from the server's checks of each food on screen. */
+  function localConflicts(): DialogConflict[] {
+    return slots.flatMap((slot) =>
+      slot.items.flatMap((item) =>
+        [{ food: item.food, alt: false }, ...item.alternatives.map((a) => ({ food: a.food, alt: true }))].flatMap(({ food, alt }) => {
+          const conflict = checks[food.id]?.conflict;
+          return conflict
+            ? [{ key: `${slot.slotKey}-${food.id}-${alt}`, foodName: foodName(food, locale), mealLabel: tSlots(slot.slotKey), groups: conflict.groups, severity: conflict.severity, isAlternative: alt }]
+            : [];
+        })
+      )
+    );
+  }
+
+  /** The same list from a plan report or a refused activation, for when the on-screen checks missed it. */
+  function fromServer(conflicts: AllergenConflict[]): DialogConflict[] {
+    return conflicts.map((c) => ({
+      key: `${c.item_id}`,
+      foodName: c.food_name_ar ?? "",
+      mealLabel: tAllergen(`meal.${c.meal_name}`),
+      groups: c.groups,
+      severity: c.severity,
+      isAlternative: c.parent_item_id !== null,
+    }));
+  }
+
+  /**
+   * The approve-and-activate button. Plans with nothing to review activate
+   * as before. With a food that conflicts with an allergy, or a patient on
+   * medication, a dialog comes first: a confirmed allergy needs the explicit
+   * tick, the rest is shown so it is not missed.
+   */
+  function handleActivateClick() {
+    const conflicts = localConflicts();
+
+    if (conflicts.length > 0 || medicationNames.length > 0) {
+      setAllergenDialog({ key: Date.now(), mode: "activate", conflicts });
+      return;
+    }
+
+    void handleActivate(false);
+  }
+
+  async function handleActivate(acknowledge: boolean) {
     setError(null);
     const plan = dirty || !currentPlan ? await handleSave() : currentPlan;
     if (!plan) return;
 
     setActivating(true);
-    const result = await activateMealPlan(authorizedFetch, subscriberId, plan.id);
+    const result = await activateMealPlan(authorizedFetch, subscriberId, plan.id, acknowledge);
     setActivating(false);
+
+    if (!result.ok) {
+      // The server's word is final: a confirmed conflict the on-screen checks
+      // missed (a check not back yet, say) is refused with the list to show.
+      const refusal = result.error as unknown as AllergenRefusal;
+      if (result.status === 422 && refusal.code === "allergen_conflict_unacknowledged") {
+        setAllergenDialog({ key: Date.now(), mode: "activate", conflicts: fromServer(refusal.allergen_conflicts ?? []) });
+        return;
+      }
+
+      setError(result.error.message);
+      return;
+    }
+
+    setAllergenDialog(null);
+    setCurrentPlan(result.data);
+    setNotice(t("activated"));
+  }
+
+  /** Records that she reviewed the conflicts on the plan already in force. No re-activation, no notification. */
+  async function handleAcknowledge() {
+    if (!currentPlan) return;
+
+    setError(null);
+    setAcknowledging(true);
+    const result = await acknowledgeAllergens(authorizedFetch, subscriberId, currentPlan.id);
+    setAcknowledging(false);
 
     if (!result.ok) {
       setError(result.error.message);
       return;
     }
 
+    setAllergenDialog(null);
     setCurrentPlan(result.data);
-    setNotice(t("activated"));
+    setNotice(t("allergenAcknowledged"));
   }
 
   async function handleGenerateDraft() {
@@ -354,6 +459,25 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
         </p>
       )}
 
+      <MedicationNotice names={medicationNames} />
+
+      {/* Pilot feedback 2, A3: the ACTIVE plan holds a confirmed-allergy conflict its acknowledgement does not cover. */}
+      {currentPlan?.new_unacknowledged_conflicts && (
+        <div role="alert" className="flex flex-col gap-3 rounded-field border border-status-late/30 bg-status-late-bg px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="flex items-start gap-2 text-sm font-medium text-status-late">
+            <ShieldAlert size={17} className="mt-0.5 shrink-0" aria-hidden="true" />
+            {tAllergen("newConflictBanner")}
+          </p>
+          <Button
+            variant="secondary"
+            onClick={() => setAllergenDialog({ key: Date.now(), mode: "acknowledge", conflicts: fromServer((currentPlan.allergen_conflicts ?? []).filter((c) => c.severity === "confirmed_allergy")) })}
+            className="shrink-0"
+          >
+            {tAllergen("review")}
+          </Button>
+        </div>
+      )}
+
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex flex-wrap items-center gap-2">
           {(latestReading?.bmi ?? profileBody) && (
@@ -414,7 +538,7 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
           <Button variant="secondary" isLoading={saving} onClick={handleSave}>
             {t("savePlan")}
           </Button>
-          <Button isLoading={activating} disabled={isActive} onClick={handleActivate}>
+          <Button isLoading={activating} disabled={isActive} onClick={handleActivateClick}>
             <Verified size={16} strokeWidth={1.75} />
             {isActive ? t("statusActive") : t("approveAndActivate")}
           </Button>
@@ -480,6 +604,19 @@ export function PlanDesigner({ subscriberId, planId }: { subscriberId: string; p
           <DailySummaryPanel meals={slots} calorieTarget={approvedCalories ? Number(approvedCalories) : calorieTarget} />
         </div>
       </div>
+
+      {allergenDialog && (
+        <AllergenConfirmDialog
+          key={allergenDialog.key}
+          open
+          mode={allergenDialog.mode}
+          conflicts={allergenDialog.conflicts}
+          medications={allergenDialog.mode === "activate" ? medicationNames : []}
+          busy={activating || acknowledging}
+          onCancel={() => setAllergenDialog(null)}
+          onConfirm={() => (allergenDialog.mode === "acknowledge" ? void handleAcknowledge() : void handleActivate(allergenDialog.conflicts.some((c) => c.severity === "confirmed_allergy")))}
+        />
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { type Fetcher, parseJson } from "@/lib/api";
 import type { Food } from "@/lib/clients/types";
-import type { MealPlan, MealPlanInput } from "./types";
+import type { AllergenConflict, FoodAllergenCheck, MealPlan, MealPlanInput } from "./types";
 
 // Re-exported for the components that already import it from here.
 export type { ApiError } from "@/lib/api";
@@ -35,11 +35,51 @@ export function updateMealPlan(
   }).then((res) => parseJson<MealPlan>(res));
 }
 
-/** BR-6/BR-10: the only way a plan (hand-built or AI draft) becomes what the client sees. */
-export function activateMealPlan(fetcher: Fetcher, subscriberId: number | string, planId: number | string) {
-  return fetcher(`/clients/${subscriberId}/meal-plans/${planId}/activate`, { method: "POST" }).then((res) =>
-    parseJson<MealPlan>(res)
-  );
+/**
+ * BR-6/BR-10: the only way a plan (hand-built or AI draft) becomes what the
+ * client sees.
+ *
+ * A plan holding a food that conflicts with a CONFIRMED allergy answers 422
+ * `allergen_conflict_unacknowledged` (with `allergen_conflicts`) until
+ * `acknowledge` is true — the nutritionist's explicit "I reviewed this and
+ * keep it". Intolerances and foods to avoid never block.
+ */
+export function activateMealPlan(
+  fetcher: Fetcher,
+  subscriberId: number | string,
+  planId: number | string,
+  acknowledge = false
+) {
+  return fetcher(`/clients/${subscriberId}/meal-plans/${planId}/activate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(acknowledge ? { acknowledge_allergen_conflicts: true } : {}),
+  }).then((res) => parseJson<MealPlan>(res));
+}
+
+/** The 422 body of a refused activation: the code and the conflicts to show. */
+export type AllergenRefusal = { code?: string; allergen_conflicts?: AllergenConflict[] };
+
+/**
+ * Record that she reviewed the confirmed-allergy conflicts on an ACTIVE plan
+ * and keeps them. Does not re-activate (activated_at is unchanged) and
+ * notifies nobody.
+ */
+export function acknowledgeAllergens(fetcher: Fetcher, subscriberId: number | string, planId: number | string) {
+  return fetcher(`/clients/${subscriberId}/meal-plans/${planId}/acknowledge-allergens`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ acknowledge_allergen_conflicts: true }),
+  }).then((res) => parseJson<MealPlan>(res));
+}
+
+/** The server's own allergen rules for foods not yet in a plan. Read-only. */
+export function checkFoodAllergens(fetcher: Fetcher, subscriberId: number | string, foodIds: number[]) {
+  return fetcher(`/clients/${subscriberId}/meal-plans/allergen-check`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ food_ids: foodIds }),
+  }).then((res) => parseJson<{ foods: FoodAllergenCheck[] }>(res));
 }
 
 /**

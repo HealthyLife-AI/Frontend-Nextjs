@@ -158,5 +158,7 @@ export type Food = {
   fiber_g_per_100g: number | null;
   /** Allergen groups (FoodTagger::GROUPS) and shopping-list section. */
   allergens?: string[];
+  /** Nutritionist responses only: false = never tagged (unknown), which `allergens: []` alone cannot tell from "tagged, none". */
+  allergens_verified?: boolean;
   shopping_section?: string;
 };
