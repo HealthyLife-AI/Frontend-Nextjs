@@ -35,7 +35,7 @@ export function FoodAutocomplete({
   const t = useTranslations("planDesigner.foodPicker");
   const locale = useLocale();
   const { authorizedFetch } = useAuth();
-  const { checks, request } = useAllergenChecks();
+  const { checks, request, requestQuantities, nutritionFor } = useAllergenChecks();
 
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Food[]>([]);
@@ -80,6 +80,17 @@ export function FoodAutocomplete({
     };
   }, [query, authorizedFetch, request]);
 
+  // With a food picked, its warnings follow the quantity typed (a high index
+  // of a small amount is not raised); the call waits for the typing to settle.
+  const pickedId = selected?.id;
+  useEffect(() => {
+    if (pickedId === undefined) return;
+    const grams = Number(quantity);
+    if (!Number.isFinite(grams) || grams <= 0) return;
+    const timer = setTimeout(() => void requestQuantities([{ id: pickedId, grams }]), DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [pickedId, quantity, requestQuantities]);
+
   /**
    * Conflicting foods are marked and sunk below the clean ones — never hidden:
    * a nutritionist may have a reason to use one, and a missing result is worse
@@ -100,7 +111,7 @@ export function FoodAutocomplete({
           </button>
         </div>
         {/* The warning is here, before "add": the choice is made with it in view. */}
-        <AllergenNotice check={checks[selected.id]} compact />
+        <AllergenNotice check={checks[selected.id]} nutrition={nutritionFor(selected.id, validQty ? qty : null)} compact />
         <div className="flex items-center gap-2">
           <input
             type="number"
