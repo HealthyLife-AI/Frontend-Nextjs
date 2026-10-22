@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Activity, AlertTriangle, HelpCircle, ShieldAlert } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { checkFoodAllergens, checkFoodAllergensWithQuantity } from "@/lib/mealPlans/api";
+import { nutritionMessage } from "@/lib/mealPlans/nutritionText";
 import type { AllergenSeverity, FoodAllergenCheck, FoodNutritionWarning } from "@/lib/mealPlans/types";
 
 /**
@@ -171,7 +172,7 @@ function NutritionLines({ warnings, compact }: { warnings: FoodNutritionWarning[
           className={`flex items-start gap-1.5 rounded-md bg-status-attention-bg px-2 py-1 text-xs font-medium text-status-attention ${compact ? "" : "mt-1"}`}
         >
           <Activity size={13} className="mt-px shrink-0" aria-hidden="true" />
-          <span>{w.type === "gi" ? t("gi", { gi: w.gi }) : t("sodium", { value: w.sodium_mg_per_100g })}</span>
+          <span>{nutritionMessage(t, w)}</span>
         </p>
       ))}
     </>
