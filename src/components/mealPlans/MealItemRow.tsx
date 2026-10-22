@@ -31,7 +31,7 @@ export function MealItemRow({
   const t = useTranslations("planDesigner");
   const locale = useLocale();
   const [addingAlternative, setAddingAlternative] = useState(false);
-  const { checks } = useAllergenChecks();
+  const { checks, nutritionFor } = useAllergenChecks();
 
   function addAlternative(food: Food, quantityGrams: number) {
     onChange({ ...item, alternatives: [...item.alternatives, { food, quantityGrams, alternatives: [] }] });
@@ -80,7 +80,7 @@ export function MealItemRow({
 
       {/* Pilot feedback 2, A5: the planned item's own warning, shown as soon as the food is in the row, saved or not. */}
       <div className="px-1 empty:hidden">
-        <AllergenNotice check={checks[item.food.id]} compact />
+        <AllergenNotice check={checks[item.food.id]} nutrition={nutritionFor(item.food.id, item.quantityGrams)} compact />
       </div>
 
       {item.alternatives.length > 0 && (
@@ -99,7 +99,7 @@ export function MealItemRow({
                   <span className="shrink-0 text-xs tabular-nums text-ink-muted">{t("quantityGrams", { value: displayGrams(alt.quantityGrams) })}</span>
                   {/* An alternative is a food the patient may be handed instead: it is checked like the item. */}
                   <div className="basis-full empty:hidden">
-                    <AllergenNotice check={checks[alt.food.id]} compact />
+                    <AllergenNotice check={checks[alt.food.id]} nutrition={nutritionFor(alt.food.id, alt.quantityGrams)} compact />
                   </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-2 sm:gap-3">

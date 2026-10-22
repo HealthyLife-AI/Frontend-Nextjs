@@ -4,8 +4,8 @@ import { createContext, useCallback, useContext, useMemo, useRef, useState, type
 import { useTranslations } from "next-intl";
 import { Activity, AlertTriangle, HelpCircle, ShieldAlert } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { checkFoodAllergens } from "@/lib/mealPlans/api";
-import type { AllergenSeverity, FoodAllergenCheck } from "@/lib/mealPlans/types";
+import { checkFoodAllergens, checkFoodAllergensWithQuantity } from "@/lib/mealPlans/api";
+import type { AllergenSeverity, FoodAllergenCheck, FoodNutritionWarning } from "@/lib/mealPlans/types";
 
 /**
  * Pilot feedback 2, A5: what the patient is approved to avoid, asked of the
@@ -23,9 +23,17 @@ type AllergenContextValue = {
   checks: Checks;
   /** Fetches any of these foods not already known. Safe to call with ids it has. */
   request: (foodIds: number[]) => Promise<void>;
+  /** Same, at the quantity each food would be planned at (see `nutritionFor`). */
+  requestQuantities: (items: { id: number; grams: number }[]) => Promise<void>;
+  /**
+   * The glycemic / sodium warnings for a food at a quantity. A high index of a
+   * small amount is not raised by the server; until the answer for that exact
+   * quantity is back, this falls back to the quantity-free answer.
+   */
+  nutritionFor: (foodId: number, grams: number | null) => FoodNutritionWarning[];
 };
 
-const AllergenContext = createContext<AllergenContextValue>({ checks: {}, request: async () => {} });
+const AllergenContext = createContext<AllergenContextValue>({ checks: {}, request: async () => {}, requestQuantities: async () => {}, nutritionFor: () => [] });
 
 export const useAllergenChecks = () => useContext(AllergenContext);
 
@@ -36,6 +44,9 @@ export function AllergenChecksProvider({ subscriberId, children }: { subscriberI
   const [checks, setChecks] = useState<Checks>({});
   // Ids already asked for (answered or in flight), so a re-render never re-asks.
   const asked = useRef<Set<number>>(new Set());
+  // Warnings per "food:grams", asked for separately because the answer depends on the amount.
+  const [byQuantity, setByQuantity] = useState<Record<string, FoodNutritionWarning[]>>({});
+  const askedQuantities = useRef<Set<string>>(new Set());
 
   const request = useCallback(
     async (foodIds: number[]) => {
@@ -59,7 +70,48 @@ export function AllergenChecksProvider({ subscriberId, children }: { subscriberI
     [authorizedFetch, subscriberId]
   );
 
-  const value = useMemo(() => ({ checks, request }), [checks, request]);
+  const requestQuantities = useCallback(
+    async (items: { id: number; grams: number }[]) => {
+      const key = (i: { id: number; grams: number }) => `${i.id}:${i.grams}`;
+      const missing = items.filter((i) => Number.isFinite(i.grams) && i.grams > 0 && !askedQuantities.current.has(key(i)));
+      const unique = [...new Map(missing.map((i) => [key(i), i])).values()];
+      if (unique.length === 0) return;
+      unique.forEach((i) => askedQuantities.current.add(key(i)));
+
+      for (let n = 0; n < unique.length; n += CHUNK) {
+        const chunk = unique.slice(n, n + CHUNK);
+        const result = await checkFoodAllergensWithQuantity(
+          authorizedFetch,
+          subscriberId,
+          chunk.map((i) => ({ food_id: i.id, quantity_grams: i.grams }))
+        );
+
+        if (!result.ok) {
+          chunk.forEach((i) => askedQuantities.current.delete(key(i)));
+          continue;
+        }
+
+        setByQuantity((prev) => ({
+          ...prev,
+          ...Object.fromEntries(result.data.foods.map((f) => [`${f.food_id}:${f.quantity_grams}`, f.nutrition_warnings ?? []])),
+        }));
+      }
+    },
+    [authorizedFetch, subscriberId]
+  );
+
+  const nutritionFor = useCallback(
+    (foodId: number, grams: number | null) => {
+      const base = checks[foodId]?.nutrition_warnings ?? [];
+      if (grams === null) return base;
+      // Amount known: its own answer. Until that is back, hold the index
+      // warning (it may turn out to be a low load) and keep the rest.
+      return byQuantity[`${foodId}:${grams}`] ?? base.filter((w) => w.type !== "gi");
+    },
+    [byQuantity, checks]
+  );
+
+  const value = useMemo(() => ({ checks, request, requestQuantities, nutritionFor }), [checks, request, requestQuantities, nutritionFor]);
 
   return <AllergenContext.Provider value={value}>{children}</AllergenContext.Provider>;
 }
@@ -84,11 +136,20 @@ export function worstSeverity(checks: Checks, foodIds: number[]): AllergenSeveri
  * A food whose allergens were never tagged gets a muted line instead: it is
  * unknown, not safe, and saying nothing would read as safe.
  */
-export function AllergenNotice({ check, compact = false }: { check: FoodAllergenCheck | undefined; compact?: boolean }) {
+export function AllergenNotice({
+  check,
+  compact = false,
+  nutrition,
+}: {
+  check: FoodAllergenCheck | undefined;
+  compact?: boolean;
+  /** The glycemic / sodium warnings at the quantity in play (`nutritionFor`); falls back to the check's own. */
+  nutrition?: FoodNutritionWarning[];
+}) {
   return (
     <>
       <AllergenLine check={check} compact={compact} />
-      <NutritionLines check={check} compact={compact} />
+      <NutritionLines warnings={nutrition ?? check?.nutrition_warnings ?? []} compact={compact} />
     </>
   );
 }
@@ -98,12 +159,12 @@ export function AllergenNotice({ check, compact = false }: { check: FoodAllergen
  * the patient's matching condition (the server decides; an unreviewed food
  * arrives with none). Never blocking, and no "unknown" noise.
  */
-function NutritionLines({ check, compact }: { check: FoodAllergenCheck | undefined; compact: boolean }) {
+function NutritionLines({ warnings, compact }: { warnings: FoodNutritionWarning[]; compact: boolean }) {
   const t = useTranslations("nutritionWarning");
 
   return (
     <>
-      {(check?.nutrition_warnings ?? []).map((w) => (
+      {warnings.map((w) => (
         <p
           key={w.type}
           role="note"

@@ -64,7 +64,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
   const tAllergen = useTranslations("allergenDialog");
   const tNutrition = useTranslations("nutritionWarning");
   const locale = useLocale();
-  const { checks, request: requestChecks } = useAllergenChecks();
+  const { checks, request: requestChecks, requestQuantities } = useAllergenChecks();
   const tPrint = useTranslations("planPrint");
   const tBmi = useTranslations("clients.bmi");
   const { authorizedFetch } = useAuth();
@@ -203,7 +203,12 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
   useEffect(() => {
     const ids = slots.flatMap((slot) => slot.items.flatMap((item) => [item.food.id, ...item.alternatives.map((a) => a.food.id)]));
     if (ids.length > 0) void requestChecks(ids);
-  }, [slots, requestChecks]);
+    // The glycemic warning depends on the amount: ask at each planned quantity too.
+    const withQuantity = slots.flatMap((slot) =>
+      slot.items.flatMap((item) => [{ id: item.food.id, grams: item.quantityGrams }, ...item.alternatives.map((a) => ({ id: a.food.id, grams: a.quantityGrams }))])
+    );
+    if (withQuantity.length > 0) void requestQuantities(withQuantity);
+  }, [slots, requestChecks, requestQuantities]);
 
   function updateSlot(index: number, next: EditableMeal) {
     setSlots((prev) => prev.map((slot, i) => (i === index ? next : slot)));

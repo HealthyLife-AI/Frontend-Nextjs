@@ -83,6 +83,23 @@ export function checkFoodAllergens(fetcher: Fetcher, subscriberId: number | stri
 }
 
 /**
+ * The same check with the quantity the food would be planned at, so a high
+ * glycemic index of a small amount (low glycemic load) is not flagged.
+ * Each answer echoes its `quantity_grams`.
+ */
+export function checkFoodAllergensWithQuantity(
+  fetcher: Fetcher,
+  subscriberId: number | string,
+  items: { food_id: number; quantity_grams: number }[]
+) {
+  return fetcher(`/clients/${subscriberId}/meal-plans/allergen-check`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ items }),
+  }).then((res) => parseJson<{ foods: (FoodAllergenCheck & { quantity_grams: number | null })[] }>(res));
+}
+
+/**
  * Item C: her approved target and summary alone, without resubmitting
  * the meals and without re-activating. Valid on the ACTIVE plan too —
  * neither field reaches the patient, so BR-6 is not in play. Sending

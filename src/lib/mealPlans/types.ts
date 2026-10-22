@@ -58,6 +58,8 @@ export type FoodAllergenCheck = {
   conflict: { groups: string[]; match: "tag" | "text"; severity: AllergenSeverity } | null;
   unverified: boolean;
   nutrition_warnings?: FoodNutritionWarning[];
+  /** Echoed when the check was asked with a quantity. */
+  quantity_grams?: number | null;
 };
 
 export type Macros = {
