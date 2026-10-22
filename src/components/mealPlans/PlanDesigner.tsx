@@ -24,6 +24,7 @@ import {
 } from "@/lib/mealPlans/api";
 import type { AllergenRefusal } from "@/lib/mealPlans/api";
 import { PlanDecisionCard } from "./PlanDecisionCard";
+import { nutritionMessage } from "@/lib/mealPlans/nutritionText";
 import { PatientInstructionsCard } from "./PatientInstructionsCard";
 import { getPatientTips, type PatientTips } from "@/lib/conditions/api";
 import type { CalorieSuggestion } from "@/lib/clients/types";
@@ -640,13 +641,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
               <li key={`${w.item_id}-${w.type}`}>
                 <span className="font-semibold">{w.food_name_ar}</span>
                 {" — "}
-                {w.type === "sodium"
-                  ? tNutrition("sodium", { value: w.sodium_mg_per_100g ?? 0 })
-                  : w.type === "gl"
-                    ? tNutrition("glOnly", { gi: w.gi ?? 0, gl: w.gl ?? 0 })
-                    : w.type === "gi"
-                      ? tNutrition("gi", { gi: w.gi ?? 0 })
-                      : tNutrition("giGl", { gi: w.gi ?? 0, gl: w.gl ?? 0 })}
+                {nutritionMessage(tNutrition, w)}
               </li>
             ))}
           </ul>

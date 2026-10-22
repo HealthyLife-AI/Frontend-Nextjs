@@ -1427,8 +1427,8 @@
   "nutritionWarning": {
     "title": "Nutrition warnings for this plan",
     "gi": "High glycemic index ({gi})",
-    "glOnly": "High glycemic load for this amount ({gl}) — index {gi}",
-    "giGl": "High glycemic index ({gi}) and high glycemic load for this amount ({gl})",
+    "glOnly": "High glycemic load for this amount ({gl})",
+    "giGl": "High glycemic index ({gi}) and high load for this amount ({gl})",
     "sodium": "High in sodium ({value} mg/100 g)"
   }
 }

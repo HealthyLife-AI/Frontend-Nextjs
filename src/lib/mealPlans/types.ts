@@ -49,8 +49,13 @@ export type NutritionWarning = {
   sodium_mg_per_100g?: number;
 };
 
-/** The food-level part of the same warnings (the picker has no quantity yet). */
-export type FoodNutritionWarning = { type: "gi"; gi: number } | { type: "sodium"; sodium_mg_per_100g: number };
+/**
+ * The same judgement for one food at a quantity (POST …/allergen-check with
+ * `items`), or for the food alone (`gi` only) when no quantity is known yet.
+ */
+export type FoodNutritionWarning =
+  | { type: "gi" | "gl" | "gi_gl"; gi: number; gl?: number | null; gi_category?: string; gl_category?: string | null }
+  | { type: "sodium"; sodium_mg_per_100g: number };
 
 /** One food against the patient's approved allergies (POST …/allergen-check). */
 export type FoodAllergenCheck = {
