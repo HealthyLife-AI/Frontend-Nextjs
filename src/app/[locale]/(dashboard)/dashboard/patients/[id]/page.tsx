@@ -28,6 +28,9 @@ import { ReviewsPanel } from "@/components/followUp/ReviewsPanel";
 import { PatientAppointmentCard } from "@/components/appointments/PatientAppointmentCard";
 import { AlertSettingsCard } from "@/components/alerts/AlertSettingsCard";
 import { MeasurementScheduleCard } from "@/components/healthRecords/MeasurementScheduleCard";
+import { CheckinCard } from "@/components/checkins/CheckinCard";
+import { FoodPreferencesCard } from "@/components/healthRecords/FoodPreferencesCard";
+import { GoalProjectionCard } from "@/components/progress/GoalProjectionCard";
 import { PatientRequestsCard } from "@/components/quickRequests/PatientRequestsCard";
 import { CurrentPlanCard } from "@/components/mealPlans/CurrentPlanCard";
 import { PendingProposals } from "@/components/healthRecords/PendingProposals";
@@ -269,6 +272,10 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
       <MeasurementScheduleCard subscriberId={id} readOnly={client.archived_at !== null} />
 
+      <CheckinCard subscriberId={id} readOnly={client.archived_at !== null} />
+
+      <FoodPreferencesCard subscriberId={id} readOnly={client.archived_at !== null} />
+
       <AlertSettingsCard subscriberId={id} readOnly={client.archived_at !== null} />
 
       <PendingProposals subscriberId={id} readOnly={client.archived_at !== null} />
@@ -286,6 +293,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           {tProgress("loadFailed")}
         </p>
       )}
+
+      <GoalProjectionCard subscriberId={id} readOnly={client.archived_at !== null} />
 
       {progress && (
         <div className="flex flex-col gap-4">

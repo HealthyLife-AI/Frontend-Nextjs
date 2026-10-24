@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { Activity, AlertTriangle, HelpCircle, ShieldAlert } from "lucide-react";
+import { Activity, AlertTriangle, HeartOff, HelpCircle, ShieldAlert } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { checkFoodAllergens, checkFoodAllergensWithQuantity } from "@/lib/mealPlans/api";
 import { nutritionMessage } from "@/lib/mealPlans/nutritionText";
@@ -176,6 +176,24 @@ function NutritionLines({ warnings, compact }: { warnings: FoodNutritionWarning[
         </p>
       ))}
     </>
+  );
+}
+
+/**
+ * Phase 2, B4: a gray note on a food the patient does not like. A soft
+ * preference, separate from the allergen and nutrition warnings: it never
+ * blocks anything and is never printed (the print sheet does not render this).
+ */
+export function PreferenceNote({ check }: { check: FoodAllergenCheck | undefined }) {
+  const t = useTranslations("foodPreferences");
+
+  if (check?.preference !== "dislike") return null;
+
+  return (
+    <p className="flex items-start gap-1.5 px-1 text-xs text-ink-muted">
+      <HeartOff size={12} className="mt-px shrink-0" aria-hidden="true" />
+      {t("rowNote")}
+    </p>
   );
 }
 
