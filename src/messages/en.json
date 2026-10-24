@@ -19,7 +19,9 @@
     "adminNutritionists": "Nutritionists",
     "adminMenu": "Admin panel",
     "pendingFoodsBadge": "{count, plural, one {# food awaiting review} other {# foods awaiting review}}",
-    "appointments": "Appointments"
+    "appointments": "Appointments",
+    "requests": "Requests",
+    "openRequestsBadge": "{count, plural, one {1 open request} other {# open requests}}"
   },
   "auth": {
     "common": {
@@ -380,7 +382,9 @@
     "type": {
       "no_log": "No log for 3+ days",
       "calories_exceeded": "Calories over target",
-      "milestone": "Milestone reached"
+      "milestone": "Milestone reached",
+      "measurement_overdue": "Measurements overdue",
+      "quick_request": "New patient request"
     },
     "previousPage": "Previous",
     "nextPage": "Next",
@@ -388,12 +392,18 @@
       "noLog": "No meal logged in {days}+ days.",
       "caloriesExceeded": "Daily calorie target exceeded for {days} consecutive days.",
       "milestoneLost": "Milestone: {kg} kg lost over the last {days} days.",
-      "milestoneGained": "Milestone: {kg} kg gained over the last {days} days."
+      "milestoneGained": "Milestone: {kg} kg gained over the last {days} days.",
+      "measurementOverdue": "The patient is {days} days past the measurement date.",
+      "quickRequest": "The patient sent a new request."
     },
     "proposals": {
       "title": "Awaiting approval: changes proposed by patients",
       "review": "{count, plural, one {Review # change} other {Review # changes}}"
-    }
+    },
+    "filterSeverityAll": "All importance",
+    "filterImportant": "Important",
+    "filterNormal": "Normal",
+    "severityImportant": "Important"
   },
   "plans": {
     "title": "Plan templates",
@@ -764,7 +774,10 @@
     "unsavedNote": "Showing the values typed on screen (not saved yet).",
     "unsavedMeals": "Meal edits are not saved and will not appear in the print. Continue?",
     "noPlan": "No plan to print.",
-    "patientInstructions": "Instructions for the patient"
+    "patientInstructions": "Instructions for the patient",
+    "activities": "Physical activity",
+    "activityLine": "{minutes} min · {times, plural, one {once a day} other {# times a day}}",
+    "activityDays": "{days, plural, one {1 day a week} other {# days a week}}"
   },
   "planDesigner": {
     "title": "Nutrition plan designer",
@@ -1430,5 +1443,84 @@
     "glOnly": "High glycemic load for this amount ({gl})",
     "giGl": "High glycemic index ({gi}) and high load for this amount ({gl})",
     "sodium": "High in sodium ({value} mg/100 g)"
+  },
+  "activities": {
+    "title": "Physical activity",
+    "visibleTag": "Visible to the patient",
+    "visibleNote": "Shown to the patient in the app and on the printout. No calorie burn is calculated from it.",
+    "examplesHint": "Ready examples — click to add a row, then edit it as you wish.",
+    "example": {
+      "walk": "Light walking",
+      "stretch": "Stretching",
+      "stairs": "Climbing stairs"
+    },
+    "empty": "No physical activity has been added to this plan yet.",
+    "add": "Add an activity",
+    "save": "Save activity",
+    "remove": "Remove activity {number}",
+    "titlePlaceholder": "Activity name (e.g. light walking)",
+    "titleLabel": "Activity {number} name",
+    "descriptionPlaceholder": "Description or note (optional)",
+    "descriptionLabel": "Activity {number} description",
+    "minutes": "Duration (min)",
+    "timesPerDay": "Times a day",
+    "daysPerWeek": "Days a week",
+    "everyDay": "Every day"
+  },
+  "measurementSchedule": {
+    "title": "Measurement schedule",
+    "helper": "How often this patient records their measurements. They get a reminder on the day, and you get an alert if they are 3 days late.",
+    "interval": "Interval between measurements",
+    "week": "Week",
+    "twoWeeks": "Two weeks",
+    "month": "Month",
+    "custom": "Custom",
+    "customDays": "Days (3–90)",
+    "days": "days",
+    "nextDue": "Next due",
+    "none": "No schedule is set for this patient.",
+    "overdue": "Overdue",
+    "overdueDays": "{days} days overdue",
+    "dateHint": "If you change the interval without changing the date, the due date counts from today.",
+    "save": "Save schedule",
+    "saved": "Measurement schedule saved",
+    "remove": "Stop the schedule",
+    "removed": "Schedule stopped",
+    "loadFailed": "Could not load the measurement schedule.",
+    "saveFailed": "Could not save. Try again."
+  },
+  "quickRequests": {
+    "title": "Requests",
+    "subtitle": "Open patient requests waiting for your reply.",
+    "patientTitle": "Patient requests",
+    "patientHelper": "What this patient sent and how you replied.",
+    "empty": "No open requests.",
+    "emptyPatient": "This patient has not sent any request.",
+    "reason": {
+      "special_occasion": "Special occasion",
+      "food_unavailable": "Food not available",
+      "craving": "Sudden craving",
+      "cannot_continue": "Cannot stick to the plan",
+      "other": "Other"
+    },
+    "status": {
+      "open": "Open",
+      "answered": "Answered",
+      "closed": "Closed"
+    },
+    "occasionOn": "Occasion date: {date}",
+    "noNote": "No note",
+    "replyLabel": "Your reply to the patient",
+    "replyPlaceholder": "Write a short reply the patient will read in the app…",
+    "send": "Send reply",
+    "close": "Close without reply",
+    "openPlan": "Open plan",
+    "openPatient": "Open patient file",
+    "yourReply": "Your reply",
+    "sent": "Reply sent",
+    "closed": "Request closed",
+    "failed": "Could not complete that. Try again.",
+    "loadFailed": "Could not load the requests.",
+    "replyNote": "The reply reaches the patient as plain text and does not change their plan automatically."
   }
 }

@@ -17,6 +17,8 @@ const PATTERNS = {
   no_log: /No meal logged in (\d+)\+ days\./,
   calories_exceeded: /Daily calorie target exceeded for (\d+) consecutive days\./,
   milestone: /Milestone: ([\d.]+)kg (lost|gained) over the last (\d+) days\./,
+  measurement_overdue: /Body measurements are (\d+) days overdue\./,
+  quick_request: /New quick request from the patient\./,
 } as const;
 
 export type AlertMessageTranslator = (
@@ -40,6 +42,15 @@ export function localizedAlertMessage(alert: Pick<Alert, "type" | "message">, t:
     if (m) {
       return t(m[2] === "lost" ? "milestoneLost" : "milestoneGained", { kg: m[1], days: Number(m[3]) });
     }
+  }
+
+  if (alert.type === "measurement_overdue") {
+    const m = alert.message.match(PATTERNS.measurement_overdue);
+    if (m) return t("measurementOverdue", { days: Number(m[1]) });
+  }
+
+  if (alert.type === "quick_request" && PATTERNS.quick_request.test(alert.message)) {
+    return t("quickRequest");
   }
 
   return alert.message;

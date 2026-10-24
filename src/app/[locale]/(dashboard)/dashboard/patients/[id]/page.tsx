@@ -27,6 +27,8 @@ import { MealLogSection } from "@/components/followUp/MealLogSection";
 import { ReviewsPanel } from "@/components/followUp/ReviewsPanel";
 import { PatientAppointmentCard } from "@/components/appointments/PatientAppointmentCard";
 import { AlertSettingsCard } from "@/components/alerts/AlertSettingsCard";
+import { MeasurementScheduleCard } from "@/components/healthRecords/MeasurementScheduleCard";
+import { PatientRequestsCard } from "@/components/quickRequests/PatientRequestsCard";
 import { CurrentPlanCard } from "@/components/mealPlans/CurrentPlanCard";
 import { PendingProposals } from "@/components/healthRecords/PendingProposals";
 import { listAiSummaries } from "@/lib/aiSummaries/api";
@@ -261,7 +263,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
       {client.archived_at && <FollowUpBanner client={client} onChange={setClient} />}
 
+      <PatientRequestsCard subscriberId={id} readOnly={client.archived_at !== null} />
+
       <CurrentPlanCard subscriberId={id} />
+
+      <MeasurementScheduleCard subscriberId={id} readOnly={client.archived_at !== null} />
 
       <AlertSettingsCard subscriberId={id} readOnly={client.archived_at !== null} />
 

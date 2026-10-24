@@ -1,5 +1,5 @@
 import { type Fetcher, parseJson } from "@/lib/api";
-import type { Alert, AlertListResponse } from "./types";
+import type { Alert, AlertListResponse, AlertSeverity } from "./types";
 
 /**
  * `is_read` is a real tri-state at the wire level: included true/false to
@@ -9,7 +9,7 @@ import type { Alert, AlertListResponse } from "./types";
  */
 export function listAlerts(
   fetcher: Fetcher,
-  params: { is_read?: boolean; subscriber_id?: number; page?: number } = {}
+  params: { is_read?: boolean; subscriber_id?: number; severity?: AlertSeverity; page?: number } = {}
 ) {
   const query = new URLSearchParams();
   // "1"/"0", not "true"/"false" — Laravel's `boolean` validation rule
@@ -18,6 +18,7 @@ export function listAlerts(
   // by actually driving this page in a browser, not by tsc/lint/build.
   if (params.is_read !== undefined) query.set("is_read", params.is_read ? "1" : "0");
   if (params.subscriber_id !== undefined) query.set("subscriber_id", String(params.subscriber_id));
+  if (params.severity !== undefined) query.set("severity", params.severity);
   if (params.page && params.page > 1) query.set("page", String(params.page));
 
   const qs = query.toString();

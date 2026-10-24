@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { AlertTriangle, ArrowLeft, Bell, CalendarClock, CheckCircle2, ClipboardCheck, Plus } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { AdherenceBadge } from "@/components/clients/AdherenceBadge";
+import { Badge } from "@/components/ui/Badge";
 import { AddPatientDialog } from "@/components/clients/AddPatientDialog";
 import { DashboardStatTiles } from "@/components/clients/DashboardStatTiles";
 import { getDashboardOverview, listClients } from "@/lib/clients/api";
@@ -16,6 +17,15 @@ import { localizedAlertMessage } from "@/lib/alerts/message";
 
 const RECENT_ALERTS_SHOWN = 5;
 const NEEDS_ATTENTION_SHOWN = 6;
+
+/**
+ * Phase 1, C3: patients with an open important alert lead the list; within each
+ * group the server's own order (stopped logging, then declining) is kept.
+ */
+function sortImportantFirst(clients: Client[] | null, important: Set<number>): Client[] | null {
+  if (clients === null) return null;
+  return [...clients].sort((a, b) => Number(important.has(b.id)) - Number(important.has(a.id)));
+}
 
 /**
  * Home answers a different question than Patients: not "show me
@@ -34,6 +44,7 @@ const NEEDS_ATTENTION_SHOWN = 6;
 export default function DashboardHomePage() {
   const t = useTranslations("dashboardHome");
   const tAlertType = useTranslations("alerts.type");
+  const tAlerts = useTranslations("alerts");
   const tAlertMessage = useTranslations("alerts.message");
   const tGoals = useTranslations("goals");
   const tGoalType = useTranslations("healthRecords.goal");
@@ -43,6 +54,8 @@ export default function DashboardHomePage() {
   const [overview, setOverview] = useState<DashboardOverview | null>(null);
   const [needsAttention, setNeedsAttention] = useState<Client[] | null>(null);
   const [alerts, setAlerts] = useState<Alert[] | null>(null);
+  // Phase 1, C3: patients with an open important alert, so they lead the list below.
+  const [importantIds, setImportantIds] = useState<Set<number>>(new Set());
   const [adding, setAdding] = useState(false);
 
   useEffect(() => {
@@ -65,11 +78,17 @@ export default function DashboardHomePage() {
         ...(stopped.ok ? stopped.data.data : []),
         ...(declining.ok ? declining.data.data : []),
       ];
-      setNeedsAttention(combined.slice(0, NEEDS_ATTENTION_SHOWN));
+      setNeedsAttention(combined);
     });
 
     listAlerts(authorizedFetch, { is_read: false }).then((result) => {
       if (!cancelled && result.ok) setAlerts(result.data.data.slice(0, RECENT_ALERTS_SHOWN));
+    });
+
+    listAlerts(authorizedFetch, { severity: "important" }).then((result) => {
+      if (!cancelled && result.ok) {
+        setImportantIds(new Set(result.data.data.filter((a) => !a.is_resolved).map((a) => a.subscriber_id)));
+      }
     });
 
     return () => {
@@ -166,7 +185,7 @@ export default function DashboardHomePage() {
             </div>
           )}
 
-          {needsAttention?.map((client) => (
+          {sortImportantFirst(needsAttention, importantIds)?.slice(0, NEEDS_ATTENTION_SHOWN).map((client) => (
             <Link
               key={client.id}
               href={`/dashboard/patients/${client.id}`}
@@ -181,7 +200,10 @@ export default function DashboardHomePage() {
                   <span className="truncate text-xs text-ink-muted">{goalText(client)}</span>
                 </div>
               </div>
-              <AdherenceBadge status={client.adherence_status} />
+              <div className="flex shrink-0 items-center gap-1.5">
+                {importantIds.has(client.id) && <Badge tone="danger">{tAlerts("severityImportant")}</Badge>}
+                <AdherenceBadge status={client.adherence_status} />
+              </div>
             </Link>
           ))}
         </section>
@@ -213,7 +235,10 @@ export default function DashboardHomePage() {
               className="flex flex-col gap-1 rounded-field border-s-[3px] border-s-status-attention/60 bg-canvas/60 p-3 transition-colors hover:bg-mkt-mint-bg/60"
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="text-sm font-bold text-ink">{alert.subscriber_name}</span>
+                <span className="flex items-center gap-1.5 text-sm font-bold text-ink">
+                  {alert.subscriber_name}
+                  {alert.severity === "important" && <Badge tone="danger">{tAlerts("severityImportant")}</Badge>}
+                </span>
                 <span className="shrink-0 rounded-full bg-card px-2 py-0.5 text-[11px] font-bold text-ink-muted">{tAlertType(alert.type)}</span>
               </div>
               <span className="truncate text-xs text-ink-muted">{localizedAlertMessage(alert, tAlertMessage)}</span>
