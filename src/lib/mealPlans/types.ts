@@ -74,6 +74,23 @@ export type Macros = {
   fat_g: number;
 };
 
+/**
+ * Phase 1, A: physical activity prescribed with the plan. Written FOR the
+ * patient (the patient's own GET /me/meal-plan carries it, and it prints).
+ * Text and numbers only: no calorie burn is calculated.
+ */
+export type PlanActivity = {
+  id?: number;
+  title: string;
+  description: string | null;
+  duration_minutes: number;
+  times_per_day: number;
+  days_per_week: number | null;
+  sort_order?: number;
+};
+
+export type PlanActivityInput = Omit<PlanActivity, "id" | "sort_order">;
+
 export type MealItem = {
   id: number;
   food: Food;
@@ -143,6 +160,7 @@ export type MealPlan = {
    * above — the patient's own GET /me/meal-plan carries it, and it prints.
    */
   patient_instructions?: string | null;
+  activities?: PlanActivity[];
   meals: Meal[];
   summary_by_day: Record<string, Macros>;
   created_at: string;
@@ -169,5 +187,7 @@ export type MealPlanInput = {
   approved_calories?: number | null;
   plan_summary?: string | null;
   patient_instructions?: string | null;
+  /** Absent = leave the stored activities alone; present (even empty) = replace them all. */
+  activities?: PlanActivityInput[];
   meals: MealInput[];
 };

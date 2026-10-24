@@ -1,6 +1,6 @@
 import { type Fetcher, parseJson } from "@/lib/api";
 import type { Food } from "@/lib/clients/types";
-import type { AllergenConflict, FoodAllergenCheck, MealPlan, MealPlanInput } from "./types";
+import type { AllergenConflict, FoodAllergenCheck, MealPlan, MealPlanInput, PlanActivityInput } from "./types";
 
 // Re-exported for the components that already import it from here.
 export type { ApiError } from "@/lib/api";
@@ -109,7 +109,7 @@ export function updatePlanDecision(
   fetcher: Fetcher,
   subscriberId: number | string,
   planId: number | string,
-  payload: { approved_calories?: number | null; plan_summary?: string | null; patient_instructions?: string | null }
+  payload: { approved_calories?: number | null; plan_summary?: string | null; patient_instructions?: string | null; activities?: PlanActivityInput[] }
 ) {
   return fetcher(`/clients/${subscriberId}/meal-plans/${planId}/decision`, {
     method: "PATCH",

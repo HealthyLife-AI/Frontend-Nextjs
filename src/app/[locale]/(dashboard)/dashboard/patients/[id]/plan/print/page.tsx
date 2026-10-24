@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { getClient } from "@/lib/clients/api";
 import type { Client } from "@/lib/clients/types";
 import { listMealPlans } from "@/lib/mealPlans/api";
-import type { MealPlan } from "@/lib/mealPlans/types";
+import type { MealPlan, PlanActivityInput } from "@/lib/mealPlans/types";
 import { displayCalories, displayGrams, foodName, itemMacros, mealMacros, planMacros, planToSlots } from "@/components/mealPlans/mealSlots";
 
 /**
@@ -37,7 +37,7 @@ export default function PlanPrintPage({ params }: { params: Promise<{ id: string
   const [notFound, setNotFound] = useState(false);
   const [includePrivate, setIncludePrivate] = useState(true);
   // The designer's typed-but-unsaved decision, handed over for a few minutes (see PlanDesigner).
-  const [unsaved, setUnsaved] = useState<{ approved_calories: number | null; plan_summary: string | null; patient_instructions: string | null } | null>(null);
+  const [unsaved, setUnsaved] = useState<{ approved_calories: number | null; plan_summary: string | null; patient_instructions: string | null; activities: PlanActivityInput[] | null } | null>(null);
 
   const load = useCallback(async () => {
     const [clientResult, plansResult] = await Promise.all([
@@ -68,6 +68,7 @@ export default function PlanPrintPage({ params }: { params: Promise<{ id: string
             approved_calories: draft.approved_calories ?? null,
             plan_summary: draft.plan_summary ?? null,
             patient_instructions: draft.patient_instructions ?? null,
+            activities: Array.isArray(draft.activities) ? draft.activities : null,
           });
         }
       } catch {
@@ -89,6 +90,8 @@ export default function PlanPrintPage({ params }: { params: Promise<{ id: string
   const planSummary = unsaved ? unsaved.plan_summary : plan.plan_summary;
   // Written for the patient, so it prints whatever the private box is set to.
   const patientInstructions = unsaved ? unsaved.patient_instructions : plan.patient_instructions;
+  // Phase 1, A3: prescribed activity, printed after the meals (it is for the patient).
+  const activities = (unsaved?.activities ?? plan.activities ?? []) as PlanActivityInput[];
   const slots = planToSlots(plan).filter((slot) => slot.items.length > 0);
   const totals = planMacros(slots);
   const dateFmt = new Intl.DateTimeFormat(locale === "ar" ? "ar-SA-u-ca-gregory-nu-latn" : "en-GB", {
@@ -210,6 +213,24 @@ export default function PlanPrintPage({ params }: { params: Promise<{ id: string
             {tPlan("summary.fat")} {displayGrams(totals.fat_g)}
           </span>
         </section>
+
+        {activities.length > 0 && (
+          <section className="flex flex-col gap-2 print:break-inside-avoid">
+            <h2 className="border-b border-divider pb-1 text-base font-bold text-ink">{t("activities")}</h2>
+            <ul className="flex flex-col gap-2 text-sm">
+              {activities.map((a, index) => (
+                <li key={index} className="flex flex-col gap-0.5">
+                  <span className="font-semibold text-ink">{a.title}</span>
+                  <span className="text-ink-muted">
+                    {t("activityLine", { minutes: a.duration_minutes, times: a.times_per_day })}
+                    {a.days_per_week ? ` · ${t("activityDays", { days: a.days_per_week })}` : ""}
+                  </span>
+                  {a.description && <span className="whitespace-pre-line text-ink">{a.description}</span>}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
       </article>
     </div>
   );

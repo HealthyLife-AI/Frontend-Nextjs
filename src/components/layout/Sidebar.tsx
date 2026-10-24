@@ -1,17 +1,18 @@
 "use client";
 
-import { Apple, Bell, CalendarClock, LayoutGrid, LogOut, Settings, Stethoscope, Users, UtensilsCrossed, X } from "lucide-react";
+import { Apple, Bell, CalendarClock, LayoutGrid, LogOut, MessageSquareMore, Settings, Stethoscope, Users, UtensilsCrossed, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import type { ComponentType } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import type { AuthUser } from "@/lib/auth/types";
 import { usePendingFoods } from "@/components/admin/PendingFoodsProvider";
+import { useOpenRequests } from "@/components/quickRequests/OpenRequestsProvider";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 
 type NavItem = {
   href: string;
-  labelKey: "dashboard" | "patients" | "appointments" | "plans" | "foods" | "alerts" | "settings" | "adminOverview" | "adminFoods" | "adminNutritionists";
+  labelKey: "dashboard" | "patients" | "appointments" | "plans" | "foods" | "alerts" | "requests" | "settings" | "adminOverview" | "adminFoods" | "adminNutritionists";
   icon: ComponentType<{ size?: number; strokeWidth?: number }>;
 };
 
@@ -22,6 +23,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard/plans", labelKey: "plans", icon: UtensilsCrossed },
   { href: "/dashboard/foods", labelKey: "foods", icon: Apple },
   { href: "/dashboard/alerts", labelKey: "alerts", icon: Bell },
+  { href: "/dashboard/requests", labelKey: "requests", icon: MessageSquareMore },
   { href: "/dashboard/settings", labelKey: "settings", icon: Settings },
 ];
 
@@ -64,6 +66,8 @@ export function Sidebar({
   const { logout } = useAuth();
   // Outside PendingFoodsProvider (nutritionists) this is the context default: null.
   const { count: pendingFoods } = usePendingFoods();
+  // Phase 1, E6: likewise only inside the nutritionist's provider.
+  const { count: openRequests } = useOpenRequests();
 
   const items = user?.role === "admin" ? ADMIN_NAV_ITEMS : NAV_ITEMS;
 
@@ -145,6 +149,17 @@ export function Sidebar({
                     <Icon size={18} strokeWidth={1.9} />
                   </span>
                   <span className="flex-1">{t(labelKey)}</span>
+                  {labelKey === "requests" && !!openRequests && (
+                    <span
+                      className={`flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 text-xs font-bold tabular-nums ${
+                        isActive ? "bg-white text-mkt-teal-deep" : "bg-status-late text-white"
+                      }`}
+                      aria-label={t("openRequestsBadge", { count: openRequests })}
+                      title={t("openRequestsBadge", { count: openRequests })}
+                    >
+                      {openRequests > 99 ? "99+" : openRequests}
+                    </span>
+                  )}
                   {/* The review queue lives on the admin overview. */}
                   {labelKey === "adminOverview" && !!pendingFoods && (
                     <span

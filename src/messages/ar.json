@@ -19,7 +19,9 @@
     "adminNutritionists": "أخصائيو التغذية",
     "adminMenu": "لوحة الإدارة",
     "pendingFoodsBadge": "{count, plural, one {طعام واحد بانتظار المراجعة} two {طعامان بانتظار المراجعة} few {# أطعمة بانتظار المراجعة} other {# طعامًا بانتظار المراجعة}}",
-    "appointments": "المواعيد"
+    "appointments": "المواعيد",
+    "requests": "الطلبات",
+    "openRequestsBadge": "{count, plural, one {طلب واحد مفتوح} two {طلبان مفتوحان} few {# طلبات مفتوحة} other {# طلبًا مفتوحًا}}"
   },
   "auth": {
     "common": {
@@ -380,7 +382,9 @@
     "type": {
       "no_log": "لا تسجيل منذ 3 أيام فأكثر",
       "calories_exceeded": "تجاوز السعرات المستهدفة",
-      "milestone": "تحقيق إنجاز"
+      "milestone": "تحقيق إنجاز",
+      "measurement_overdue": "تأخر تسجيل القياسات",
+      "quick_request": "طلب جديد من المريض"
     },
     "previousPage": "السابق",
     "nextPage": "التالي",
@@ -388,12 +392,18 @@
       "noLog": "لم يسجّل أي وجبة منذ {days} أيام أو أكثر.",
       "caloriesExceeded": "تجاوز السعرات اليومية المستهدفة {days} أيام متتالية.",
       "milestoneLost": "إنجاز: خسر {kg} كجم خلال آخر {days} يومًا.",
-      "milestoneGained": "إنجاز: اكتسب {kg} كجم خلال آخر {days} يومًا."
+      "milestoneGained": "إنجاز: اكتسب {kg} كجم خلال آخر {days} يومًا.",
+      "measurementOverdue": "تأخر المريض {days} أيام عن موعد تسجيل القياسات.",
+      "quickRequest": "أرسل المريض طلبًا جديدًا."
     },
     "proposals": {
       "title": "بانتظار الاعتماد: تعديلات اقترحها المرضى",
       "review": "{count, plural, one {مراجعة تعديل واحد} two {مراجعة تعديلين} few {مراجعة # تعديلات} other {مراجعة # تعديلًا}}"
-    }
+    },
+    "filterSeverityAll": "كل الأهمية",
+    "filterImportant": "مهم",
+    "filterNormal": "عادي",
+    "severityImportant": "مهم"
   },
   "plans": {
     "title": "قوالب الخطط",
@@ -764,7 +774,10 @@
     "unsavedNote": "تُعرض القيم المكتوبة على الشاشة (لم تُحفظ بعد).",
     "unsavedMeals": "تعديلات الوجبات غير محفوظة ولن تظهر في الطباعة. المتابعة؟",
     "noPlan": "لا توجد خطة لطباعتها.",
-    "patientInstructions": "تعليمات للمريض"
+    "patientInstructions": "تعليمات للمريض",
+    "activities": "النشاط البدني",
+    "activityLine": "{minutes} دقيقة · {times, plural, one {مرة واحدة يوميًا} two {مرتان يوميًا} few {# مرات يوميًا} other {# مرة يوميًا}}",
+    "activityDays": "{days, plural, one {يوم واحد في الأسبوع} two {يومان في الأسبوع} few {# أيام في الأسبوع} other {# يومًا في الأسبوع}}"
   },
   "planDesigner": {
     "title": "مصمم الخطة الغذائية",
@@ -1430,5 +1443,84 @@
     "glOnly": "حِمل جلايسيمي مرتفع لهذه الكمية ({gl})",
     "giGl": "مؤشر جلايسيمي مرتفع ({gi}) وحِمل مرتفع لهذه الكمية ({gl})",
     "sodium": "مرتفع بالصوديوم ({value} ملغ/100غ)"
+  },
+  "activities": {
+    "title": "النشاط البدني",
+    "visibleTag": "يظهر للمريض",
+    "visibleNote": "يظهر للمريض في التطبيق وفي الطباعة. لا يُحسب منه أي حرق للسعرات.",
+    "examplesHint": "أمثلة جاهزة — اضغط لإضافة صف ثم عدّله كما تشاء.",
+    "example": {
+      "walk": "مشي خفيف",
+      "stretch": "تمارين تمدد",
+      "stairs": "صعود الدرج"
+    },
+    "empty": "لم يُضف نشاط بدني لهذه الخطة بعد.",
+    "add": "إضافة نشاط",
+    "save": "حفظ النشاط",
+    "remove": "حذف النشاط {number}",
+    "titlePlaceholder": "اسم النشاط (مثال: مشي خفيف)",
+    "titleLabel": "اسم النشاط {number}",
+    "descriptionPlaceholder": "وصف أو ملاحظة (اختياري)",
+    "descriptionLabel": "وصف النشاط {number}",
+    "minutes": "المدة (دقيقة)",
+    "timesPerDay": "مرات في اليوم",
+    "daysPerWeek": "أيام في الأسبوع",
+    "everyDay": "كل يوم"
+  },
+  "measurementSchedule": {
+    "title": "جدول القياسات",
+    "helper": "كل كم يوم يسجّل المريض قياساته. يُرسل له تذكير في موعد القياس، وتصلك تنبيه إذا تأخر 3 أيام.",
+    "interval": "الفترة بين القياسات",
+    "week": "أسبوع",
+    "twoWeeks": "أسبوعان",
+    "month": "شهر",
+    "custom": "مخصص",
+    "customDays": "عدد الأيام (3–90)",
+    "days": "يوم",
+    "nextDue": "الموعد القادم",
+    "none": "لم يُحدد جدول لهذا المريض.",
+    "overdue": "متأخر",
+    "overdueDays": "متأخر {days} يومًا",
+    "dateHint": "عند تغيير الفترة بدون تغيير التاريخ، يُحسب الموعد من اليوم.",
+    "save": "حفظ الجدول",
+    "saved": "تم حفظ جدول القياسات",
+    "remove": "إيقاف الجدول",
+    "removed": "تم إيقاف الجدول",
+    "loadFailed": "تعذّر تحميل جدول القياسات.",
+    "saveFailed": "تعذّر الحفظ. حاول مجددًا."
+  },
+  "quickRequests": {
+    "title": "الطلبات",
+    "subtitle": "طلبات المرضى المفتوحة بانتظار ردك.",
+    "patientTitle": "طلبات المريض",
+    "patientHelper": "ما أرسله هذا المريض وما رددت به.",
+    "empty": "لا توجد طلبات مفتوحة.",
+    "emptyPatient": "لم يرسل هذا المريض أي طلب.",
+    "reason": {
+      "special_occasion": "مناسبة خاصة",
+      "food_unavailable": "الأكل غير متوفر",
+      "craving": "شراهة مفاجئة",
+      "cannot_continue": "لا أستطيع الالتزام",
+      "other": "أخرى"
+    },
+    "status": {
+      "open": "مفتوح",
+      "answered": "تم الرد",
+      "closed": "مغلق"
+    },
+    "occasionOn": "موعد المناسبة: {date}",
+    "noNote": "بدون ملاحظة",
+    "replyLabel": "ردك على المريض",
+    "replyPlaceholder": "اكتب ردًا قصيرًا يصل المريض في التطبيق…",
+    "send": "إرسال الرد",
+    "close": "إغلاق بدون رد",
+    "openPlan": "فتح الخطة",
+    "openPatient": "فتح ملف المريض",
+    "yourReply": "ردك",
+    "sent": "تم إرسال الرد",
+    "closed": "تم إغلاق الطلب",
+    "failed": "تعذّر تنفيذ العملية. حاول مجددًا.",
+    "loadFailed": "تعذّر تحميل الطلبات.",
+    "replyNote": "يظهر الرد للمريض كنص فقط، ولا يغيّر خطته تلقائيًا."
   }
 }

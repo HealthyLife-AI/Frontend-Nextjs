@@ -16,6 +16,7 @@ const SECTIONS = [
   { href: "/dashboard/patients", key: "patients" },
   { href: "/dashboard/plans", key: "plans" },
   { href: "/dashboard/alerts", key: "alerts" },
+  { href: "/dashboard/requests", key: "requests" },
   { href: "/dashboard/settings", key: "settings" },
   { href: "/dashboard", key: "dashboard" },
 ] as const;

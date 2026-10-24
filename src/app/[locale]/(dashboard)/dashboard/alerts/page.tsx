@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useFormatter, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { Bell, CalendarX, ClipboardCheck, Flame, Award, Check } from "lucide-react";
+import { Bell, CalendarX, ClipboardCheck, Flame, Award, Check, MessageSquareMore, Ruler } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Badge } from "@/components/ui/Badge";
 import { listAlerts, markAlertRead } from "@/lib/alerts/api";
-import type { Alert, AlertType } from "@/lib/alerts/types";
+import type { Alert, AlertSeverity, AlertType } from "@/lib/alerts/types";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { localizedAlertMessage } from "@/lib/alerts/message";
 import { listClients } from "@/lib/clients/api";
@@ -20,10 +20,18 @@ const FILTERS = [
   { labelKey: "filterRead", is_read: true },
 ] as const;
 
+const SEVERITY_FILTERS = [
+  { labelKey: "filterSeverityAll", severity: undefined },
+  { labelKey: "filterImportant", severity: "important" },
+  { labelKey: "filterNormal", severity: "normal" },
+] as const;
+
 const TYPE_ICON: Record<AlertType, typeof CalendarX> = {
   no_log: CalendarX,
   calories_exceeded: Flame,
   milestone: Award,
+  measurement_overdue: Ruler,
+  quick_request: MessageSquareMore,
 };
 
 /** Same tint used for the icon chip and the leading dot elsewhere on this screen. */
@@ -31,6 +39,8 @@ const TYPE_TONE: Record<AlertType, "danger" | "warning" | "success"> = {
   no_log: "danger",
   calories_exceeded: "warning",
   milestone: "success",
+  measurement_overdue: "warning",
+  quick_request: "warning",
 };
 
 /**
@@ -51,6 +61,8 @@ export default function AlertsPage() {
   const isReadParam = searchParams.get("is_read");
   const isRead = isReadParam === "true" ? true : isReadParam === "false" ? false : undefined;
   const page = Number(searchParams.get("page") ?? "1");
+  const severityParam = searchParams.get("severity");
+  const severity: AlertSeverity | undefined = severityParam === "important" || severityParam === "normal" ? severityParam : undefined;
 
   const [alerts, setAlerts] = useState<Alert[] | null>(null);
   const [meta, setMeta] = useState<{ current_page: number; last_page: number; total: number } | null>(null);
@@ -61,7 +73,7 @@ export default function AlertsPage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
 
-    listAlerts(authorizedFetch, { is_read: isRead, page }).then((result) => {
+    listAlerts(authorizedFetch, { is_read: isRead, severity, page }).then((result) => {
       if (cancelled) return;
       if (result.ok) {
         setAlerts(result.data.data);
@@ -73,11 +85,12 @@ export default function AlertsPage() {
     return () => {
       cancelled = true;
     };
-  }, [authorizedFetch, isRead, page]);
+  }, [authorizedFetch, isRead, severity, page]);
 
-  function navigate(next: { is_read?: boolean; page?: number }) {
+  function navigate(next: { is_read?: boolean; severity?: AlertSeverity; page?: number }) {
     const query: Record<string, string> = {};
     if (next.is_read !== undefined) query.is_read = String(next.is_read);
+    if (next.severity !== undefined) query.severity = next.severity;
     if (next.page && next.page > 1) query.page = String(next.page);
 
     router.push({ pathname: "/dashboard/alerts", query });
@@ -101,15 +114,31 @@ export default function AlertsPage() {
 
       <PendingProposalsRow />
 
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {FILTERS.map((filter) => (
           <button
             key={filter.labelKey}
             type="button"
-            onClick={() => navigate({ is_read: filter.is_read })}
+            onClick={() => navigate({ is_read: filter.is_read, severity })}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
               filter.is_read === isRead
                 ? "bg-gradient-to-br from-primary to-mkt-teal-deep text-white shadow-brand"
+                : "border border-border bg-card text-ink-muted hover:bg-canvas hover:text-ink"
+            }`}
+          >
+            {t(filter.labelKey)}
+          </button>
+        ))}
+        <span className="mx-1 hidden w-px self-stretch bg-divider sm:block" aria-hidden="true" />
+        {/* Phase 1, C3: by importance. The server already lists important ones first. */}
+        {SEVERITY_FILTERS.map((filter) => (
+          <button
+            key={filter.labelKey}
+            type="button"
+            onClick={() => navigate({ is_read: isRead, severity: filter.severity })}
+            className={`rounded-full px-4 py-2 text-sm font-semibold transition-all ${
+              filter.severity === severity
+                ? "bg-status-late text-white shadow-brand"
                 : "border border-border bg-card text-ink-muted hover:bg-canvas hover:text-ink"
             }`}
           >
@@ -127,7 +156,7 @@ export default function AlertsPage() {
               <Bell size={22} strokeWidth={1.75} />
             </div>
             <p className="max-w-xs text-sm text-ink-muted">
-              {isRead === undefined ? t("emptyHint") : t("noResults")}
+              {isRead === undefined && severity === undefined ? t("emptyHint") : t("noResults")}
             </p>
           </div>
         )}
@@ -142,7 +171,7 @@ export default function AlertsPage() {
             <button
               type="button"
               disabled={meta.current_page <= 1}
-              onClick={() => navigate({ is_read: isRead, page: meta.current_page - 1 })}
+              onClick={() => navigate({ is_read: isRead, severity, page: meta.current_page - 1 })}
               className="rounded-field px-3 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
             >
               {t("previousPage")}
@@ -150,7 +179,7 @@ export default function AlertsPage() {
             <button
               type="button"
               disabled={meta.current_page >= meta.last_page}
-              onClick={() => navigate({ is_read: isRead, page: meta.current_page + 1 })}
+              onClick={() => navigate({ is_read: isRead, severity, page: meta.current_page + 1 })}
               className="rounded-field px-3 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:bg-canvas hover:text-ink disabled:opacity-40 disabled:hover:bg-transparent"
             >
               {t("nextPage")}
@@ -177,7 +206,7 @@ function AlertRow({ alert, onMarkRead }: { alert: Alert; onMarkRead: (id: number
     <div
       className={`flex items-start gap-3 rounded-panel border border-border/70 bg-card p-4 shadow-panel ${
         alert.is_read ? "opacity-70" : ""
-      }`}
+      } ${alert.severity === "important" ? "border-s-[3px] border-s-status-late" : ""}`}
     >
       <div
         className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-field ${
@@ -200,6 +229,7 @@ function AlertRow({ alert, onMarkRead }: { alert: Alert; onMarkRead: (id: number
             {alert.subscriber_name}
           </Link>
           <span className="text-xs text-ink-muted">{alert.subscriber_code}</span>
+          {alert.severity === "important" && <Badge tone="danger">{t("severityImportant")}</Badge>}
           <Badge tone="primary">{t(`type.${alert.type}`)}</Badge>
           {showsResolution && (
             <Badge tone={alert.is_resolved ? "neutral" : "warning"}>

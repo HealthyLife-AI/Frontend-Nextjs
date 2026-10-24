@@ -26,6 +26,7 @@ import type { AllergenRefusal } from "@/lib/mealPlans/api";
 import { PlanDecisionCard } from "./PlanDecisionCard";
 import { nutritionMessage } from "@/lib/mealPlans/nutritionText";
 import { PatientInstructionsCard } from "./PatientInstructionsCard";
+import { ActivitiesCard, activitiesFromPlan, activitiesToInput, type EditableActivity } from "./ActivitiesCard";
 import { getPatientTips, type PatientTips } from "@/lib/conditions/api";
 import type { CalorieSuggestion } from "@/lib/clients/types";
 import type { AllergenConflict, MealPlan } from "@/lib/mealPlans/types";
@@ -84,6 +85,8 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
   const [planSummary, setPlanSummary] = useState("");
   // Clinical batch 1: text for the patient (visible in the app and on the printout), the tips offered for it, and how the suggestion was reached.
   const [patientInstructions, setPatientInstructions] = useState("");
+  // Phase 1, A: physical activity prescribed with the plan (also for the patient).
+  const [activities, setActivities] = useState<EditableActivity[]>([]);
   const [tips, setTips] = useState<PatientTips | null>(null);
   const [breakdown, setBreakdown] = useState<CalorieSuggestion | null>(null);
   // Item B: the BMI line shown while she writes the plan.
@@ -185,6 +188,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
           );
           setPlanSummary(relevant.plan_summary ?? "");
           setPatientInstructions(relevant.patient_instructions ?? "");
+          setActivities(activitiesFromPlan(relevant.activities));
         }
       } else if (effective) {
         // A brand-new plan: pre-filled with the effective target.
@@ -232,6 +236,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
       approved_calories: approvedCalories ? Number(approvedCalories) : null,
       plan_summary: planSummary.trim() || null,
       patient_instructions: patientInstructions.trim() || null,
+      activities: activitiesToInput(activities),
     });
     setSavingDecision(false);
 
@@ -296,6 +301,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
           approved_calories: approvedCalories ? Number(approvedCalories) : null,
           plan_summary: planSummary.trim() || null,
           patient_instructions: patientInstructions.trim() || null,
+          activities: activitiesToInput(activities),
         })
       );
     } catch {
@@ -314,6 +320,8 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
       approved_calories: approvedCalories ? Number(approvedCalories) : null,
       plan_summary: planSummary.trim() || null,
       patient_instructions: patientInstructions.trim() || null,
+      // Always sent: the rows on screen ARE the plan's activities (an empty list clears them).
+      activities: activitiesToInput(activities),
     };
     const result = currentPlan
       ? await updateMealPlan(authorizedFetch, subscriberId, currentPlan.id, payload)
@@ -628,6 +636,16 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
           setDirty(true);
         }}
         tips={tips}
+        onSave={isActive ? handleSaveDecision : undefined}
+        saving={savingDecision}
+      />
+
+      <ActivitiesCard
+        rows={activities}
+        onChange={(rows) => {
+          setActivities(rows);
+          setDirty(true);
+        }}
         onSave={isActive ? handleSaveDecision : undefined}
         saving={savingDecision}
       />

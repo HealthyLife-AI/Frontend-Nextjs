@@ -4,7 +4,10 @@
  * contract; keep this in sync with it, never the other way around.
  */
 
-export type AlertType = "no_log" | "calories_exceeded" | "milestone";
+export type AlertType = "no_log" | "calories_exceeded" | "milestone" | "measurement_overdue" | "quick_request";
+
+/** Phase 1, C: decided by the server when the alert opens. */
+export type AlertSeverity = "normal" | "important";
 
 export type Alert = {
   id: number;
@@ -12,6 +15,7 @@ export type Alert = {
   subscriber_name: string;
   subscriber_code: string;
   type: AlertType;
+  severity: AlertSeverity;
   message: string;
   is_read: boolean;
   /**
