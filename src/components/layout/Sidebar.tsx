@@ -1,6 +1,6 @@
 "use client";
 
-import { Apple, Bell, CalendarClock, LayoutGrid, LogOut, MessageSquareMore, Settings, Stethoscope, Users, UtensilsCrossed, X } from "lucide-react";
+import { Apple, Bell, CalendarClock, LayoutGrid, Lightbulb, LogOut, MessageSquareMore, Settings, Stethoscope, Users, UtensilsCrossed, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import type { ComponentType } from "react";
@@ -12,7 +12,7 @@ import { LocaleSwitcher } from "./LocaleSwitcher";
 
 type NavItem = {
   href: string;
-  labelKey: "dashboard" | "patients" | "appointments" | "plans" | "foods" | "alerts" | "requests" | "settings" | "adminOverview" | "adminFoods" | "adminNutritionists";
+  labelKey: "dashboard" | "patients" | "appointments" | "plans" | "foods" | "alerts" | "requests" | "posts" | "settings" | "adminOverview" | "adminFoods" | "adminNutritionists";
   icon: ComponentType<{ size?: number; strokeWidth?: number }>;
 };
 
@@ -24,6 +24,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard/foods", labelKey: "foods", icon: Apple },
   { href: "/dashboard/alerts", labelKey: "alerts", icon: Bell },
   { href: "/dashboard/requests", labelKey: "requests", icon: MessageSquareMore },
+  { href: "/dashboard/posts", labelKey: "posts", icon: Lightbulb },
   { href: "/dashboard/settings", labelKey: "settings", icon: Settings },
 ];
 

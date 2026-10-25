@@ -31,6 +31,8 @@ import { MeasurementScheduleCard } from "@/components/healthRecords/MeasurementS
 import { CheckinCard } from "@/components/checkins/CheckinCard";
 import { FoodPreferencesCard } from "@/components/healthRecords/FoodPreferencesCard";
 import { GoalProjectionCard } from "@/components/progress/GoalProjectionCard";
+import { WeightInsightCard } from "@/components/progress/WeightInsightCard";
+import { MorningPreviewCard } from "@/components/today/MorningPreviewCard";
 import { PatientRequestsCard } from "@/components/quickRequests/PatientRequestsCard";
 import { CurrentPlanCard } from "@/components/mealPlans/CurrentPlanCard";
 import { PendingProposals } from "@/components/healthRecords/PendingProposals";
@@ -276,6 +278,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
       <FoodPreferencesCard subscriberId={id} readOnly={client.archived_at !== null} />
 
+      <MorningPreviewCard subscriberId={id} />
+
       <AlertSettingsCard subscriberId={id} readOnly={client.archived_at !== null} />
 
       <PendingProposals subscriberId={id} readOnly={client.archived_at !== null} />
@@ -295,6 +299,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       )}
 
       <GoalProjectionCard subscriberId={id} readOnly={client.archived_at !== null} />
+
+      <WeightInsightCard subscriberId={id} readOnly={client.archived_at !== null} />
 
       {progress && (
         <div className="flex flex-col gap-4">
