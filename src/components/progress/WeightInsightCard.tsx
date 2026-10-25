@@ -66,6 +66,14 @@ export function WeightInsightCard({ subscriberId, readOnly }: { subscriberId: st
   const insight = data.insight;
   const number = (n: number, digits = 1) => new Intl.NumberFormat(locale === "ar" ? "ar-SA-u-nu-latn" : "en-GB", { maximumFractionDigits: digits }).format(n);
   const yesNo = (v: boolean) => t(v ? "yes" : "no");
+  // "rejected_blocklist:<word>" carries the word; anything unrecorded (an older text) says so.
+  const fallbackReason = (reason: string | null) => {
+    if (reason === null) return t("fallbackReason.unknown");
+    const [key, word] = reason.split(":");
+    return ["not_configured", "provider_failed", "empty", "rejected_digit", "rejected_length", "rejected_blocklist"].includes(key)
+      ? t(`fallbackReason.${key}`, { word: word ?? "" })
+      : t("fallbackReason.unknown");
+  };
   const code = (group: "appetite" | "sleep" | "barrier", value: string | null) => (value === null ? "—" : t(`checkin.${group}.${value}`));
 
   return (
@@ -111,6 +119,7 @@ export function WeightInsightCard({ subscriberId, readOnly }: { subscriberId: st
             </span>
             {insight.is_fallback && <Badge tone="neutral">{t("auto")}</Badge>}
           </div>
+          {insight.is_fallback && <p className="text-xs text-ink-muted">{fallbackReason(insight.fallback_reason)}</p>}
 
           <p className="rounded-field bg-canvas/60 p-3.5 text-sm leading-relaxed text-ink">{insight.text_ar}</p>
 

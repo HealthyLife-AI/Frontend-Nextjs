@@ -779,8 +779,8 @@
     "noPlan": "لا توجد خطة لطباعتها.",
     "patientInstructions": "تعليمات للمريض",
     "activities": "النشاط البدني",
-    "activityLine": "{minutes} دقيقة · {times, plural, one {مرة واحدة يوميًا} two {مرتان يوميًا} few {# مرات يوميًا} other {# مرة يوميًا}}",
-    "activityDays": "{days, plural, one {يوم واحد في الأسبوع} two {يومان في الأسبوع} few {# أيام في الأسبوع} other {# يومًا في الأسبوع}}"
+    "activityLine": "{minutes} دقيقة · {times, plural, one {مرة واحدة يوميًا} two {مرتين يوميًا} few {# مرات يوميًا} other {# مرة يوميًا}}",
+    "activityDays": "{days, plural, one {يوم واحد في الأسبوع} two {يومين في الأسبوع} few {# أيام في الأسبوع} other {# يومًا في الأسبوع}}"
   },
   "planDesigner": {
     "title": "مصمم الخطة الغذائية",
@@ -1589,7 +1589,7 @@
       "low": "التزام منخفض"
     },
     "currentLevel": "الأقرب للمريض",
-    "weeks": "{count, plural, one {أسبوع واحد} two {أسبوعان} few {# أسابيع} other {# أسبوعًا}}",
+    "weeks": "{count, plural, one {أسبوع واحد} two {أسبوعين} few {# أسابيع} other {# أسبوعًا}}",
     "notReachable": "لا يمكن الوصول بهذا المعدل",
     "noAdherenceYet": "لا يوجد تسجيل كافٍ لتحديد مستوى الالتزام",
     "currentLevelLine": "مستوى المريض الحالي: {level}",
@@ -1701,7 +1701,7 @@
     "saveFailed": "تعذّر الحفظ. حاول مجددًا.",
     "kg": "كغ",
     "factsTitle": "الحقائق المستخدمة (للأخصائية فقط)",
-    "daysValue": "{count, plural, one {يوم واحد} two {يومان} few {# أيام} other {# يومًا}}",
+    "daysValue": "{count, plural, one {يوم واحد} two {يومين} few {# أيام} other {# يومًا}}",
     "fact": {
       "days": "المدة",
       "adherence": "الالتزام",
@@ -1738,6 +1738,15 @@
         "work_study": "الدوام أو الدراسة",
         "none": "ولا شي"
       }
+    },
+    "fallbackReason": {
+      "not_configured": "مزوّد الذكاء الاصطناعي غير مفعّل على هذا الخادم",
+      "provider_failed": "تعذّر الوصول لمزوّد الذكاء الاصطناعي",
+      "empty": "جاء رد المزوّد فارغًا",
+      "rejected_digit": "رُفض الرد: فيه رقم غير موجود في الحقائق",
+      "rejected_length": "رُفض الرد: أطول من 350 حرفًا",
+      "rejected_blocklist": "رُفض الرد: فيه كلمة محظورة ({word})",
+      "unknown": "السبب غير مسجّل (نص قديم)"
     }
   }
 }

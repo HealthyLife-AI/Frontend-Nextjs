@@ -24,6 +24,8 @@ export type WeightInsightData = {
   change_kg: number;
   text_ar: string;
   is_fallback: boolean;
+  /** Why the fixed text was used: not_configured | provider_failed | empty | rejected_digit | rejected_length | rejected_blocklist:<word>. Null for the model's own text. */
+  fallback_reason: string | null;
   generated_at: string;
   facts: InsightFacts;
 };
