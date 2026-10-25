@@ -134,6 +134,8 @@ export type SummarySuggestion = {
   suggested_approved_calories: number | null;
   /** True when the model was unavailable or its reply was rejected: the first line only. */
   is_fallback: boolean;
+  /** Why: not_configured | provider_failed | empty | rejected_length | rejected_digit | macro_label. Null when the model's note was used. */
+  fallback_reason: string | null;
 };
 
 /**
