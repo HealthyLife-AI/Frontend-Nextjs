@@ -384,7 +384,8 @@
       "calories_exceeded": "Calories over target",
       "milestone": "Milestone reached",
       "measurement_overdue": "Measurements overdue",
-      "quick_request": "New patient request"
+      "quick_request": "New patient request",
+      "checkin_flag": "Check-in needs attention"
     },
     "previousPage": "Previous",
     "nextPage": "Next",
@@ -394,7 +395,8 @@
       "milestoneLost": "Milestone: {kg} kg lost over the last {days} days.",
       "milestoneGained": "Milestone: {kg} kg gained over the last {days} days.",
       "measurementOverdue": "The patient is {days} days past the measurement date.",
-      "quickRequest": "The patient sent a new request."
+      "quickRequest": "The patient sent a new request.",
+      "checkinFlag": "The patient's periodic check-in needs your attention."
     },
     "proposals": {
       "title": "Awaiting approval: changes proposed by patients",
@@ -1435,7 +1437,9 @@
       "type1_no_deficit": "Type 1 diabetes: no automatic calorie deficit",
       "bmi_not_above_normal": "BMI is normal or below: no automatic deficit",
       "surplus_not_configured": "The surplus has not been set yet"
-    }
+    },
+    "energy": "Resting {bmr} → with activity (×{multiplier}) {maintenance} → target {suggested}",
+    "energyAdjusted": "Resting {bmr} → with activity (×{multiplier}) {maintenance} → target {suggested} ({sign}{deficit}, {bmiClass})"
   },
   "nutritionWarning": {
     "title": "Nutrition warnings for this plan",
@@ -1522,5 +1526,85 @@
     "failed": "Could not complete that. Try again.",
     "loadFailed": "Could not load the requests.",
     "replyNote": "The reply reaches the patient as plain text and does not change their plan automatically."
+  },
+  "checkinCard": {
+    "title": "Periodic check-in",
+    "helper": "A short questionnaire the patient gets in the app every week or two. Answers that need attention reach you as an alert.",
+    "interval": "Interval",
+    "off": "Off",
+    "weekly": "Weekly",
+    "biweekly": "Every two weeks",
+    "nextDue": "Next due",
+    "startsToday": "Starts today",
+    "save": "Save",
+    "saved": "Check-in settings saved",
+    "savedOff": "Periodic check-in switched off",
+    "saveFailed": "Could not save. Try again.",
+    "loadFailed": "Could not load the periodic check-in.",
+    "history": "Answers",
+    "empty": "No answers yet.",
+    "status": {
+      "pending": "Waiting for an answer",
+      "submitted": "Answered",
+      "expired": "Expired"
+    },
+    "needsAttention": "Needs attention",
+    "reviewed": "Reviewed",
+    "markReviewed": "Mark as reviewed"
+  },
+  "foodPreferences": {
+    "title": "Liked and disliked foods",
+    "helper": "What the patient likes and does not. Preferences only: they show in the plan designer and lean the AI draft.",
+    "likes": "Liked",
+    "dislikes": "Disliked",
+    "noLikes": "No liked foods.",
+    "noDislikes": "No disliked foods.",
+    "byPatient": "Patient",
+    "byNutritionist": "Nutritionist",
+    "remove": "Remove {name}",
+    "searchPlaceholder": "Search for a food to add…",
+    "searching": "Searching…",
+    "noResults": "No matching foods.",
+    "addLike": "Like",
+    "addDislike": "Dislike",
+    "like": "Liked",
+    "dislike": "Disliked",
+    "rowNote": "The patient does not like this food",
+    "softNote": "Preferences are not allergies: they never block a food and are not printed with the plan.",
+    "saveFailed": "Could not save. Try again.",
+    "loadFailed": "Could not load the preferences."
+  },
+  "goalProjection": {
+    "title": "Goal projection",
+    "estimateNote": "An estimate, not a promise: it changes with the patient's adherence.",
+    "showToPatient": "Show to the patient",
+    "unavailable": "Cannot be projected yet. It needs a weight-loss or weight-gain goal with a target weight and a calorie target, and the goal not already reached.",
+    "remainingLoss": "Left to lose: {kg} kg",
+    "remainingGain": "Left to gain: {kg} kg",
+    "level": {
+      "high": "High adherence",
+      "medium": "Medium adherence",
+      "low": "Low adherence"
+    },
+    "currentLevel": "Closest to the patient",
+    "weeks": "{count, plural, one {1 week} other {# weeks}}",
+    "notReachable": "Not reachable at this pace",
+    "noAdherenceYet": "Not enough logging to tell the adherence level",
+    "currentLevelLine": "Patient's level now: {level}",
+    "noTrend": "Not enough readings for the observed trend",
+    "observedTrend": "Observed trend: {value} kg/week",
+    "inputsTitle": "Inputs (nutritionist only)",
+    "input": {
+      "currentWeight": "Current weight",
+      "targetWeight": "Target weight",
+      "maintenance": "Maintenance calories",
+      "target": "Approved target",
+      "adherence": "Adherence (14 days)",
+      "weeklyFull": "Weekly change at full adherence"
+    },
+    "kg": "kg",
+    "kgPerWeek": "kg/week",
+    "kcalPerDay": "{value} kcal/day",
+    "saveFailed": "Could not save. Try again."
   }
 }

@@ -1,11 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Ruler } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { formatLongDate } from "@/lib/format/date";
 import {
   SCHEDULE_MAX_DAYS,
   SCHEDULE_MIN_DAYS,
@@ -28,6 +29,7 @@ const choiceFor = (days: number): Choice => ((SCHEDULE_PRESETS as readonly numbe
  */
 export function MeasurementScheduleCard({ subscriberId, readOnly }: { subscriberId: string; readOnly: boolean }) {
   const t = useTranslations("measurementSchedule");
+  const locale = useLocale();
   const { authorizedFetch } = useAuth();
 
   const [loaded, setLoaded] = useState(false);
@@ -168,6 +170,7 @@ export function MeasurementScheduleCard({ subscriberId, readOnly }: { subscriber
             }}
             className="h-11 w-full rounded-field border border-border bg-canvas/60 px-3 text-sm tabular-nums text-ink outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 disabled:opacity-60"
           />
+          {due && <p className="text-xs font-semibold text-ink">{formatLongDate(due, locale)}</p>}
           <p className="text-xs text-ink-muted">{t("dateHint")}</p>
         </div>
       </div>

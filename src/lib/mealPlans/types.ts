@@ -62,6 +62,8 @@ export type FoodAllergenCheck = {
   food_id: number;
   conflict: { groups: string[]; match: "tag" | "text"; severity: AllergenSeverity } | null;
   unverified: boolean;
+  /** Phase 2, B4: the patient's like / dislike for this food, or null. A soft note, never a warning. */
+  preference?: "like" | "dislike" | null;
   nutrition_warnings?: FoodNutritionWarning[];
   /** Echoed when the check was asked with a quantity. */
   quantity_grams?: number | null;

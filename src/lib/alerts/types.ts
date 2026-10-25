@@ -4,7 +4,7 @@
  * contract; keep this in sync with it, never the other way around.
  */
 
-export type AlertType = "no_log" | "calories_exceeded" | "milestone" | "measurement_overdue" | "quick_request";
+export type AlertType = "no_log" | "calories_exceeded" | "milestone" | "measurement_overdue" | "quick_request" | "checkin_flag";
 
 /** Phase 1, C: decided by the server when the alert opens. */
 export type AlertSeverity = "normal" | "important";

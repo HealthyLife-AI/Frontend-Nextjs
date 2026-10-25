@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Repeat, Trash2 } from "lucide-react";
 import type { Food } from "@/lib/clients/types";
-import { AllergenNotice, useAllergenChecks } from "./AllergenChecks";
+import { AllergenNotice, PreferenceNote, useAllergenChecks } from "./AllergenChecks";
 import { FoodAutocomplete } from "./FoodAutocomplete";
 import { displayCalories, displayGrams, foodName, itemMacros, type EditableItem } from "./mealSlots";
 
@@ -81,6 +81,7 @@ export function MealItemRow({
       {/* Pilot feedback 2, A5: the planned item's own warning, shown as soon as the food is in the row, saved or not. */}
       <div className="px-1 empty:hidden">
         <AllergenNotice check={checks[item.food.id]} nutrition={nutritionFor(item.food.id, item.quantityGrams)} compact />
+        <PreferenceNote check={checks[item.food.id]} />
       </div>
 
       {item.alternatives.length > 0 && (
@@ -100,6 +101,7 @@ export function MealItemRow({
                   {/* An alternative is a food the patient may be handed instead: it is checked like the item. */}
                   <div className="basis-full empty:hidden">
                     <AllergenNotice check={checks[alt.food.id]} nutrition={nutritionFor(alt.food.id, alt.quantityGrams)} compact />
+                    <PreferenceNote check={checks[alt.food.id]} />
                   </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-2 sm:gap-3">

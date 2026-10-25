@@ -19,6 +19,7 @@ const PATTERNS = {
   milestone: /Milestone: ([\d.]+)kg (lost|gained) over the last (\d+) days\./,
   measurement_overdue: /Body measurements are (\d+) days overdue\./,
   quick_request: /New quick request from the patient\./,
+  checkin_flag: /A check-in needs attention\./,
 } as const;
 
 export type AlertMessageTranslator = (
@@ -51,6 +52,10 @@ export function localizedAlertMessage(alert: Pick<Alert, "type" | "message">, t:
 
   if (alert.type === "quick_request" && PATTERNS.quick_request.test(alert.message)) {
     return t("quickRequest");
+  }
+
+  if (alert.type === "checkin_flag" && PATTERNS.checkin_flag.test(alert.message)) {
+    return t("checkinFlag");
   }
 
   return alert.message;

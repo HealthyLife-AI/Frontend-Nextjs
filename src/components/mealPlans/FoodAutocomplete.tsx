@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { AlertTriangle, Loader2, Search, ShieldAlert, X } from "lucide-react";
+import { AlertTriangle, Heart, Loader2, Search, ShieldAlert, X } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { searchFoods } from "@/lib/mealPlans/api";
 import type { Food } from "@/lib/clients/types";
-import { AllergenNotice, useAllergenChecks } from "./AllergenChecks";
+import { AllergenNotice, PreferenceNote, useAllergenChecks } from "./AllergenChecks";
 import { foodName } from "./mealSlots";
 
 const DEBOUNCE_MS = 300;
@@ -33,6 +33,7 @@ export function FoodAutocomplete({
   onCancel: () => void;
 }) {
   const t = useTranslations("planDesigner.foodPicker");
+  const tPref = useTranslations("foodPreferences");
   const locale = useLocale();
   const { authorizedFetch } = useAuth();
   const { checks, request, requestQuantities, nutritionFor } = useAllergenChecks();
@@ -96,7 +97,9 @@ export function FoodAutocomplete({
    * a nutritionist may have a reason to use one, and a missing result is worse
    * than a flagged one. Within each group the server's own order (relevance) holds.
    */
-  const ordered = [...results].sort((a, b) => Number(Boolean(checks[a.id]?.conflict)) - Number(Boolean(checks[b.id]?.conflict)));
+  // Phase 2, B4: within that, liked foods lead and disliked ones come last. Never hidden, never blocking.
+  const rank = (id: number) => (checks[id]?.conflict ? 10 : 0) + (checks[id]?.preference === "like" ? 0 : checks[id]?.preference === "dislike" ? 2 : 1);
+  const ordered = [...results].sort((a, b) => rank(a.id) - rank(b.id));
 
   if (selected) {
     const qty = Number(quantity);
@@ -112,6 +115,7 @@ export function FoodAutocomplete({
         </div>
         {/* The warning is here, before "add": the choice is made with it in view. */}
         <AllergenNotice check={checks[selected.id]} nutrition={nutritionFor(selected.id, validQty ? qty : null)} compact />
+        <PreferenceNote check={checks[selected.id]} />
         <div className="flex items-center gap-2">
           <input
             type="number"
@@ -190,6 +194,8 @@ export function FoodAutocomplete({
                         />
                       )}
                       <span className="truncate">{foodName(food, locale)}</span>
+                      {checks[food.id]?.preference === "like" && <Heart size={13} aria-label={tPref("like")} className="shrink-0 fill-status-late/80 text-status-late" />}
+                      {checks[food.id]?.preference === "dislike" && <span className="shrink-0 text-xs text-ink-muted">{tPref("dislike")}</span>}
                     </span>
                     <span className="shrink-0 text-xs text-ink-muted">{t("caloriesPer100g", { value: food.calories_per_100g })}</span>
                   </span>

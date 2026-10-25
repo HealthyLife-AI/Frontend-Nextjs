@@ -103,6 +103,10 @@ export type Medication = {
  */
 export type CalorieSuggestion = {
   maintenance: number | null;
+  /** Phase 2, D: energy at rest (Mifflin-St Jeor), the activity level and its multiplier: rest -> with activity -> target. */
+  bmr?: number | null;
+  activity_level?: string | null;
+  activity_multiplier?: number | null;
   adjustment: number | null;
   suggested: number | null;
   bmi: number | null;

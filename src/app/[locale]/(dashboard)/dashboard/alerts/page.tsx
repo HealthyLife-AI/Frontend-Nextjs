@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useFormatter, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
-import { Bell, CalendarX, ClipboardCheck, Flame, Award, Check, MessageSquareMore, Ruler } from "lucide-react";
+import { Bell, CalendarX, ClipboardCheck, Flame, Award, Check, ClipboardList, MessageSquareMore, Ruler } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Badge } from "@/components/ui/Badge";
 import { listAlerts, markAlertRead } from "@/lib/alerts/api";
@@ -32,6 +32,7 @@ const TYPE_ICON: Record<AlertType, typeof CalendarX> = {
   milestone: Award,
   measurement_overdue: Ruler,
   quick_request: MessageSquareMore,
+  checkin_flag: ClipboardList,
 };
 
 /** Same tint used for the icon chip and the leading dot elsewhere on this screen. */
@@ -41,6 +42,7 @@ const TYPE_TONE: Record<AlertType, "danger" | "warning" | "success"> = {
   milestone: "success",
   measurement_overdue: "warning",
   quick_request: "warning",
+  checkin_flag: "warning",
 };
 
 /**

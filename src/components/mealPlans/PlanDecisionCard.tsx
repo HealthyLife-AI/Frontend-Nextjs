@@ -83,7 +83,27 @@ export function PlanDecisionCard({
           )}
           {breakdown && breakdown.maintenance !== null && breakdown.suggested !== null && (
             <div className="flex flex-col gap-0.5 text-xs text-ink-muted" data-testid="calorie-breakdown">
-              {breakdown.adjustment !== null && breakdown.adjustment !== 0 && breakdown.bmi_class ? (
+              {breakdown.bmr != null && breakdown.activity_multiplier != null ? (
+                // Phase 2, D3: rest -> with activity -> target, on one line.
+                <p className="tabular-nums" data-testid="energy-breakdown">
+                  {breakdown.adjustment !== null && breakdown.adjustment !== 0 && breakdown.bmi_class
+                    ? tB("energyAdjusted", {
+                        bmr: breakdown.bmr,
+                        multiplier: breakdown.activity_multiplier,
+                        maintenance: breakdown.maintenance,
+                        suggested: breakdown.suggested,
+                        sign: breakdown.adjustment < 0 ? "−" : "+",
+                        deficit: Math.abs(breakdown.adjustment),
+                        bmiClass: tB(`class.${breakdown.bmi_class}`),
+                      })
+                    : tB("energy", {
+                        bmr: breakdown.bmr,
+                        multiplier: breakdown.activity_multiplier,
+                        maintenance: breakdown.maintenance,
+                        suggested: breakdown.suggested,
+                      })}
+                </p>
+              ) : breakdown.adjustment !== null && breakdown.adjustment !== 0 && breakdown.bmi_class ? (
                 <p className="tabular-nums">
                   {tB("formula", {
                     maintenance: breakdown.maintenance,
