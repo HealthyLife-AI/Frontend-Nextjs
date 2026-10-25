@@ -21,7 +21,8 @@
     "pendingFoodsBadge": "{count, plural, one {# food awaiting review} other {# foods awaiting review}}",
     "appointments": "Appointments",
     "requests": "Requests",
-    "openRequestsBadge": "{count, plural, one {1 open request} other {# open requests}}"
+    "openRequestsBadge": "{count, plural, one {1 open request} other {# open requests}}",
+    "posts": "Tips"
   },
   "auth": {
     "common": {
@@ -1607,5 +1608,136 @@
     "kgPerWeek": "kg/week",
     "kcalPerDay": "{value} kcal/day",
     "saveFailed": "Could not save. Try again."
+  },
+  "posts": {
+    "title": "Tips",
+    "subtitle": "Short tips you write for your patients; they reach them in the app. Plain text only.",
+    "appTitle": "Your nutritionist's tips",
+    "previewLabel": "Preview as the patient sees it",
+    "previewTitlePlaceholder": "Tip title",
+    "previewBodyPlaceholder": "The tip text shows here.",
+    "pinned": "Pinned",
+    "new": "New tip",
+    "newTitle": "New tip",
+    "editTitle": "Edit tip",
+    "editorSubtitle": "Write the tip, choose who sees it, and check how it looks before publishing.",
+    "fromTemplates": "From ready-made tips",
+    "templatesTitle": "Ready-made tips",
+    "templatesHint": "Pick a line to start a new draft you edit before publishing.",
+    "noTemplates": "No ready-made tips.",
+    "templateTitle": "A tip from your nutritionist",
+    "empty": "No tips yet. Start a new one, or from the ready-made tips.",
+    "loadFailed": "Could not load the tips.",
+    "saveFailed": "Could not save. Try again.",
+    "fixErrors": "Check the marked fields and try again.",
+    "saved": "Saved",
+    "published": "Published",
+    "unpublished": "Unpublished. Patients no longer see this tip.",
+    "status": {
+      "draft": "Draft",
+      "published": "Published"
+    },
+    "audienceLabel": "Who gets it?",
+    "audience": {
+      "all": "All my patients",
+      "conditions": "By condition",
+      "patients": "Specific patients"
+    },
+    "audienceCount": "{count, plural, one {1 patient} other {# patients}}",
+    "conditionsHint": "Reaches every patient with one of these conditions on file.",
+    "condition": {
+      "diabetes_type1": "Type 1 diabetes",
+      "diabetes_type2": "Type 2 diabetes",
+      "gestational_diabetes": "Gestational diabetes",
+      "insulin_resistance": "Insulin resistance",
+      "prediabetes": "Prediabetes",
+      "hypertension": "Hypertension",
+      "kidney_disease": "Kidney disease",
+      "liver_disease": "Liver disease",
+      "cancer": "Cancer",
+      "celiac": "Celiac disease",
+      "fluid_retention": "Fluid retention"
+    },
+    "noPatients": "No patients chosen yet.",
+    "patientSearch": "Search a patient by name…",
+    "searching": "Searching…",
+    "removePatient": "Remove {name}",
+    "readCount": "{count, plural, one {Read by 1 patient} other {Read by # patients}}",
+    "readStats": "Read by {read} of {total}",
+    "titleLabel": "Title",
+    "bodyLabel": "Text",
+    "plainTextHint": "Plain text only: no formatting.",
+    "pin": "Pin to the top of the list",
+    "save": "Save",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "delete": "Delete",
+    "deleteTitle": "Delete this tip?",
+    "deleteBody": "The tip disappears from the app and its read records go with it. This cannot be undone.",
+    "cancel": "Cancel",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "morningPreview": {
+    "title": "Morning message",
+    "subtitle": "What the patient sees in the app today. Read-only.",
+    "meals": "Today's meals",
+    "noMeals": "No meals today (no active plan).",
+    "activities": "Activity",
+    "noActivities": "No activity in the plan.",
+    "activityLine": "{minutes} min, {times}x a day",
+    "reminders": "Reminders",
+    "noReminders": "No reminders today."
+  },
+  "weightInsight": {
+    "title": "Weight change explained",
+    "subtitle": "A short explanation of the change between the last two weight readings, built from the patient's own data. Not a diagnosis.",
+    "showToPatient": "Show to the patient",
+    "unavailable": "No explanation yet. It needs two weight readings between 5 and 28 days apart.",
+    "auto": "Auto-generated",
+    "regenerate": "Regenerate",
+    "throttled": "Too many requests. Try again in a minute.",
+    "regenerateFailed": "Could not regenerate. Try again.",
+    "saveFailed": "Could not save. Try again.",
+    "kg": "kg",
+    "factsTitle": "Facts used (nutritionist only)",
+    "daysValue": "{count, plural, one {1 day} other {# days}}",
+    "fact": {
+      "days": "Period",
+      "adherence": "Adherence",
+      "loggedDays": "Days logged",
+      "offPlan": "Off-plan meals",
+      "highSodium": "High-sodium food logs",
+      "water": "Water fluctuation likely",
+      "consistent": "Consistent with the plan"
+    },
+    "yes": "Yes",
+    "no": "No",
+    "noCheckins": "No answered check-ins in this period.",
+    "checkin": {
+      "appetite": {
+        "label": "Appetite",
+        "lower": "Lower than usual",
+        "normal": "Normal",
+        "higher": "Higher than usual"
+      },
+      "sleep": {
+        "label": "Sleep",
+        "good": "Good",
+        "interrupted": "Interrupted",
+        "short": "Short"
+      },
+      "barrier": {
+        "label": "Main difficulties",
+        "time": "Time",
+        "food_availability": "Food availability",
+        "budget": "Budget",
+        "occasions": "Occasions and gatherings",
+        "hunger": "Hunger and appetite",
+        "mood": "Mood and stress",
+        "work_study": "Work or study",
+        "none": "None"
+      }
+    }
   }
 }

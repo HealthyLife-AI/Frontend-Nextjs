@@ -21,7 +21,8 @@
     "pendingFoodsBadge": "{count, plural, one {طعام واحد بانتظار المراجعة} two {طعامان بانتظار المراجعة} few {# أطعمة بانتظار المراجعة} other {# طعامًا بانتظار المراجعة}}",
     "appointments": "المواعيد",
     "requests": "الطلبات",
-    "openRequestsBadge": "{count, plural, one {طلب واحد مفتوح} two {طلبان مفتوحان} few {# طلبات مفتوحة} other {# طلبًا مفتوحًا}}"
+    "openRequestsBadge": "{count, plural, one {طلب واحد مفتوح} two {طلبان مفتوحان} few {# طلبات مفتوحة} other {# طلبًا مفتوحًا}}",
+    "posts": "النصائح"
   },
   "auth": {
     "common": {
@@ -1607,5 +1608,136 @@
     "kgPerWeek": "كغ/أسبوع",
     "kcalPerDay": "{value} سعرة/يوم",
     "saveFailed": "تعذّر الحفظ. حاول مجددًا."
+  },
+  "posts": {
+    "title": "النصائح",
+    "subtitle": "نصائح قصيرة تكتبها لمرضاك وتصلهم في التطبيق. نص عادي فقط.",
+    "appTitle": "نصائح أخصائيتك",
+    "previewLabel": "معاينة كما تظهر للمريض",
+    "previewTitlePlaceholder": "عنوان النصيحة",
+    "previewBodyPlaceholder": "نص النصيحة يظهر هنا.",
+    "pinned": "مثبّتة",
+    "new": "نصيحة جديدة",
+    "newTitle": "نصيحة جديدة",
+    "editTitle": "تعديل النصيحة",
+    "editorSubtitle": "اكتب النصيحة، حدّد من يراها، وراجع شكلها قبل النشر.",
+    "fromTemplates": "من النصائح الجاهزة",
+    "templatesTitle": "النصائح الجاهزة",
+    "templatesHint": "اختر سطرًا ليصير مسودة جديدة تعدّلها قبل نشرها.",
+    "noTemplates": "لا توجد نصائح جاهزة.",
+    "templateTitle": "نصيحة من أخصائيتك",
+    "empty": "لا توجد نصائح بعد. ابدأ بنصيحة جديدة أو من النصائح الجاهزة.",
+    "loadFailed": "تعذّر تحميل النصائح.",
+    "saveFailed": "تعذّر الحفظ. حاول مجددًا.",
+    "fixErrors": "راجع الحقول المعلّمة ثم حاول مجددًا.",
+    "saved": "تم الحفظ",
+    "published": "تم النشر",
+    "unpublished": "تم إلغاء النشر. لم تعد النصيحة ظاهرة للمرضى.",
+    "status": {
+      "draft": "مسودة",
+      "published": "منشورة"
+    },
+    "audienceLabel": "لمن تُرسل؟",
+    "audience": {
+      "all": "كل مرضاي",
+      "conditions": "حسب الحالة",
+      "patients": "مرضى محددون"
+    },
+    "audienceCount": "{count, plural, one {مريض واحد} two {مريضان} few {# مرضى} other {# مريضًا}}",
+    "conditionsHint": "تصل لكل مريض سُجّلت له إحدى هذه الحالات.",
+    "condition": {
+      "diabetes_type1": "سكري النوع الأول",
+      "diabetes_type2": "سكري النوع الثاني",
+      "gestational_diabetes": "سكري الحمل",
+      "insulin_resistance": "مقاومة الإنسولين",
+      "prediabetes": "ما قبل السكري",
+      "hypertension": "ارتفاع ضغط الدم",
+      "kidney_disease": "أمراض الكلى",
+      "liver_disease": "أمراض الكبد",
+      "cancer": "السرطان",
+      "celiac": "الداء البطني (السيلياك)",
+      "fluid_retention": "احتباس السوائل"
+    },
+    "noPatients": "لم تختر مرضى بعد.",
+    "patientSearch": "ابحث عن مريض بالاسم…",
+    "searching": "جارِ البحث…",
+    "removePatient": "إزالة {name}",
+    "readCount": "{count, plural, one {قرأها مريض واحد} two {قرأها مريضان} few {قرأها # مرضى} other {قرأها # مريضًا}}",
+    "readStats": "قرأها {read} من {total}",
+    "titleLabel": "العنوان",
+    "bodyLabel": "النص",
+    "plainTextHint": "نص عادي فقط، بدون تنسيق أو روابط مُنسَّقة.",
+    "pin": "تثبيت في أعلى القائمة",
+    "save": "حفظ",
+    "publish": "نشر",
+    "unpublish": "إلغاء النشر",
+    "delete": "حذف",
+    "deleteTitle": "حذف النصيحة؟",
+    "deleteBody": "ستختفي النصيحة من التطبيق وتُحذف معها بيانات القراءة. لا يمكن التراجع.",
+    "cancel": "إلغاء",
+    "previous": "السابق",
+    "next": "التالي"
+  },
+  "morningPreview": {
+    "title": "رسالة الصباح",
+    "subtitle": "ما يراه المريض اليوم في التطبيق. للقراءة فقط.",
+    "meals": "وجبات اليوم",
+    "noMeals": "لا توجد وجبات اليوم (لا خطة فعّالة).",
+    "activities": "النشاط",
+    "noActivities": "لا نشاط في الخطة.",
+    "activityLine": "{minutes} دقيقة، {times} مرة باليوم",
+    "reminders": "التذكيرات",
+    "noReminders": "لا تذكيرات اليوم."
+  },
+  "weightInsight": {
+    "title": "تفسير تغيّر الوزن",
+    "subtitle": "شرح قصير للتغيّر بين آخر قياسين للوزن، مبني على بيانات المريض. ليس تشخيصًا.",
+    "showToPatient": "إظهار للمريض",
+    "unavailable": "لا يتوفر تفسير بعد. يلزم قياسان للوزن بينهما 5 أيام على الأقل وليس أكثر من 28 يومًا.",
+    "auto": "مولّد آليًا",
+    "regenerate": "إعادة التوليد",
+    "throttled": "طلبات كثيرة. حاول بعد دقيقة.",
+    "regenerateFailed": "تعذّرت إعادة التوليد. حاول مجددًا.",
+    "saveFailed": "تعذّر الحفظ. حاول مجددًا.",
+    "kg": "كغ",
+    "factsTitle": "الحقائق المستخدمة (للأخصائية فقط)",
+    "daysValue": "{count, plural, one {يوم واحد} two {يومان} few {# أيام} other {# يومًا}}",
+    "fact": {
+      "days": "المدة",
+      "adherence": "الالتزام",
+      "loggedDays": "أيام التسجيل",
+      "offPlan": "وجبات خارج الخطة",
+      "highSodium": "تسجيلات أطعمة عالية الصوديوم",
+      "water": "احتمال تذبذب الماء",
+      "consistent": "متوافق مع الخطة"
+    },
+    "yes": "نعم",
+    "no": "لا",
+    "noCheckins": "لا استبيانات مُجابة في هذه الفترة.",
+    "checkin": {
+      "appetite": {
+        "label": "الشهية",
+        "lower": "أقل من العادة",
+        "normal": "طبيعية",
+        "higher": "أكثر من العادة"
+      },
+      "sleep": {
+        "label": "النوم",
+        "good": "جيد",
+        "interrupted": "متقطع",
+        "short": "قليل"
+      },
+      "barrier": {
+        "label": "أبرز الصعوبات",
+        "time": "الوقت",
+        "food_availability": "توفر الأكل",
+        "budget": "الميزانية",
+        "occasions": "المناسبات والعزايم",
+        "hunger": "الجوع والشهية",
+        "mood": "المزاج والتوتر",
+        "work_study": "الدوام أو الدراسة",
+        "none": "ولا شي"
+      }
+    }
   }
 }
