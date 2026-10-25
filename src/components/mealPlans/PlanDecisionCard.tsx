@@ -79,7 +79,12 @@ export function PlanDecisionCard({
             className="h-12 w-full rounded-field border border-border bg-canvas/60 px-3.5 text-sm tabular-nums text-ink outline-none transition-all hover:border-primary/30 focus:border-primary focus:bg-card focus:ring-4 focus:ring-primary/10"
           />
           {suggestion !== null && (
-            <p className="text-xs text-ink-muted">{t("systemSuggestion", { value: suggestion })}</p>
+            // With an adjustment the figure is after the deficit/surplus, so the
+            // Mifflin x activity formula would be wrong for it: the breakdown
+            // below explains it instead.
+            <p className="text-xs text-ink-muted">
+              {breakdown?.adjustment ? t("systemSuggestion", { value: suggestion }) : t("systemSuggestionFormula", { value: suggestion })}
+            </p>
           )}
           {breakdown && breakdown.maintenance !== null && breakdown.suggested !== null && (
             <div className="flex flex-col gap-0.5 text-xs text-ink-muted" data-testid="calorie-breakdown">
