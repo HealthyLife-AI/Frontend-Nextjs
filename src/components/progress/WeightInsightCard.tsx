@@ -70,7 +70,7 @@ export function WeightInsightCard({ subscriberId, readOnly }: { subscriberId: st
   const fallbackReason = (reason: string | null) => {
     if (reason === null) return t("fallbackReason.unknown");
     const [key, word] = reason.split(":");
-    return ["not_configured", "provider_failed", "empty", "rejected_digit", "rejected_length", "rejected_blocklist"].includes(key)
+    return ["not_configured", "provider_failed", "empty", "rejected_digit", "rejected_length", "rejected_dialect", "rejected_blocklist"].includes(key)
       ? t(`fallbackReason.${key}`, { word: word ?? "" })
       : t("fallbackReason.unknown");
   };

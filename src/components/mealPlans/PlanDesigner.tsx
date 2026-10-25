@@ -104,6 +104,8 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
   const [suggestingSummary, setSuggestingSummary] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  // Why the suggestion came back as the first line only (shown under the notice).
+  const [noticeReason, setNoticeReason] = useState<string | null>(null);
   // A patient-proposed allergy is not used by the draft (or anywhere) until approved.
   const [pendingAllergy, setPendingAllergy] = useState(false);
   // Pilot feedback 2, C1: the patient's current medications, names only.
@@ -220,6 +222,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
     setDirty(true);
     setMealsDirty(true);
     setNotice(null);
+    setNoticeReason(null);
   }
 
   /**
@@ -254,6 +257,11 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
    * then saves with the normal button. Replacing text she already wrote
    * is confirmed first.
    */
+  const suggestionReason = (reason: string | null) =>
+    reason !== null && ["not_configured", "provider_failed", "empty", "rejected_digit", "rejected_length", "macro_label"].includes(reason)
+      ? t(`decision.suggestionReason.${reason}`)
+      : t("decision.suggestionReason.unknown");
+
   async function handleSuggestSummary() {
     if (!currentPlan) return;
     if ((planSummary.trim() || approvedCalories) && !window.confirm(t("decision.confirmReplace"))) return;
@@ -274,6 +282,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
     }
     setDirty(true);
     setNotice(result.data.is_fallback ? t("decision.suggestionFallback") : t("decision.suggestionReady"));
+    setNoticeReason(result.data.is_fallback ? suggestionReason(result.data.fallback_reason) : null);
   }
 
   /**
@@ -449,6 +458,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
     setDirty(false);
     setMealsDirty(false);
     setNotice(null);
+    setNoticeReason(null);
     if (result.data.warnings?.includes("pending_allergy_proposal")) setPendingAllergy(true);
   }
 
@@ -597,6 +607,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
       {notice && (
         <p role="status" className="rounded-field bg-status-on-track-bg px-3.5 py-2.5 text-sm text-status-on-track">
           {notice}
+          {noticeReason && <span className="mt-0.5 block text-xs opacity-80">{noticeReason}</span>}
         </p>
       )}
 

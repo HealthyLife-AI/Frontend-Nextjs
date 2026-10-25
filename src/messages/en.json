@@ -813,9 +813,18 @@
       "suggest": "Suggest a summary",
       "confirmReplace": "The suggestion will replace what is written now. Continue?",
       "suggestionReady": "Suggestion ready — review it, then save.",
-      "suggestionFallback": "The model was unavailable — first line only (the plan's own figures).",
+      "suggestionFallback": "First line only (the plan's own figures).",
       "save": "Save decision",
-      "saved": "Plan decision saved."
+      "saved": "Plan decision saved.",
+      "suggestionReason": {
+        "not_configured": "The AI provider is not configured on this server",
+        "provider_failed": "The AI provider could not be reached",
+        "empty": "The provider replied with nothing",
+        "rejected_digit": "It named a number other than the computed ones",
+        "rejected_length": "The reply was longer than the limit",
+        "macro_label": "The macro description does not match the plan's shares",
+        "unknown": "Unknown reason"
+      }
     },
     "saved": "Plan saved.",
     "activated": "Plan approved — this is now the client's active plan.",
@@ -1743,10 +1752,11 @@
       "not_configured": "The AI provider is not configured on this server",
       "provider_failed": "The AI provider could not be reached",
       "empty": "The provider replied with nothing",
-      "rejected_digit": "Reply refused: it had a number that is not in the facts",
+      "rejected_digit": "It named a number other than the change in kg and the period",
       "rejected_length": "Reply refused: longer than 350 characters",
+      "rejected_dialect": "It used a non-Palestinian dialect: «{word}»",
       "rejected_blocklist": "Reply refused: it had a blocked word ({word})",
-      "unknown": "Reason not recorded (older text)"
+      "unknown": "Unknown reason"
     }
   }
 }
