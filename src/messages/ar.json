@@ -216,7 +216,7 @@
       "computed": "محسوب",
       "underweight": "نقص وزن",
       "normal": "طبيعي",
-      "overweight": "زيادة وزن",
+      "overweight": "وزن زائد",
       "obesity": "سمنة"
     },
     "healthProfile": {
@@ -805,7 +805,8 @@
       "title": "قرار الخطة",
       "privateTag": "خاص بالأخصائي – لا يظهر للمريض",
       "approvedCalories": "السعرات المعتمدة",
-      "systemSuggestion": "اقتراح النظام: {value} (Mifflin-St Jeor × مستوى النشاط)",
+      "systemSuggestion": "اقتراح النظام: {value}",
+      "systemSuggestionFormula": "اقتراح النظام: {value} (Mifflin-St Jeor × مستوى النشاط)",
       "summary": "ملخص الخطة",
       "belowFloor": "أقل من الحد الاسترشادي ({value} سعرة). يمكنك الحفظ — راجعي أن هذا مقصود.",
       "suggest": "اقترح ملخصًا",
@@ -1427,7 +1428,7 @@
     "class": {
       "underweight": "نقص وزن",
       "normal": "وزن طبيعي",
-      "overweight": "زيادة وزن",
+      "overweight": "وزن زائد",
       "obesity_1": "سمنة درجة أولى",
       "obesity_2": "سمنة درجة ثانية",
       "obesity_3": "سمنة درجة ثالثة"
