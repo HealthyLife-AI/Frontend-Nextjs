@@ -1738,6 +1738,15 @@
         "work_study": "Work or study",
         "none": "None"
       }
+    },
+    "fallbackReason": {
+      "not_configured": "The AI provider is not configured on this server",
+      "provider_failed": "The AI provider could not be reached",
+      "empty": "The provider replied with nothing",
+      "rejected_digit": "Reply refused: it had a number that is not in the facts",
+      "rejected_length": "Reply refused: longer than 350 characters",
+      "rejected_blocklist": "Reply refused: it had a blocked word ({word})",
+      "unknown": "Reason not recorded (older text)"
     }
   }
 }
