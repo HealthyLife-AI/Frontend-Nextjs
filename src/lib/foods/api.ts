@@ -19,12 +19,17 @@ export type FoodInput = {
   carbs_g_per_100g: number;
   fat_g_per_100g: number;
   fiber_g_per_100g: number | null;
-  /** Admin only: allergen groups and shopping-list section (never nutrition values). */
+  /** Admin only: allergen groups, shopping-list section, cost tier and prep level (never nutrition values). */
+  cost_tier?: string | null;
+  prep_level?: string | null;
   allergens?: string[];
   shopping_section?: string;
 };
 
 export const FOOD_ALLERGENS = ["tree_nuts", "peanuts", "milk_lactose", "egg", "wheat_gluten", "sesame", "fish", "shellfish", "soy"] as const;
+export const COST_TIERS = ["economical", "standard", "premium"] as const;
+export const PREP_LEVELS = ["no_cook", "easy", "normal"] as const;
+
 export const SHOPPING_SECTIONS = ["produce", "meat_poultry_fish", "dairy_eggs", "grains_starches", "legumes_nuts", "oils_spices", "other"] as const;
 
 /** Approved catalog search (same endpoint the plan designer uses). */

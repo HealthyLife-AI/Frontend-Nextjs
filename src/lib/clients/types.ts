@@ -182,4 +182,7 @@ export type Food = {
   /** Nutritionist responses only: false = never tagged (unknown), which `allergens: []` alone cannot tell from "tagged, none". */
   allergens_verified?: boolean;
   shopping_section?: string;
+  /** Phase 4, B: null = not reviewed (shows nothing). */
+  cost_tier?: "economical" | "standard" | "premium" | null;
+  prep_level?: "no_cook" | "easy" | "normal" | null;
 };

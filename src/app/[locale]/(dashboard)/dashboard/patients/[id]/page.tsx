@@ -33,6 +33,8 @@ import { FoodPreferencesCard } from "@/components/healthRecords/FoodPreferencesC
 import { GoalProjectionCard } from "@/components/progress/GoalProjectionCard";
 import { WeightInsightCard } from "@/components/progress/WeightInsightCard";
 import { MorningPreviewCard } from "@/components/today/MorningPreviewCard";
+import { ReportsCard } from "@/components/reports/ReportsCard";
+import { WellbeingCard } from "@/components/progress/WellbeingCard";
 import { PatientRequestsCard } from "@/components/quickRequests/PatientRequestsCard";
 import { CurrentPlanCard } from "@/components/mealPlans/CurrentPlanCard";
 import { PendingProposals } from "@/components/healthRecords/PendingProposals";
@@ -280,6 +282,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
       <MorningPreviewCard subscriberId={id} />
 
+      <ReportsCard subscriberId={id} readOnly={client.archived_at !== null} />
+
       <AlertSettingsCard subscriberId={id} readOnly={client.archived_at !== null} />
 
       <PendingProposals subscriberId={id} readOnly={client.archived_at !== null} />
@@ -301,6 +305,8 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
       <GoalProjectionCard subscriberId={id} readOnly={client.archived_at !== null} />
 
       <WeightInsightCard subscriberId={id} readOnly={client.archived_at !== null} />
+
+      <WellbeingCard subscriberId={id} />
 
       {progress && (
         <div className="flex flex-col gap-4">

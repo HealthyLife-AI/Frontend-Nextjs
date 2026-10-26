@@ -6,6 +6,7 @@ import { Repeat, Trash2 } from "lucide-react";
 import type { Food } from "@/lib/clients/types";
 import { AllergenNotice, PreferenceNote, useAllergenChecks } from "./AllergenChecks";
 import { FoodAutocomplete } from "./FoodAutocomplete";
+import { FoodTagBadges } from "@/components/foods/FoodTagBadges";
 import { displayCalories, displayGrams, foodName, itemMacros, type EditableItem } from "./mealSlots";
 
 /**
@@ -59,6 +60,7 @@ export function MealItemRow({
           <span className="min-w-0 max-w-full truncate text-sm font-semibold text-ink" title={foodName(item.food, locale)}>
             {foodName(item.food, locale)}
           </span>
+          <FoodTagBadges food={item.food} />
           <span className="shrink-0 text-xs tabular-nums text-ink-muted">{t("quantityGrams", { value: displayGrams(item.quantityGrams) })}</span>
         </div>
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
@@ -97,6 +99,7 @@ export function MealItemRow({
                   <span className="min-w-0 max-w-full truncate text-sm font-medium text-ink" title={foodName(alt.food, locale)}>
                     {foodName(alt.food, locale)}
                   </span>
+                  <FoodTagBadges food={alt.food} />
                   <span className="shrink-0 text-xs tabular-nums text-ink-muted">{t("quantityGrams", { value: displayGrams(alt.quantityGrams) })}</span>
                   {/* An alternative is a food the patient may be handed instead: it is checked like the item. */}
                   <div className="basis-full empty:hidden">
