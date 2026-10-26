@@ -386,7 +386,8 @@
       "milestone": "Milestone reached",
       "measurement_overdue": "Measurements overdue",
       "quick_request": "New patient request",
-      "checkin_flag": "Check-in needs attention"
+      "checkin_flag": "Check-in needs attention",
+      "report_uploaded": "New medical report"
     },
     "previousPage": "Previous",
     "nextPage": "Next",
@@ -397,7 +398,8 @@
       "milestoneGained": "Milestone: {kg} kg gained over the last {days} days.",
       "measurementOverdue": "The patient is {days} days past the measurement date.",
       "quickRequest": "The patient sent a new request.",
-      "checkinFlag": "The patient's periodic check-in needs your attention."
+      "checkinFlag": "The patient's periodic check-in needs your attention.",
+      "reportUploaded": "The patient uploaded a new medical report."
     },
     "proposals": {
       "title": "Awaiting approval: changes proposed by patients",
@@ -1757,6 +1759,69 @@
       "rejected_dialect": "It used a non-Palestinian dialect: «{word}»",
       "rejected_blocklist": "Reply refused: it had a blocked word ({word})",
       "unknown": "Unknown reason"
+    }
+  },
+  "foodTags": {
+    "economical": "Economical",
+    "noCook": "No cooking",
+    "easyPrep": "Easy prep",
+    "chipEconomical": "Economical",
+    "chipQuickPrep": "No cooking / easy prep",
+    "preferEconomical": "Prefer economical foods",
+    "preferEasyPrep": "Prefer no-cook or easy prep",
+    "costTier": "Cost",
+    "prepLevel": "Preparation",
+    "unknown": "Not set",
+    "cost": {
+      "economical": "Economical",
+      "standard": "Standard",
+      "premium": "Premium"
+    },
+    "prep": {
+      "no_cook": "No cooking",
+      "easy": "Easy prep",
+      "normal": "Normal prep"
+    }
+  },
+  "reports": {
+    "title": "Medical reports",
+    "helper": "Lab results, images and prescriptions the patient uploaded. Files are encrypted, every view is logged, and nothing goes to an AI.",
+    "empty": "The patient has not uploaded any reports yet.",
+    "reviewed": "Reviewed",
+    "needsReview": "Waiting for review",
+    "markReviewed": "Mark as reviewed",
+    "note": "Your note to the patient",
+    "saveNote": "Save note",
+    "saveFailed": "Could not save. Try again.",
+    "viewFailed": "Could not open the file.",
+    "category": {
+      "lab_test": "Lab test",
+      "imaging": "Imaging",
+      "prescription": "Prescription",
+      "medical_letter": "Medical letter",
+      "other": "Other"
+    }
+  },
+  "wellbeing": {
+    "title": "Sleep and wellbeing",
+    "subtitle": "The last 14 days as the patient logged them.",
+    "empty": "Nothing logged in the last 14 days.",
+    "avgSleep": "Average sleep",
+    "shortNights": "Nights under 6 hours",
+    "topStress": "Most frequent: stress",
+    "topMood": "Most frequent: mood",
+    "hours": "{value} h",
+    "chartLabel": "Hours of sleep per night, with a mood dot and a stress dot",
+    "legend": "Bar: hours of sleep (yellow = under 6). First dot: mood. Second dot: stress.",
+    "stress": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "mood": {
+      "good": "Good",
+      "ok": "OK",
+      "low": "Low"
     }
   }
 }

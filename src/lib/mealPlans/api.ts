@@ -155,12 +155,22 @@ export function suggestPlanSummary(fetcher: Fetcher, subscriberId: number | stri
  * but not saved yet, so the draft is built to the number she is
  * deciding on rather than the one already stored.
  */
-export function generateAiDraft(fetcher: Fetcher, subscriberId: number | string, approvedCalories?: number | null) {
+export function generateAiDraft(
+  fetcher: Fetcher,
+  subscriberId: number | string,
+  approvedCalories?: number | null,
+  // Phase 4, B6: soft preferences, off unless ticked.
+  options: { preferEconomical?: boolean; preferEasyPrep?: boolean } = {}
+) {
   // `warnings`: "pending_allergy_proposal" while a patient-proposed allergy awaits approval.
   return fetcher(`/clients/${subscriberId}/meal-plans/ai-draft`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(approvedCalories ? { approved_calories: approvedCalories } : {}),
+    body: JSON.stringify({
+      ...(approvedCalories ? { approved_calories: approvedCalories } : {}),
+      ...(options.preferEconomical ? { prefer_economical: true } : {}),
+      ...(options.preferEasyPrep ? { prefer_easy_prep: true } : {}),
+    }),
   }).then((res) => parseJson<MealPlan & { warnings?: string[] }>(res));
 }
 
@@ -206,8 +216,11 @@ export function applyMealPlanTemplate(
 export type FoodSearchResponse = { data: Food[] };
 
 /** FR-25: prefix match on either language. `q` must be at least 2 characters. */
-export function searchFoods(fetcher: Fetcher, q: string) {
-  return fetcher(`/foods/search?q=${encodeURIComponent(q)}&per_page=10`).then((res) =>
+export function searchFoods(fetcher: Fetcher, q: string, filters: { economical?: boolean; quickPrep?: boolean } = {}) {
+  // Phase 4, B4: the picker's chips. They filter the results, never what is already in the plan.
+  const extra = `${filters.economical ? "&economical=1" : ""}${filters.quickPrep ? "&quick_prep=1" : ""}`;
+
+  return fetcher(`/foods/search?q=${encodeURIComponent(q)}&per_page=10${extra}`).then((res) =>
     parseJson<FoodSearchResponse>(res)
   );
 }

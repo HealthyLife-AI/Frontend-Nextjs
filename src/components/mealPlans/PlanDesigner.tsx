@@ -99,6 +99,10 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
   const [saving, setSaving] = useState(false);
   const [activating, setActivating] = useState(false);
   const [generatingDraft, setGeneratingDraft] = useState(false);
+  // Phase 4, B6: soft preferences for the draft, off by default.
+  const [preferEconomical, setPreferEconomical] = useState(false);
+  const [preferEasyPrep, setPreferEasyPrep] = useState(false);
+  const tTags = useTranslations("foodTags");
   const [savingTemplate, setSavingTemplate] = useState(false);
   const [savingDecision, setSavingDecision] = useState(false);
   const [suggestingSummary, setSuggestingSummary] = useState(false);
@@ -444,7 +448,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
 
     setError(null);
     setGeneratingDraft(true);
-    const result = await generateAiDraft(authorizedFetch, subscriberId, approvedCalories ? Number(approvedCalories) : null);
+    const result = await generateAiDraft(authorizedFetch, subscriberId, approvedCalories ? Number(approvedCalories) : null, { preferEconomical, preferEasyPrep });
     setGeneratingDraft(false);
 
     if (!result.ok) {
@@ -561,6 +565,16 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-col gap-0.5 text-xs text-ink-muted">
+            <label className="flex items-center gap-1.5">
+              <input type="checkbox" checked={preferEconomical} onChange={(e) => setPreferEconomical(e.target.checked)} className="accent-[var(--color-primary)]" />
+              {tTags("preferEconomical")}
+            </label>
+            <label className="flex items-center gap-1.5">
+              <input type="checkbox" checked={preferEasyPrep} onChange={(e) => setPreferEasyPrep(e.target.checked)} className="accent-[var(--color-primary)]" />
+              {tTags("preferEasyPrep")}
+            </label>
+          </div>
           <Button variant="secondary" isLoading={generatingDraft} onClick={handleGenerateDraft} title={t("aiDraftHint")}>
             <Sparkles size={16} strokeWidth={1.75} />
             {t("suggestPlan")}

@@ -6,6 +6,7 @@ import { AlertTriangle, Heart, Loader2, Search, ShieldAlert, X } from "lucide-re
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { searchFoods } from "@/lib/mealPlans/api";
+import { FoodTagBadges } from "@/components/foods/FoodTagBadges";
 import type { Food } from "@/lib/clients/types";
 import { AllergenNotice, PreferenceNote, useAllergenChecks } from "./AllergenChecks";
 import { foodName } from "./mealSlots";
@@ -42,6 +43,10 @@ export function FoodAutocomplete({
   const [results, setResults] = useState<Food[]>([]);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<Food | null>(null);
+  // Phase 4, B4: chips that narrow the search results (never what is already in the plan).
+  const [economical, setEconomical] = useState(false);
+  const [quickPrep, setQuickPrep] = useState(false);
+  const tTags = useTranslations("foodTags");
   const [quantity, setQuantity] = useState("100");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -65,7 +70,7 @@ export function FoodAutocomplete({
     setLoading(true);
 
     const timer = setTimeout(async () => {
-      const result = await searchFoods(authorizedFetch, query.trim());
+      const result = await searchFoods(authorizedFetch, query.trim(), { economical, quickPrep });
       if (cancelled) return;
       const found = result.ok ? result.data.data : [];
       setResults(found);
@@ -79,7 +84,7 @@ export function FoodAutocomplete({
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [query, authorizedFetch, request]);
+  }, [query, authorizedFetch, request, economical, quickPrep]);
 
   // With a food picked, its warnings follow the quantity typed (a high index
   // of a small amount is not raised); the call waits for the typing to settle.
@@ -159,6 +164,25 @@ export function FoodAutocomplete({
         </button>
       </div>
 
+      <div className="flex flex-wrap gap-1.5">
+        {(
+          [
+            ["economical", economical, setEconomical, tTags("chipEconomical")],
+            ["quickPrep", quickPrep, setQuickPrep, tTags("chipQuickPrep")],
+          ] as const
+        ).map(([key, on, set, label]) => (
+          <button
+            key={key}
+            type="button"
+            aria-pressed={on}
+            onClick={() => set(!on)}
+            className={`rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors ${on ? "border-primary bg-primary/10 text-primary" : "border-border text-ink-muted hover:border-primary/40"}`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
       {query.trim().length >= MIN_QUERY_LENGTH && (
         <div className="max-h-56 overflow-y-auto rounded-field border border-border">
           {loading && (
@@ -194,6 +218,7 @@ export function FoodAutocomplete({
                         />
                       )}
                       <span className="truncate">{foodName(food, locale)}</span>
+                      <FoodTagBadges food={food} />
                       {checks[food.id]?.preference === "like" && <Heart size={13} aria-label={tPref("like")} className="shrink-0 fill-status-late/80 text-status-late" />}
                       {checks[food.id]?.preference === "dislike" && <span className="shrink-0 text-xs text-ink-muted">{tPref("dislike")}</span>}
                     </span>

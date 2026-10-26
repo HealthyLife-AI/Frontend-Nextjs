@@ -20,6 +20,7 @@ const PATTERNS = {
   measurement_overdue: /Body measurements are (\d+) days overdue\./,
   quick_request: /New quick request from the patient\./,
   checkin_flag: /A check-in needs attention\./,
+  report_uploaded: /A patient uploaded a medical report\./,
 } as const;
 
 export type AlertMessageTranslator = (
@@ -52,6 +53,10 @@ export function localizedAlertMessage(alert: Pick<Alert, "type" | "message">, t:
 
   if (alert.type === "quick_request" && PATTERNS.quick_request.test(alert.message)) {
     return t("quickRequest");
+  }
+
+  if (alert.type === "report_uploaded" && PATTERNS.report_uploaded.test(alert.message)) {
+    return t("reportUploaded");
   }
 
   if (alert.type === "checkin_flag" && PATTERNS.checkin_flag.test(alert.message)) {

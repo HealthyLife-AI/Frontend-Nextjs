@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
 import { Select } from "@/components/ui/Select";
 import type { ApiError } from "@/lib/api";
-import { FOOD_ALLERGENS, SHOPPING_SECTIONS, type CatalogFood, type FoodInput } from "@/lib/foods/api";
+import { COST_TIERS, FOOD_ALLERGENS, PREP_LEVELS, SHOPPING_SECTIONS, type CatalogFood, type FoodInput } from "@/lib/foods/api";
 
 type Values = Record<
   "name_ar" | "name_en" | "calories_per_100g" | "protein_g_per_100g" | "carbs_g_per_100g" | "fat_g_per_100g" | "fiber_g_per_100g",
@@ -51,6 +51,9 @@ export function FoodForm({
   const tGroup = useTranslations("healthRecords.group");
   const [allergens, setAllergens] = useState<string[]>(food?.allergens ?? []);
   const [section, setSection] = useState<string>(food?.shopping_section ?? "other");
+  const [costTier, setCostTier] = useState<string>(food?.cost_tier ?? "");
+  const [prepLevel, setPrepLevel] = useState<string>(food?.prep_level ?? "");
+  const tTags = useTranslations("foodTags");
   const [values, setValues] = useState<Values>(() => initial(food));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -77,7 +80,7 @@ export function FoodForm({
       carbs_g_per_100g: Number(values.carbs_g_per_100g),
       fat_g_per_100g: Number(values.fat_g_per_100g),
       fiber_g_per_100g: values.fiber_g_per_100g === "" ? null : Number(values.fiber_g_per_100g),
-      ...(withTags ? { allergens, shopping_section: section } : {}),
+      ...(withTags ? { allergens, shopping_section: section, cost_tier: costTier === "" ? null : costTier, prep_level: prepLevel === "" ? null : prepLevel } : {}),
     };
 
     setBusy(true);
@@ -146,6 +149,24 @@ export function FoodForm({
               </option>
             ))}
           </Select>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Select label={tTags("costTier")} value={costTier} onChange={(e) => setCostTier(e.target.value)}>
+              <option value="">{tTags("unknown")}</option>
+              {COST_TIERS.map((c) => (
+                <option key={c} value={c}>
+                  {tTags(`cost.${c}`)}
+                </option>
+              ))}
+            </Select>
+            <Select label={tTags("prepLevel")} value={prepLevel} onChange={(e) => setPrepLevel(e.target.value)}>
+              <option value="">{tTags("unknown")}</option>
+              {PREP_LEVELS.map((p) => (
+                <option key={p} value={p}>
+                  {tTags(`prep.${p}`)}
+                </option>
+              ))}
+            </Select>
+          </div>
         </div>
       )}
 
