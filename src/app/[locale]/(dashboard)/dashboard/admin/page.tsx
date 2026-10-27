@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Apple, Check, CheckCircle2, Clock, Stethoscope, UserCheck, Users, X } from "lucide-react";
+import { Apple, Check, CheckCircle2, Clock, Pencil, Stethoscope, UserCheck, Users, X } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { StatTile } from "@/components/clients/StatTile";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -10,7 +10,10 @@ import { FoodTable } from "@/components/foods/FoodTable";
 import { usePendingFoods } from "@/components/admin/PendingFoodsProvider";
 import { DailyRunStatus } from "@/components/admin/DailyRunStatus";
 import { ConsentConfigStatus } from "@/components/admin/ConsentConfigStatus";
-import { approveFood, getAdminOverview, listAdminFoods, rejectFood, type AdminOverview } from "@/lib/admin/api";
+import { approveFood, getAdminOverview, listAdminFoods, rejectFood, updateAdminFood, type AdminOverview } from "@/lib/admin/api";
+import { Dialog } from "@/components/ui/Dialog";
+import { Button } from "@/components/ui/Button";
+import { FoodForm } from "@/components/foods/FoodForm";
 import type { CatalogFood } from "@/lib/foods/api";
 
 /**
@@ -28,6 +31,9 @@ export default function AdminOverviewPage() {
   const [pending, setPending] = useState<CatalogFood[] | null>(null);
   const [busyId, setBusyId] = useState<number | null>(null);
   const [failed, setFailed] = useState(false);
+  // A submission being corrected, and one about to be approved with fields still missing.
+  const [editing, setEditing] = useState<CatalogFood | null>(null);
+  const [confirming, setConfirming] = useState<CatalogFood | null>(null);
 
   const load = useCallback(() => {
     getAdminOverview(authorizedFetch).then((r) => (r.ok ? setOverview(r.data) : setFailed(true)));
@@ -119,12 +125,21 @@ export default function AdminOverviewPage() {
           <FoodTable
             foods={pending}
             showSource={false}
+            showMissing
             actions={(food) => (
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
+                  onClick={() => setEditing(food)}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-canvas px-3.5 py-1.5 text-xs font-bold text-ink-muted transition-colors hover:bg-mkt-mint-bg hover:text-mkt-teal-deep"
+                >
+                  <Pencil size={14} strokeWidth={2.2} />
+                  {t("edit")}
+                </button>
+                <button
+                  type="button"
                   disabled={busyId === food.id}
-                  onClick={() => review(food, "approve")}
+                  onClick={() => ((food.missing ?? []).length > 0 ? setConfirming(food) : review(food, "approve"))}
                   className="inline-flex items-center gap-1.5 rounded-full bg-status-on-track-bg px-3.5 py-1.5 text-xs font-bold text-status-on-track transition-colors hover:bg-status-on-track hover:text-white disabled:opacity-50"
                 >
                   <Check size={14} strokeWidth={2.4} />
@@ -144,6 +159,52 @@ export default function AdminOverviewPage() {
           />
         )}
       </section>
+
+      <Dialog open={editing !== null} onClose={() => setEditing(null)} title={t("editFood")} size="lg">
+        {editing && (
+          <FoodForm
+            key={editing.id}
+            food={editing}
+            submitLabel={t("save")}
+            onCancel={() => setEditing(null)}
+            withTags
+            onSubmit={async (payload) => {
+              const result = await updateAdminFood(authorizedFetch, editing.id, payload, true);
+              if (!result.ok) return { ok: false, error: result.error };
+              setEditing(null);
+              load();
+              return { ok: true };
+            }}
+          />
+        )}
+      </Dialog>
+
+      <Dialog open={confirming !== null} onClose={() => setConfirming(null)} title={t("approveMissingTitle")}>
+        {confirming && (
+          <div className="flex flex-col gap-4">
+            <p className="text-sm leading-relaxed text-ink-muted">{t("approveMissingBody")}</p>
+            <ul className="list-disc ps-5 text-sm text-ink">
+              {(confirming.missing ?? []).map((m) => (
+                <li key={m}>{tFoods(`missing.${m}`)}</li>
+              ))}
+            </ul>
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setConfirming(null)}>
+                {tFoods("form.cancel")}
+              </Button>
+              <Button
+                onClick={() => {
+                  const food = confirming;
+                  setConfirming(null);
+                  void review(food, "approve");
+                }}
+              >
+                {t("approveAnyway")}
+              </Button>
+            </div>
+          </div>
+        )}
+      </Dialog>
     </div>
   );
 }

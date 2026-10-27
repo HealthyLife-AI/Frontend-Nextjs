@@ -185,4 +185,11 @@ export type Food = {
   /** Phase 4, B: null = not reviewed (shows nothing). */
   cost_tier?: "economical" | "standard" | "premium" | null;
   prep_level?: "no_cook" | "easy" | "normal" | null;
+  /** Nutritionist / admin responses only (never the patient's): the reviewed values and what is still missing. */
+  glycemic_index?: number | null;
+  sodium_mg_per_100g?: number | null;
+  nutrition_review_source?: string | null;
+  nutrition_reviewed_at?: string | null;
+  nutrition_reviewer_name?: string | null;
+  missing?: ("glycemic_index" | "sodium" | "cost_tier" | "prep_level")[];
 };

@@ -19,9 +19,13 @@ export type FoodInput = {
   carbs_g_per_100g: number;
   fat_g_per_100g: number;
   fiber_g_per_100g: number | null;
-  /** Admin only: allergen groups, shopping-list section, cost tier and prep level (never nutrition values). */
+  /** Admin only: allergen groups, shopping-list section, cost tier and prep level (and, for the admin, the reviewed glycemic index / sodium). */
   cost_tier?: string | null;
   prep_level?: string | null;
+  /** Sent only when set / changed: sending them is what makes the admin the reviewer. */
+  glycemic_index?: number | null;
+  sodium_mg_per_100g?: number | null;
+  nutrition_review_source?: string | null;
   allergens?: string[];
   shopping_section?: string;
 };
