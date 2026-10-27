@@ -956,7 +956,42 @@
         "legumes_nuts": "Legumes & nuts",
         "oils_spices": "Oils & spices",
         "other": "Other"
-      }
+      },
+      "extraTitle": "Extra values (optional)",
+      "glycemicIndex": "Glycemic index",
+      "glycemicHint": "Leave empty if there is no published source. Meat and oils have no glycemic index.",
+      "sodium": "Sodium (mg/100 g)",
+      "source": "Source",
+      "sourceRequired": "A source is required when the glycemic index or sodium is filled.",
+      "costTier": "Cost",
+      "prepLevel": "Preparation",
+      "notSet": "Not set",
+      "cost": {
+        "economical": "Economical",
+        "standard": "Standard",
+        "premium": "Premium"
+      },
+      "prep": {
+        "no_cook": "No cooking",
+        "easy": "Easy",
+        "normal": "Normal"
+      },
+      "lastReview": "Last reviewed: {name}, {date}"
+    },
+    "colGi": "GI",
+    "colSodium": "Sodium",
+    "colMissing": "Missing",
+    "missing": {
+      "glycemic_index": "glycemic index",
+      "sodium": "sodium",
+      "cost_tier": "cost tier",
+      "prep_level": "prep level"
+    },
+    "missingShort": {
+      "glycemic_index": "GI",
+      "sodium": "Sodium",
+      "cost_tier": "Cost",
+      "prep_level": "Prep"
     }
   },
   "admin": {
@@ -1011,7 +1046,16 @@
       "versionDefault": "CONSENT_VERSION isn't set on this server, so patients are asked to accept the default policy version {version}. Set it explicitly (see DEPLOYMENT.md) so a policy change is a deliberate step.",
       "urlDerived": "CONSENT_POLICY_URL isn't set, so the app links patients to {url} (derived from FRONTEND_URL). Set it explicitly (see DEPLOYMENT.md).",
       "urlMissing": "Neither CONSENT_POLICY_URL nor FRONTEND_URL is set, so the patient app has no link to the privacy policy. Patients can still accept; set CONSENT_POLICY_URL (see DEPLOYMENT.md)."
-    }
+    },
+    "filterMissing": "Missing: all",
+    "filterMissingOption": {
+      "glycemic_index": "Missing: glycemic index",
+      "sodium": "Missing: sodium",
+      "tags": "Missing: tags"
+    },
+    "approveMissingTitle": "Approve with missing data",
+    "approveMissingBody": "This food is still missing the following. You can approve it now and fill them in later:",
+    "approveAnyway": "Approve"
   },
   "clientsDelete": {
     "button": "Delete client",

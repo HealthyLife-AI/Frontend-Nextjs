@@ -12,12 +12,15 @@ export function FoodTable({
   foods,
   showStatus = false,
   showSource = true,
+  showMissing = false,
   actions,
   empty,
 }: {
   foods: CatalogFood[];
   showStatus?: boolean;
   showSource?: boolean;
+  /** Admin: the glycemic index, sodium and an "ناقص" badge per field still to fill in. */
+  showMissing?: boolean;
   actions?: (food: CatalogFood) => ReactNode;
   empty?: ReactNode;
 }) {
@@ -40,6 +43,9 @@ export function FoodTable({
             <th className="px-3 py-3.5 text-end">{t("colProtein")}</th>
             <th className="px-3 py-3.5 text-end">{t("colCarbs")}</th>
             <th className="px-3 py-3.5 text-end">{t("colFat")}</th>
+            {showMissing && <th className="px-3 py-3.5 text-end">{t("colGi")}</th>}
+            {showMissing && <th className="px-3 py-3.5 text-end">{t("colSodium")}</th>}
+            {showMissing && <th className="px-3 py-3.5 text-start">{t("colMissing")}</th>}
             {showSource && <th className="px-3 py-3.5 text-start">{t("colSource")}</th>}
             {showStatus && <th className="px-3 py-3.5 text-start">{t("colStatus")}</th>}
             {actions && <th className="px-5 py-3.5 text-end">{t("colActions")}</th>}
@@ -64,6 +70,24 @@ export function FoodTable({
                 <td className="px-3 py-3 text-end tabular-nums text-ink-muted">{num(food.protein_g_per_100g)}</td>
                 <td className="px-3 py-3 text-end tabular-nums text-ink-muted">{num(food.carbs_g_per_100g)}</td>
                 <td className="px-3 py-3 text-end tabular-nums text-ink-muted">{num(food.fat_g_per_100g)}</td>
+                {showMissing && <td className="px-3 py-3 text-end tabular-nums text-ink-muted">{food.glycemic_index ?? "—"}</td>}
+                {showMissing && <td className="px-3 py-3 text-end tabular-nums text-ink-muted">{food.sodium_mg_per_100g ?? "—"}</td>}
+                {showMissing && (
+                  <td className="min-w-[9.5rem] px-3 py-3">
+                    {/* One wrapping line of compact tags; the column header already says "missing". */}
+                    <span className="flex flex-wrap items-center gap-x-1 gap-y-1">
+                      {(food.missing ?? []).map((m) => (
+                        <span
+                          key={m}
+                          title={t(`missing.${m}`)}
+                          className="inline-flex items-center whitespace-nowrap rounded-full bg-status-attention-bg px-2 py-0.5 text-[11px] font-semibold leading-4 text-status-attention"
+                        >
+                          {t(`missingShort.${m}`)}
+                        </span>
+                      ))}
+                    </span>
+                  </td>
+                )}
                 {showSource && (
                   <td className="px-3 py-3">
                     <span className="rounded-full bg-canvas px-2.5 py-1 text-[11px] font-bold text-ink-muted">

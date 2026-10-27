@@ -10,7 +10,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { FoodForm } from "@/components/foods/FoodForm";
 import { FoodTable, Pager } from "@/components/foods/FoodTable";
 import { usePendingFoods } from "@/components/admin/PendingFoodsProvider";
-import { createAdminFood, deleteAdminFood, listAdminFoods, updateAdminFood, type FoodSource, type FoodUsage } from "@/lib/admin/api";
+import { createAdminFood, deleteAdminFood, listAdminFoods, updateAdminFood, type FoodMissingFilter, type FoodSource, type FoodUsage } from "@/lib/admin/api";
 import type { CatalogFood, FoodInput, FoodPage, FoodStatus } from "@/lib/foods/api";
 
 /**
@@ -31,6 +31,7 @@ export default function AdminFoodsPage() {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<FoodStatus | "">("");
   const [source, setSource] = useState<FoodSource | "">("");
+  const [missing, setMissing] = useState<FoodMissingFilter | "">("");
   const [page, setPage] = useState(1);
   const [data, setData] = useState<FoodPage | null>(null);
   const [editing, setEditing] = useState<CatalogFood | "new" | null>(null);
@@ -42,10 +43,10 @@ export default function AdminFoodsPage() {
   const [confirmError, setConfirmError] = useState<string | null>(null);
 
   const load = useCallback(() => {
-    return listAdminFoods(authorizedFetch, { q: query.trim(), status, source, page }).then((r) => {
+    return listAdminFoods(authorizedFetch, { q: query.trim(), status, source, missing, page }).then((r) => {
       if (r.ok) setData(r.data);
     });
-  }, [authorizedFetch, query, status, source, page]);
+  }, [authorizedFetch, query, status, source, missing, page]);
 
   useEffect(() => {
     const timer = setTimeout(load, 250);
@@ -143,6 +144,22 @@ export default function AdminFoodsPage() {
               </option>
             ))}
           </select>
+          <select
+            value={missing}
+            onChange={(e) => {
+              setMissing(e.target.value as FoodMissingFilter | "");
+              setPage(1);
+            }}
+            aria-label={t("filterMissing")}
+            className={select}
+          >
+            <option value="">{t("filterMissing")}</option>
+            {(["glycemic_index", "sodium", "tags"] as const).map((m) => (
+              <option key={m} value={m}>
+                {t(`filterMissingOption.${m}`)}
+              </option>
+            ))}
+          </select>
         </div>
 
         {data ? (
@@ -150,6 +167,7 @@ export default function AdminFoodsPage() {
             <FoodTable
               foods={data.data}
               showStatus
+              showMissing
               empty={tFoods("noResults")}
               actions={(food) => (
                 <div className="flex justify-end gap-1.5">

@@ -956,7 +956,42 @@
         "legumes_nuts": "بقوليات ومكسرات",
         "oils_spices": "زيوت وتوابل",
         "other": "أخرى"
-      }
+      },
+      "extraTitle": "قيم إضافية (اختياري)",
+      "glycemicIndex": "المؤشر الجلايسيمي",
+      "glycemicHint": "اتركه فارغًا إذا لم يتوفر مصدر منشور. اللحوم والزيوت ليس لها مؤشر جلايسيمي.",
+      "sodium": "الصوديوم (ملغ/100 غ)",
+      "source": "المصدر",
+      "sourceRequired": "المصدر مطلوب عند إدخال المؤشر الجلايسيمي أو الصوديوم.",
+      "costTier": "التكلفة",
+      "prepLevel": "التحضير",
+      "notSet": "غير محدد",
+      "cost": {
+        "economical": "اقتصادي",
+        "standard": "عادي",
+        "premium": "مرتفع"
+      },
+      "prep": {
+        "no_cook": "بدون طبخ",
+        "easy": "سهل",
+        "normal": "عادي"
+      },
+      "lastReview": "آخر مراجعة: {name}، {date}"
+    },
+    "colGi": "المؤشر",
+    "colSodium": "الصوديوم",
+    "colMissing": "الناقص",
+    "missing": {
+      "glycemic_index": "المؤشر الجلايسيمي",
+      "sodium": "الصوديوم",
+      "cost_tier": "التكلفة",
+      "prep_level": "التحضير"
+    },
+    "missingShort": {
+      "glycemic_index": "مؤشر",
+      "sodium": "صوديوم",
+      "cost_tier": "تكلفة",
+      "prep_level": "تحضير"
     }
   },
   "admin": {
@@ -1011,7 +1046,16 @@
       "versionDefault": "المتغير CONSENT_VERSION غير مضبوط على هذا الخادم، لذا يُطلب من المرضى الموافقة على إصدار السياسة الافتراضي {version}. اضبطه صراحةً (راجع DEPLOYMENT.md) ليكون تغيير السياسة خطوة مقصودة.",
       "urlDerived": "المتغير CONSENT_POLICY_URL غير مضبوط، لذا يوجّه التطبيق المرضى إلى {url} (مشتق من FRONTEND_URL). اضبطه صراحةً (راجع DEPLOYMENT.md).",
       "urlMissing": "لا CONSENT_POLICY_URL ولا FRONTEND_URL مضبوطان، لذا لا يعرض تطبيق المرضى رابطاً لسياسة الخصوصية. ما زال بإمكان المرضى الموافقة؛ اضبط CONSENT_POLICY_URL (راجع DEPLOYMENT.md)."
-    }
+    },
+    "filterMissing": "ناقص: الكل",
+    "filterMissingOption": {
+      "glycemic_index": "ناقص: المؤشر الجلايسيمي",
+      "sodium": "ناقص: الصوديوم",
+      "tags": "ناقص: الوسوم"
+    },
+    "approveMissingTitle": "الموافقة مع بيانات ناقصة",
+    "approveMissingBody": "هذا الطعام ينقصه ما يلي. يمكنك الموافقة الآن وإكمالها لاحقًا:",
+    "approveAnyway": "اعتماد"
   },
   "clientsDelete": {
     "button": "حذف المريض",

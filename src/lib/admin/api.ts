@@ -51,6 +51,9 @@ export type AdminNutritionistPage = {
 
 export type FoodSource = "usda" | "admin" | "nutritionist";
 
+/** Foods still waiting for a reviewer: no glycemic index (where one applies), no sodium, or no tags. */
+export type FoodMissingFilter = "glycemic_index" | "sodium" | "tags";
+
 export function getAdminOverview(fetcher: Fetcher) {
   return fetcher("/admin/overview").then((res) => parseJson<AdminOverview>(res));
 }
@@ -65,12 +68,13 @@ export function listAdminNutritionists(fetcher: Fetcher, params: { q?: string; p
 
 export function listAdminFoods(
   fetcher: Fetcher,
-  params: { q?: string; status?: FoodStatus | ""; source?: FoodSource | ""; page?: number }
+  params: { q?: string; status?: FoodStatus | ""; source?: FoodSource | ""; missing?: FoodMissingFilter | ""; page?: number }
 ) {
   const query = new URLSearchParams();
   if (params.q) query.set("q", params.q);
   if (params.status) query.set("status", params.status);
   if (params.source) query.set("source", params.source);
+  if (params.missing) query.set("missing", params.missing);
   if (params.page && params.page > 1) query.set("page", String(params.page));
   const qs = query.toString();
   return fetcher(`/admin/foods${qs ? `?${qs}` : ""}`).then((res) => parseJson<FoodPage>(res));
