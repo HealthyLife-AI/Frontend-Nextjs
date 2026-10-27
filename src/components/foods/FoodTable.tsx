@@ -73,12 +73,17 @@ export function FoodTable({
                 {showMissing && <td className="px-3 py-3 text-end tabular-nums text-ink-muted">{food.glycemic_index ?? "—"}</td>}
                 {showMissing && <td className="px-3 py-3 text-end tabular-nums text-ink-muted">{food.sodium_mg_per_100g ?? "—"}</td>}
                 {showMissing && (
-                  <td className="px-3 py-3">
-                    <span className="flex flex-wrap gap-1">
+                  <td className="min-w-[9.5rem] px-3 py-3">
+                    {/* One wrapping line of compact tags; the column header already says "missing". */}
+                    <span className="flex flex-wrap items-center gap-x-1 gap-y-1">
                       {(food.missing ?? []).map((m) => (
-                        <Badge key={m} tone="warning">
-                          {t("missingBadge", { field: t(`missing.${m}`) })}
-                        </Badge>
+                        <span
+                          key={m}
+                          title={t(`missing.${m}`)}
+                          className="inline-flex items-center whitespace-nowrap rounded-full bg-status-attention-bg px-2 py-0.5 text-[11px] font-semibold leading-4 text-status-attention"
+                        >
+                          {t(`missingShort.${m}`)}
+                        </span>
                       ))}
                     </span>
                   </td>

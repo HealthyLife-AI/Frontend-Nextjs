@@ -981,12 +981,17 @@
     "colGi": "المؤشر",
     "colSodium": "الصوديوم",
     "colMissing": "الناقص",
-    "missingBadge": "ناقص: {field}",
     "missing": {
       "glycemic_index": "المؤشر الجلايسيمي",
       "sodium": "الصوديوم",
       "cost_tier": "التكلفة",
       "prep_level": "التحضير"
+    },
+    "missingShort": {
+      "glycemic_index": "مؤشر",
+      "sodium": "صوديوم",
+      "cost_tier": "تكلفة",
+      "prep_level": "تحضير"
     }
   },
   "admin": {
@@ -1050,7 +1055,7 @@
     },
     "approveMissingTitle": "الموافقة مع بيانات ناقصة",
     "approveMissingBody": "هذا الطعام ينقصه ما يلي. يمكنك الموافقة الآن وإكمالها لاحقًا:",
-    "approveAnyway": "موافقة"
+    "approveAnyway": "اعتماد"
   },
   "clientsDelete": {
     "button": "حذف المريض",

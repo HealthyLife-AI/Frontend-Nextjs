@@ -981,12 +981,17 @@
     "colGi": "GI",
     "colSodium": "Sodium",
     "colMissing": "Missing",
-    "missingBadge": "Missing: {field}",
     "missing": {
       "glycemic_index": "glycemic index",
       "sodium": "sodium",
       "cost_tier": "cost tier",
       "prep_level": "prep level"
+    },
+    "missingShort": {
+      "glycemic_index": "GI",
+      "sodium": "Sodium",
+      "cost_tier": "Cost",
+      "prep_level": "Prep"
     }
   },
   "admin": {
