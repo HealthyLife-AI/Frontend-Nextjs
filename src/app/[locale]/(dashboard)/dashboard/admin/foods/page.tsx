@@ -10,7 +10,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { FoodForm } from "@/components/foods/FoodForm";
 import { FoodTable, Pager } from "@/components/foods/FoodTable";
 import { usePendingFoods } from "@/components/admin/PendingFoodsProvider";
-import { createAdminFood, deleteAdminFood, listAdminFoods, updateAdminFood, type FoodMissingFilter, type FoodSource, type FoodUsage } from "@/lib/admin/api";
+import { createAdminFood, deleteAdminFood, listAdminFoods, setRegionalCost, updateAdminFood, type FoodMissingFilter, type FoodSource, type FoodUsage } from "@/lib/admin/api";
 import type { CatalogFood, FoodInput, FoodPage, FoodStatus } from "@/lib/foods/api";
 
 /**
@@ -215,6 +215,17 @@ export default function AdminFoodsPage() {
             submitLabel={editing === "new" ? t("create") : t("save")}
             onCancel={() => setEditing(null)}
             withTags
+            onClearRegionalCost={
+              editing === "new"
+                ? undefined
+                : async (country) => {
+                    const r = await setRegionalCost(authorizedFetch, editing.id, country, null);
+                    if (r.ok) {
+                      setEditing(r.data);
+                      load();
+                    }
+                  }
+            }
             onSubmit={async (payload) => {
               const result =
                 editing === "new"

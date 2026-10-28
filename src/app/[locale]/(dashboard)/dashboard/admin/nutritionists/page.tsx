@@ -6,7 +6,7 @@ import { Search } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Pager } from "@/components/foods/FoodTable";
-import { listAdminNutritionists, type AdminNutritionistPage } from "@/lib/admin/api";
+import { listAdminNutritionists, setNutritionistCountry, type AdminNutritionistPage } from "@/lib/admin/api";
 
 /** Every nutritionist account on the platform, with client counts. */
 export default function AdminNutritionistsPage() {
@@ -17,6 +17,7 @@ export default function AdminNutritionistsPage() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [data, setData] = useState<AdminNutritionistPage | null>(null);
+  const [countryError, setCountryError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -30,6 +31,14 @@ export default function AdminNutritionistsPage() {
       clearTimeout(timer);
     };
   }, [authorizedFetch, query, page]);
+
+  async function changeCountry(id: number, country: string) {
+    setCountryError(false);
+    const r = await setNutritionistCountry(authorizedFetch, id, country);
+
+    if (!r.ok) return setCountryError(true);
+    setData((d) => (d ? { ...d, data: d.data.map((n) => (n.id === id ? { ...n, country: r.data.country } : n)) } : d));
+  }
 
   return (
     <div className="flex flex-col gap-7">
@@ -52,6 +61,12 @@ export default function AdminNutritionistsPage() {
           </label>
         </div>
 
+        {countryError && (
+          <p role="alert" className="mx-4 mt-3 rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
+            {t("countryFailed")}
+          </p>
+        )}
+
         {!data ? (
           <p className="px-5 py-14 text-center text-sm text-ink-muted">…</p>
         ) : data.data.length === 0 ? (
@@ -64,6 +79,7 @@ export default function AdminNutritionistsPage() {
                   <tr className="border-b border-border/70 bg-mkt-mint-bg/60 text-xs font-bold text-mkt-teal-deep">
                     <th className="px-5 py-3.5 text-start">{t("colName")}</th>
                     <th className="px-3 py-3.5 text-start">{t("colClinic")}</th>
+                    <th className="px-3 py-3.5 text-start">{t("colCountry")}</th>
                     <th className="px-3 py-3.5 text-end">{t("colClients")}</th>
                     <th className="px-3 py-3.5 text-end">{t("colActive")}</th>
                     <th className="px-5 py-3.5 text-end">{t("colJoined")}</th>
@@ -86,6 +102,20 @@ export default function AdminNutritionistsPage() {
                         </div>
                       </td>
                       <td className="px-3 py-3 text-ink-muted">{n.clinic_name ?? "—"}</td>
+                      <td className="px-3 py-3">
+                        <select
+                          value={n.country}
+                          onChange={(e) => changeCountry(n.id, e.target.value)}
+                          aria-label={t("colCountry")}
+                          className="h-9 rounded-field border border-border bg-canvas px-2 text-xs text-ink outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
+                        >
+                          {Object.entries(data.countries).map(([code, name]) => (
+                            <option key={code} value={code}>
+                              {code} · {name}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
                       <td className="px-3 py-3 text-end font-bold tabular-nums text-ink">{n.clients_count}</td>
                       <td className="px-3 py-3 text-end tabular-nums text-status-on-track">{n.active_clients_count}</td>
                       <td className="px-5 py-3 text-end text-ink-muted">

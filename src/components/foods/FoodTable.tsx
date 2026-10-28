@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/Badge";
-import type { CatalogFood } from "@/lib/foods/api";
+import { COST_TIERS, type CatalogFood } from "@/lib/foods/api";
 
 const STATUS_TONE = { approved: "success", pending: "warning", rejected: "danger" } as const;
 
@@ -13,6 +13,7 @@ export function FoodTable({
   showStatus = false,
   showSource = true,
   showMissing = false,
+  onCostChange,
   actions,
   empty,
 }: {
@@ -21,6 +22,8 @@ export function FoodTable({
   showSource?: boolean;
   /** Admin: the glycemic index, sodium and an "ناقص" badge per field still to fill in. */
   showMissing?: boolean;
+  /** Nutritionist: an inline cost selector ("التكلفة في بلدك") that writes the tier for their own country. */
+  onCostChange?: (food: CatalogFood, tier: string | null) => void;
   actions?: (food: CatalogFood) => ReactNode;
   empty?: ReactNode;
 }) {
@@ -43,6 +46,7 @@ export function FoodTable({
             <th className="px-3 py-3.5 text-end">{t("colProtein")}</th>
             <th className="px-3 py-3.5 text-end">{t("colCarbs")}</th>
             <th className="px-3 py-3.5 text-end">{t("colFat")}</th>
+            {onCostChange && <th className="px-3 py-3.5 text-start">{t("colCost")}</th>}
             {showMissing && <th className="px-3 py-3.5 text-end">{t("colGi")}</th>}
             {showMissing && <th className="px-3 py-3.5 text-end">{t("colSodium")}</th>}
             {showMissing && <th className="px-3 py-3.5 text-start">{t("colMissing")}</th>}
@@ -70,6 +74,23 @@ export function FoodTable({
                 <td className="px-3 py-3 text-end tabular-nums text-ink-muted">{num(food.protein_g_per_100g)}</td>
                 <td className="px-3 py-3 text-end tabular-nums text-ink-muted">{num(food.carbs_g_per_100g)}</td>
                 <td className="px-3 py-3 text-end tabular-nums text-ink-muted">{num(food.fat_g_per_100g)}</td>
+                {onCostChange && (
+                  <td className="px-3 py-3">
+                    <select
+                      value={food.cost_tier ?? ""}
+                      onChange={(e) => onCostChange(food, e.target.value === "" ? null : e.target.value)}
+                      aria-label={t("colCost")}
+                      className="h-9 rounded-field border border-border bg-canvas px-2 text-xs text-ink outline-none focus:border-primary focus:ring-4 focus:ring-primary/10"
+                    >
+                      <option value="">{t("form.notSet")}</option>
+                      {COST_TIERS.map((c) => (
+                        <option key={c} value={c}>
+                          {t(`form.cost.${c}`)}
+                        </option>
+                      ))}
+                    </select>
+                  </td>
+                )}
                 {showMissing && <td className="px-3 py-3 text-end tabular-nums text-ink-muted">{food.glycemic_index ?? "—"}</td>}
                 {showMissing && <td className="px-3 py-3 text-end tabular-nums text-ink-muted">{food.sodium_mg_per_100g ?? "—"}</td>}
                 {showMissing && (

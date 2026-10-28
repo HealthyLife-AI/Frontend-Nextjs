@@ -52,6 +52,18 @@ export function submitFood(fetcher: Fetcher, payload: FoodInput) {
   }).then((res) => parseJson<CatalogFood>(res));
 }
 
+/**
+ * The nutritionist's cost tier for a food in THEIR OWN country (the server picks the country; one is never sent).
+ * Applies at once. `null` clears it.
+ */
+export function setFoodCost(fetcher: Fetcher, id: number, costTier: string | null) {
+  return fetcher(`/foods/${id}/cost`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ cost_tier: costTier }),
+  }).then((res) => parseJson<{ food_id: number; country: string; cost_tier: string | null }>(res));
+}
+
 /** Nutritionist: their own submissions with review status. */
 export function listMyFoods(fetcher: Fetcher, page = 1) {
   return fetcher(`/foods/mine?page=${page}`).then((res) => parseJson<FoodPage>(res));

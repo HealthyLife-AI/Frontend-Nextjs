@@ -192,4 +192,6 @@ export type Food = {
   nutrition_reviewed_at?: string | null;
   nutrition_reviewer_name?: string | null;
   missing?: ("glycemic_index" | "sodium" | "cost_tier" | "prep_level")[];
+  /** Admin responses only: the cost tier in each country that has its own value (foods.cost_tier is the PS one). */
+  regional_costs?: { country: string; country_name: string; cost_tier: string; set_by_name: string | null; updated_at: string | null }[];
 };

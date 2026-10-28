@@ -9,7 +9,7 @@ import { Dialog } from "@/components/ui/Dialog";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { FoodForm } from "@/components/foods/FoodForm";
 import { FoodTable, Pager } from "@/components/foods/FoodTable";
-import { listMyFoods, searchCatalog, submitFood, type FoodPage } from "@/lib/foods/api";
+import { listMyFoods, searchCatalog, setFoodCost, submitFood, type CatalogFood, type FoodPage } from "@/lib/foods/api";
 
 /**
  * Nutritionist's view of the food catalog: search the approved database
@@ -28,6 +28,7 @@ export default function FoodsPage() {
   const [mine, setMine] = useState<FoodPage | null>(null);
   const [adding, setAdding] = useState(false);
   const [notice, setNotice] = useState(false);
+  const [costError, setCostError] = useState(false);
 
   const term = query.trim();
 
@@ -54,6 +55,18 @@ export default function FoodsPage() {
   useEffect(() => {
     loadMine();
   }, [loadMine]);
+
+  // The cost tier is the nutritionist's own country's and applies at once: write it, then show it in the row.
+  async function changeCost(food: CatalogFood, tier: string | null) {
+    setCostError(false);
+    const r = await setFoodCost(authorizedFetch, food.id, tier);
+
+    if (!r.ok) return setCostError(true);
+
+    const apply = (page: FoodPage | null) => (page ? { ...page, data: page.data.map((f) => (f.id === food.id ? { ...f, cost_tier: tier as CatalogFood["cost_tier"] } : f)) } : page);
+    setResults(apply);
+    setMine(apply);
+  }
 
   return (
     <div className="flex flex-col gap-7">
@@ -97,7 +110,12 @@ export default function FoodsPage() {
           <p className="px-5 py-14 text-center text-sm text-ink-muted">{t("searchHint")}</p>
         ) : results ? (
           <>
-            <FoodTable foods={results.data} empty={t("noResults")} />
+            {costError && (
+              <p role="alert" className="mx-4 mt-3 rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
+                {t("costFailed")}
+              </p>
+            )}
+            <FoodTable foods={results.data} empty={t("noResults")} onCostChange={changeCost} />
             <Pager page={results.meta.current_page} lastPage={results.meta.last_page} total={results.meta.total} onPage={setPage} />
           </>
         ) : (
