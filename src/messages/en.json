@@ -976,7 +976,11 @@
         "easy": "Easy",
         "normal": "Normal"
       },
-      "lastReview": "Last reviewed: {name}, {date}"
+      "lastReview": "Last reviewed: {name}, {date}",
+      "costTierPs": "Cost (Palestine)",
+      "regionalTitle": "Cost in other countries (read-only)",
+      "regionalEmpty": "No country-specific values.",
+      "regionalClear": "Clear"
     },
     "colGi": "GI",
     "colSodium": "Sodium",
@@ -992,7 +996,9 @@
       "sodium": "Sodium",
       "cost_tier": "Cost",
       "prep_level": "Prep"
-    }
+    },
+    "colCost": "Cost in your country",
+    "costFailed": "Could not save the cost. Try again."
   },
   "admin": {
     "eyebrow": "Admin panel",
@@ -1055,7 +1061,9 @@
     },
     "approveMissingTitle": "Approve with missing data",
     "approveMissingBody": "This food is still missing the following. You can approve it now and fill them in later:",
-    "approveAnyway": "Approve"
+    "approveAnyway": "Approve",
+    "colCountry": "Country",
+    "countryFailed": "Could not save the country. Try again."
   },
   "clientsDelete": {
     "button": "Delete client",

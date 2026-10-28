@@ -39,12 +39,16 @@ export type AdminNutritionist = {
   email: string;
   phone: string | null;
   clinic_name: string | null;
+  /** ISO code: decides which country's food costs they read. */
+  country: string;
   clients_count: number;
   active_clients_count: number;
   created_at: string | null;
 };
 
 export type AdminNutritionistPage = {
+  /** The countries a nutritionist can be set to (code => Arabic name): one list, from the server. */
+  countries: Record<string, string>;
   data: AdminNutritionist[];
   meta: { current_page: number; last_page: number; total: number; per_page: number };
 };
@@ -108,6 +112,23 @@ export function deleteAdminFood(fetcher: Fetcher, id: number) {
   return fetcher(`/admin/foods/${id}`, { method: "DELETE" }).then((res) =>
     parseJson<null>(res)
   );
+}
+
+export function setNutritionistCountry(fetcher: Fetcher, id: number, country: string) {
+  return fetcher(`/admin/nutritionists/${id}/country`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ country }),
+  }).then((res) => parseJson<{ id: number; country: string }>(res));
+}
+
+/** A food's cost tier in any country; `null` clears that country's value. Returns the food with its regional rows. */
+export function setRegionalCost(fetcher: Fetcher, foodId: number, country: string, costTier: string | null) {
+  return fetcher(`/admin/foods/${foodId}/regional-costs/${country}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ cost_tier: costTier }),
+  }).then((res) => parseJson<CatalogFood>(res));
 }
 
 export function approveFood(fetcher: Fetcher, id: number) {

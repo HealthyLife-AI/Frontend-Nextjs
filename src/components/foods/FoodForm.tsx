@@ -50,6 +50,7 @@ export function FoodForm({
   onSubmit,
   onCancel,
   withTags = false,
+  onClearRegionalCost,
 }: {
   food?: CatalogFood | null;
   submitLabel: string;
@@ -57,6 +58,8 @@ export function FoodForm({
   onCancel?: () => void;
   /** Admin: also edit allergen groups and the shopping-list section, and the extras are open. */
   withTags?: boolean;
+  /** Admin edit: clear one country's cost tier (the list below is read-only otherwise). */
+  onClearRegionalCost?: (country: string) => Promise<void>;
 }) {
   const t = useTranslations("foods.form");
   const tGroup = useTranslations("healthRecords.group");
@@ -170,7 +173,7 @@ export function FoodForm({
         hint={gi.trim() !== "" || sodium.trim() !== "" ? t("sourceRequired") : undefined}
       />
       <div className="grid gap-3 sm:grid-cols-2">
-        <Select label={t("costTier")} value={costTier} onChange={(e) => setCostTier(e.target.value)} error={errors.cost_tier}>
+        <Select label={withTags ? t("costTierPs") : t("costTier")} value={costTier} onChange={(e) => setCostTier(e.target.value)} error={errors.cost_tier}>
           <option value="">{t("notSet")}</option>
           {COST_TIERS.map((c) => (
             <option key={c} value={c}>
@@ -187,6 +190,33 @@ export function FoodForm({
           ))}
         </Select>
       </div>
+      {withTags && food && (
+        <div className="flex flex-col gap-1.5 rounded-field bg-canvas/60 p-3">
+          <p className="text-xs font-semibold text-ink-muted">{t("regionalTitle")}</p>
+          {(food.regional_costs ?? []).length === 0 ? (
+            <p className="text-xs text-ink-muted">{t("regionalEmpty")}</p>
+          ) : (
+            <ul className="flex flex-col gap-1">
+              {(food.regional_costs ?? []).map((r) => (
+                <li key={r.country} className="flex flex-wrap items-center justify-between gap-2 text-xs text-ink">
+                  <span>
+                    <span className="font-bold">{r.country}</span> {r.country_name} · {t(`cost.${r.cost_tier}`)}
+                    <span className="text-ink-muted">
+                      {r.set_by_name ? ` · ${r.set_by_name}` : ""}
+                      {r.updated_at ? ` · ${formatLongDate(r.updated_at.slice(0, 10), locale)}` : ""}
+                    </span>
+                  </span>
+                  {onClearRegionalCost && (
+                    <button type="button" onClick={() => onClearRegionalCost(r.country)} className="font-semibold text-status-late hover:underline">
+                      {t("regionalClear")}
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
       {food?.nutrition_reviewed_at && (
         <p className="text-xs text-ink-muted">
           {t("lastReview", { name: food.nutrition_reviewer_name ?? "—", date: formatLongDate(food.nutrition_reviewed_at.slice(0, 10), locale) })}

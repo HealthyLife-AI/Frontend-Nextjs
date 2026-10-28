@@ -976,7 +976,11 @@
         "easy": "سهل",
         "normal": "عادي"
       },
-      "lastReview": "آخر مراجعة: {name}، {date}"
+      "lastReview": "آخر مراجعة: {name}، {date}",
+      "costTierPs": "التكلفة (فلسطين)",
+      "regionalTitle": "تكلفة الأطعمة في بلدان أخرى (للقراءة فقط)",
+      "regionalEmpty": "لا قيم خاصة ببلدان أخرى.",
+      "regionalClear": "مسح"
     },
     "colGi": "المؤشر",
     "colSodium": "الصوديوم",
@@ -992,7 +996,9 @@
       "sodium": "صوديوم",
       "cost_tier": "تكلفة",
       "prep_level": "تحضير"
-    }
+    },
+    "colCost": "التكلفة في بلدك",
+    "costFailed": "تعذّر حفظ التكلفة. حاول مجددًا."
   },
   "admin": {
     "eyebrow": "لوحة الإدارة",
@@ -1055,7 +1061,9 @@
     },
     "approveMissingTitle": "الموافقة مع بيانات ناقصة",
     "approveMissingBody": "هذا الطعام ينقصه ما يلي. يمكنك الموافقة الآن وإكمالها لاحقًا:",
-    "approveAnyway": "اعتماد"
+    "approveAnyway": "اعتماد",
+    "colCountry": "البلد",
+    "countryFailed": "تعذّر حفظ البلد. حاول مجددًا."
   },
   "clientsDelete": {
     "button": "حذف المريض",

@@ -7,6 +7,8 @@ export type AuthUser = {
   nutritionist_id: number | null;
   /** Google profile picture when the account signed in with Google; null otherwise. */
   avatar_url?: string | null;
+  /** A nutritionist's country (ISO code); read-only for them, an admin sets it. */
+  country?: string;
 };
 
 /** What the browser gets back — never includes the refresh token. */
