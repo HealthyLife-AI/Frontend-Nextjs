@@ -1,6 +1,6 @@
 "use client";
 
-import { Apple, Bell, CalendarClock, LayoutGrid, Lightbulb, LogOut, MessageSquareMore, Settings, Stethoscope, Users, UtensilsCrossed, X } from "lucide-react";
+import { Apple, Bell, BrainCircuit, CalendarClock, LayoutGrid, Lightbulb, LogOut, MessageSquareMore, Settings, Stethoscope, Users, UtensilsCrossed, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import type { ComponentType } from "react";
@@ -12,7 +12,7 @@ import { LocaleSwitcher } from "./LocaleSwitcher";
 
 type NavItem = {
   href: string;
-  labelKey: "dashboard" | "patients" | "appointments" | "plans" | "foods" | "alerts" | "requests" | "posts" | "settings" | "adminOverview" | "adminFoods" | "adminNutritionists";
+  labelKey: "dashboard" | "patients" | "appointments" | "plans" | "foods" | "alerts" | "requests" | "posts" | "settings" | "adminOverview" | "adminFoods" | "adminNutritionists" | "adminAiUsage";
   icon: ComponentType<{ size?: number; strokeWidth?: number }>;
 };
 
@@ -33,6 +33,7 @@ const ADMIN_NAV_ITEMS: NavItem[] = [
   { href: "/dashboard/admin", labelKey: "adminOverview", icon: LayoutGrid },
   { href: "/dashboard/admin/foods", labelKey: "adminFoods", icon: Apple },
   { href: "/dashboard/admin/nutritionists", labelKey: "adminNutritionists", icon: Stethoscope },
+  { href: "/dashboard/admin/ai-usage", labelKey: "adminAiUsage", icon: BrainCircuit },
 ];
 
 /**

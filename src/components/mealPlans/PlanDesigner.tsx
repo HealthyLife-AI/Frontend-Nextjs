@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Bookmark, Calculator, Printer, RotateCcw, ShieldAlert, Sparkles, Verified } from "lucide-react";
+import { Bookmark, Calculator, Info, Printer, RotateCcw, ShieldAlert, Sparkles, Verified } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { getHealthProfile } from "@/lib/clients/api";
@@ -112,6 +112,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
   const [noticeReason, setNoticeReason] = useState<string | null>(null);
   // A patient-proposed allergy is not used by the draft (or anywhere) until approved.
   const [pendingAllergy, setPendingAllergy] = useState(false);
+  const [aiLimitReached, setAiLimitReached] = useState(false);
   // Pilot feedback 2, C1: the patient's current medications, names only.
   const [medicationNames, setMedicationNames] = useState<string[]>([]);
   // Pilot feedback 2, A5: the activation / acknowledgement dialog. A fresh `key`
@@ -464,6 +465,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
     setNotice(null);
     setNoticeReason(null);
     if (result.data.warnings?.includes("pending_allergy_proposal")) setPendingAllergy(true);
+    setAiLimitReached(Boolean(result.data.ai_limit) || Boolean(result.data.warnings?.includes("ai_draft_limit_reached")));
   }
 
   async function handleSaveAsTemplate() {
@@ -497,6 +499,13 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
 
   return (
     <div className="flex flex-col gap-5">
+      {aiLimitReached && (
+        <p role="status" className="flex flex-wrap items-center gap-2 rounded-field border border-status-attention/30 bg-status-attention-bg px-3.5 py-2.5 text-sm text-ink">
+          <Info size={17} className="shrink-0 text-status-attention" aria-hidden="true" />
+          {t("aiLimitBanner")}
+        </p>
+      )}
+
       {pendingAllergy && (
         <p role="alert" className="flex flex-wrap items-center gap-2 rounded-field border border-status-attention/30 bg-status-attention-bg px-3.5 py-2.5 text-sm text-ink">
           <ShieldAlert size={17} className="shrink-0 text-status-attention" aria-hidden="true" />

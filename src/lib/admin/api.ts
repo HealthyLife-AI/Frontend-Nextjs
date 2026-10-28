@@ -138,3 +138,36 @@ export function approveFood(fetcher: Fetcher, id: number) {
 export function rejectFood(fetcher: Fetcher, id: number) {
   return fetcher(`/foods/${id}/reject`, { method: "POST" }).then((res) => parseJson<CatalogFood>(res));
 }
+
+export type AiUsageRow = {
+  calls: number;
+  successful_calls: number;
+  prompt_tokens: number;
+  completion_tokens: number;
+  cached_tokens: number;
+  total_tokens: number;
+  cost_usd: number;
+};
+
+export type AiUsageReport = {
+  month: string;
+  from: string;
+  to: string;
+  prices_usd_per_million: { input: number; output: number; cached_input: number };
+  totals: AiUsageRow;
+  by_feature: (AiUsageRow & { feature: string })[];
+  top_nutritionists: (AiUsageRow & {
+    id: number;
+    name: string | null;
+    active_patients: number;
+    cost_per_active_patient_usd: number | null;
+  })[];
+  active_patients: number;
+  cost_per_active_patient_usd: number | null;
+  active_patient_definition: string;
+};
+
+/** `month` is YYYY-MM; omitted means the current month in the clinic's timezone. */
+export function getAiUsage(fetcher: Fetcher, month?: string) {
+  return fetcher(`/admin/ai-usage${month ? `?month=${encodeURIComponent(month)}` : ""}`).then((res) => parseJson<AiUsageReport>(res));
+}
