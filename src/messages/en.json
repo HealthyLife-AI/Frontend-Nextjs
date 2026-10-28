@@ -895,6 +895,7 @@
     "fallbackDraftTag": "Calorie-based starting draft",
     "fallbackDraftNote": "An AI suggestion wasn’t available this time, so this draft is based on calories only. Allergies were checked by name only — please review the items carefully.",
     "fallbackRetry": "Try again with AI",
+    "aiLimitBanner": "You reached the monthly limit of AI drafts, so this is an automatic draft without AI. Contact us if you need the limit raised.",
     "pendingAllergyBanner": "The patient proposed an allergy that is not approved yet; its foods are not excluded from drafts until you approve it.",
     "pendingAllergyReview": "Review the proposal",
     "allergenAcknowledged": "Conflict review recorded."

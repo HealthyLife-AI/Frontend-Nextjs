@@ -162,7 +162,7 @@ export function generateAiDraft(
   // Phase 4, B6: soft preferences, off unless ticked.
   options: { preferEconomical?: boolean; preferEasyPrep?: boolean } = {}
 ) {
-  // `warnings`: "pending_allergy_proposal" while a patient-proposed allergy awaits approval.
+  // `warnings`: "pending_allergy_proposal" while a patient-proposed allergy awaits approval; "ai_draft_limit_reached" (with `ai_limit`) when the monthly AI cap made this the rule-based draft.
   return fetcher(`/clients/${subscriberId}/meal-plans/ai-draft`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -171,7 +171,7 @@ export function generateAiDraft(
       ...(options.preferEconomical ? { prefer_economical: true } : {}),
       ...(options.preferEasyPrep ? { prefer_easy_prep: true } : {}),
     }),
-  }).then((res) => parseJson<MealPlan & { warnings?: string[] }>(res));
+  }).then((res) => parseJson<MealPlan & { warnings?: string[]; ai_limit?: { message_ar: string; message_en: string } | null }>(res));
 }
 
 /** `name` is optional — see `MealPlan.name`'s note on why only a template ever has one. */
