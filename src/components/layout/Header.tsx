@@ -11,6 +11,7 @@ import { LocaleSwitcher } from "./LocaleSwitcher";
 const SECTIONS = [
   { href: "/dashboard/admin/foods", key: "adminFoods" },
   { href: "/dashboard/admin/nutritionists", key: "adminNutritionists" },
+  { href: "/dashboard/admin/ai-usage", key: "adminAiUsage" },
   { href: "/dashboard/admin", key: "adminOverview" },
   { href: "/dashboard/foods", key: "foods" },
   { href: "/dashboard/patients", key: "patients" },
