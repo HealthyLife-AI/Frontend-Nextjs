@@ -1185,9 +1185,8 @@
   },
   "legal": {
     "shell": {
-      "draftTitle": "Draft — placeholder text",
-      "draftBody": "This page is a placeholder. The final text will replace it before launch; nothing on this page is the policy patients agree to.",
       "backHome": "Back to the home page",
+      "privacyPolicy": "Privacy policy",
       "copyright": "© {year} HealthyLife AI"
     },
     "accountDeletion": {
@@ -1209,12 +1208,9 @@
     },
     "privacy": {
       "title": "Privacy policy",
-      "intro": "How HealthyLife AI handles the information of nutritionists and their patients.",
-      "placeholder": "Placeholder — the final text for this section will be added before launch.",
-      "s1Title": "What information is handled",
-      "s2Title": "How it is used",
-      "s3Title": "Who can see it",
-      "s4Title": "Your choices and how to reach us"
+      "metaDescription": "The HealthyLife privacy policy: what information we collect, how we use and protect it, and your rights.",
+      "lastUpdated": "Last updated: {date}",
+      "switchLanguage": "العربية"
     }
   },
   "notices": {

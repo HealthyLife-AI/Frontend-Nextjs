@@ -18,6 +18,7 @@ import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
   const t = await getTranslations("common");
   const tShowcase = await getTranslations("auth.showcase");
+  const tLegal = await getTranslations("legal.shell");
 
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-canvas px-3 py-6 sm:px-6 lg:py-10">
@@ -41,7 +42,12 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
             <div className="w-full max-w-[400px]">{children}</div>
           </div>
 
-          <p className="text-center text-xs text-ink-muted/80">© {new Date().getFullYear()} {t("brandFull")}</p>
+          <p className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-center text-xs text-ink-muted/80">
+            <span>© {new Date().getFullYear()} {t("brandFull")}</span>
+            <Link href="/privacy" className="font-semibold text-mkt-teal-deep hover:text-primary">
+              {tLegal("privacyPolicy")}
+            </Link>
+          </p>
         </div>
 
         {/* Brand half */}
