@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
-import { TriangleAlert } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
@@ -12,19 +11,14 @@ import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
  * its links are in-page anchors (`#faq`) that mean nothing off the
  * homepage. Logical properties only, so it lays out the same in both
  * directions.
- *
- * `draft` puts a prominent notice above the content for pages whose text
- * is a placeholder (the privacy policy, until the real text is provided).
  */
 export async function LegalPage({
   title,
   intro,
-  draft = false,
   children,
 }: {
   title: string;
   intro?: string;
-  draft?: boolean;
   children: ReactNode;
 }) {
   const t = await getTranslations("legal.shell");
@@ -43,16 +37,6 @@ export async function LegalPage({
       </header>
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:px-6 sm:py-14">
-        {draft && (
-          <div role="note" className="mb-8 flex items-start gap-3 rounded-panel border border-status-attention/30 bg-status-attention-bg p-4">
-            <TriangleAlert size={20} strokeWidth={1.75} className="mt-0.5 shrink-0 text-status-attention" aria-hidden="true" />
-            <div>
-              <p className="text-sm font-bold text-ink">{t("draftTitle")}</p>
-              <p className="mt-0.5 text-sm text-ink-muted">{t("draftBody")}</p>
-            </div>
-          </div>
-        )}
-
         <h1 className="text-balance text-3xl font-extrabold leading-tight text-ink sm:text-4xl">{title}</h1>
         {intro && <p className="mt-4 text-pretty text-lg leading-relaxed text-ink-muted">{intro}</p>}
 
@@ -62,9 +46,14 @@ export async function LegalPage({
       <footer className="border-t border-divider bg-card">
         <div className="mx-auto flex max-w-3xl flex-col items-center justify-between gap-2 px-4 py-6 text-xs text-ink-muted sm:flex-row sm:px-6">
           <span>{t("copyright", { year })}</span>
-          <Link href="/" className="font-semibold text-mkt-teal-deep hover:text-primary">
-            {t("backHome")}
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/privacy" className="font-semibold text-mkt-teal-deep hover:text-primary">
+              {t("privacyPolicy")}
+            </Link>
+            <Link href="/" className="font-semibold text-mkt-teal-deep hover:text-primary">
+              {t("backHome")}
+            </Link>
+          </div>
         </div>
       </footer>
     </div>

@@ -12,8 +12,7 @@ import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
  *
  * Not included on purpose: social icons (no accounts behind them yet)
  * and a terms link (no page exists yet — plain text rather than a dead
- * link). The privacy policy links to /privacy (a draft page until the
- * final text is provided). The year is computed.
+ * link). The privacy policy links to /privacy. The year is computed.
  */
 export async function HomeFooter() {
   const t = await getTranslations("home.footer");
