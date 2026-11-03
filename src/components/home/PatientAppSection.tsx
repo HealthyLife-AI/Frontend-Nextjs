@@ -21,7 +21,7 @@ const ITEMS: {
 /**
  * The client-side of the product: a floating phone mockup flanked by
  * four feature cards at `lg`+, stacked below it on smaller screens.
- * The phone's own micro animations (water bar, rows) are driven by the
+ * The phone's own micro animations (its rows rising) are driven by the
  * `Reveal` wrapping it.
  */
 export async function PatientAppSection() {

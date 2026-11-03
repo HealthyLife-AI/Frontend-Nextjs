@@ -170,7 +170,7 @@ export function HeroVisual() {
               <div className="grid grid-cols-3 gap-2.5">
                 <Metric label={t("metricCalories")} value="1,650" unit={t("metricCaloriesUnit")} tone="bg-primary" text="text-primary" width="88%" delay="0.3s" />
                 <Metric label={t("metricProtein")} value="118" unit={t("metricProteinUnit")} tone="bg-accent" text="text-accent-active" width="98%" delay="0.45s" />
-                <Metric label={t("metricStreak")} value="14" unit={t("metricStreakUnit")} tone="bg-status-attention" text="text-status-attention" width="70%" delay="0.6s" />
+                <Metric label={t("metricLogged")} value="12" unit={t("metricLoggedUnit")} tone="bg-status-attention" text="text-status-attention" width="86%" delay="0.6s" />
               </div>
 
               <div className="rounded-xl bg-white p-3 shadow-card">

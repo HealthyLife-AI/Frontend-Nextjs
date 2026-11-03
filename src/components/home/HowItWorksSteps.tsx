@@ -4,14 +4,17 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
   BadgeCheck,
   BellRing,
-  BrainCircuit,
+  Check,
+  KeyRound,
   Languages,
   MessageCircle,
-  Send,
+  MessageSquareText,
   SlidersHorizontal,
   Sparkles,
+  Stethoscope,
   TrendingDown,
   Trophy,
+  User,
   UserPlus,
   Zap,
   type LucideIcon,
@@ -29,7 +32,7 @@ const STEPS: {
 }[] = [
   { icon: UserPlus, noteIcon: BadgeCheck, numberKey: "step1Number", titleKey: "step1Title", bodyKey: "step1Body", noteKey: "step1Note", tile: "bg-primary" },
   { icon: SlidersHorizontal, noteIcon: Zap, numberKey: "step2Number", titleKey: "step2Title", bodyKey: "step2Body", noteKey: "step2Note", tile: "bg-mkt-jade" },
-  { icon: BrainCircuit, noteIcon: BellRing, numberKey: "step3Number", titleKey: "step3Title", bodyKey: "step3Body", noteKey: "step3Note", tile: "bg-mkt-amber" },
+  { icon: Stethoscope, noteIcon: BellRing, numberKey: "step3Number", titleKey: "step3Title", bodyKey: "step3Body", noteKey: "step3Note", tile: "bg-mkt-amber" },
 ];
 
 /**
@@ -177,25 +180,34 @@ function InviteScene({ active }: { active: boolean }) {
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <Field label={t("nameLabel")} value={t("nameValue")} />
             <Field label={t("phoneLabel")} value={t("phoneValue")} ltr />
-            <Field label={t("goalLabel")} value={t("goalValue")} />
+            <Field label={t("usernameLabel")} value={t("usernameValue")} ltr />
             <div className="flex items-end">
               <span className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-primary to-mkt-teal-deep text-sm font-bold text-white shadow-brand">
-                <Send size={15} strokeWidth={2} className="rtl:-scale-x-100" />
+                <Check size={15} strokeWidth={2.4} />
                 {t("submit")}
               </span>
             </div>
           </div>
         </Rise>
 
+        {/* The real onboarding: the platform generates the password and the nutritionist
+            sends both credentials over WhatsApp (CredentialsCard) — there is no invite link. */}
         <Rise i={2} className="ms-auto max-w-[85%] rounded-2xl rounded-ss-md border border-status-on-track/30 bg-status-on-track-bg/70 p-3.5 text-start shadow-card">
           <div className="mb-1 flex items-center gap-1.5 text-[11px] font-bold text-mkt-emerald-deep">
             <MessageCircle size={13} strokeWidth={2} />
             {t("waFrom")}
           </div>
           <p className="text-sm leading-relaxed text-ink">{t("waBody")}</p>
-          <span dir="ltr" className="mkt-nums mt-2 inline-flex items-center gap-1.5 rounded-lg bg-white px-2.5 py-1.5 text-xs font-semibold text-primary shadow-[0_1px_2px_rgba(11,46,48,0.06)]">
-            🔗 {t("waLink")}
-          </span>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            <span dir="ltr" className="mkt-nums inline-flex items-center gap-1.5 rounded-lg bg-white px-2.5 py-1.5 text-xs font-semibold text-primary shadow-[0_1px_2px_rgba(11,46,48,0.06)]">
+              <User size={12} strokeWidth={2.2} aria-hidden="true" />
+              {t("waUser")}
+            </span>
+            <span dir="ltr" className="inline-flex items-center gap-1.5 rounded-lg bg-white px-2.5 py-1.5 text-xs font-semibold tracking-widest text-primary shadow-[0_1px_2px_rgba(11,46,48,0.06)]">
+              <KeyRound size={12} strokeWidth={2.2} aria-hidden="true" />
+              ••••••••
+            </span>
+          </div>
         </Rise>
 
         <Rise i={4} className="mt-auto flex items-center gap-2 text-xs font-semibold text-ink-muted">
@@ -290,10 +302,18 @@ function MealRow({ i, label, meal, kcal }: { i: number; label: string; meal: str
 
 function WatchScene({ active }: { active: boolean }) {
   const t = useTranslations("home.howItWorks.scene3");
-  const alerts: { icon: LucideIcon; textKey: "alert1" | "alert2" | "alert3"; tagKey: "alert1Tag" | "alert2Tag" | "alert3Tag"; tone: string }[] = [
+  // Three daily-check alerts plus one patient request — the same two queues the
+  // nutritionist's home screen shows each morning.
+  const alerts: {
+    icon: LucideIcon;
+    textKey: "alert1" | "alert2" | "alert3" | "alert4";
+    tagKey: "alert1Tag" | "alert2Tag" | "alert3Tag" | "alert4Tag";
+    tone: string;
+  }[] = [
     { icon: BellRing, textKey: "alert1", tagKey: "alert1Tag", tone: "bg-status-late-bg text-status-late" },
     { icon: TrendingDown, textKey: "alert2", tagKey: "alert2Tag", tone: "bg-status-attention-bg text-status-attention" },
     { icon: Trophy, textKey: "alert3", tagKey: "alert3Tag", tone: "bg-status-on-track-bg text-status-on-track" },
+    { icon: MessageSquareText, textKey: "alert4", tagKey: "alert4Tag", tone: "bg-primary/10 text-primary" },
   ];
 
   return (
@@ -318,7 +338,7 @@ function WatchScene({ active }: { active: boolean }) {
             </Rise>
           ))}
         </div>
-        <Rise i={5} className="mt-auto rounded-2xl border border-mkt-mint-border bg-gradient-to-br from-mkt-mint-bg to-white p-3.5 text-start shadow-card">
+        <Rise i={6} className="mt-auto rounded-2xl border border-mkt-mint-border bg-gradient-to-br from-mkt-mint-bg to-white p-3.5 text-start shadow-card">
           <div className="mb-1.5 flex items-center justify-between">
             <span className="flex items-center gap-1.5 text-xs font-bold text-mkt-emerald-deep">
               <Sparkles size={13} strokeWidth={2} />

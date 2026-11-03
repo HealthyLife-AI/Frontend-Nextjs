@@ -1,13 +1,14 @@
 import type { CSSProperties } from "react";
-import { Check, Droplets, Flame, ShoppingCart, Sparkles, User, UtensilsCrossed } from "lucide-react";
+import { CalendarClock, Check, Footprints, ShoppingCart, Sparkles, User, UtensilsCrossed, Video } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 /**
- * The client app's home screen (streak, water tracker, today's meals) in
- * a phone frame. Every color is a token: the streak card uses the
- * `attention` amber family, the water card the `sky`/`mint` family — the
- * earlier one-off hex gradients are gone. The water bar grows and the
- * rows rise when the surrounding `Reveal` marks the block in view.
+ * The client app's home screen in a phone frame, showing only what the
+ * app really has: today's appointment reminder and plan activity (both
+ * from the morning summary, `TodaySummary` on the backend) above today's
+ * meals. There is deliberately no water tracker or streak — the app has
+ * neither, and the page shouldn't promise them. Every color is a token;
+ * the rows rise when the surrounding `Reveal` marks the block in view.
  */
 export function PatientAppPhoneMockup({ className = "" }: { className?: string }) {
   const m = useTranslations("home.patientApp.mockup");
@@ -33,44 +34,41 @@ export function PatientAppPhoneMockup({ className = "" }: { className?: string }
               <div className="text-sm font-extrabold text-ink">{m("greeting")}</div>
             </div>
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-mkt-mint to-primary text-xs font-bold text-white ring-2 ring-white">
-              {m("greeting").slice(-1)}
+              {m("initial")}
             </span>
           </div>
 
-          {/* Streak */}
-          <div className="mkt-rise flex items-center justify-between rounded-2xl border border-status-attention/30 bg-status-attention-bg p-2.5" style={{ "--i": 0 } as CSSProperties}>
-            <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-status-attention to-mkt-amber text-white">
-                <Flame size={16} strokeWidth={2} />
+          {/* Appointment reminder — the app's own "appointment today" line. */}
+          <div className="mkt-rise flex items-center justify-between gap-2 rounded-2xl border border-primary/20 bg-gradient-to-br from-mkt-sky/30 to-white p-2.5" style={{ "--i": 0 } as CSSProperties}>
+            <div className="flex min-w-0 items-center gap-2">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-mkt-teal-deep text-white">
+                <CalendarClock size={16} strokeWidth={2} />
               </span>
-              <div className="text-start">
-                <div className="text-xs font-extrabold text-ink">{m("streakDays")}</div>
-                <div className="text-[9px] font-medium text-status-attention">{m("streakRank")}</div>
+              <div className="min-w-0 text-start">
+                <div className="text-[9px] font-semibold text-primary">{m("apptLabel")}</div>
+                <div className="truncate text-[11px] font-extrabold text-ink">{m("apptBody")}</div>
               </div>
             </div>
-            <span className="rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold text-status-attention">{m("streakBadge")}</span>
+            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-white/90 px-2 py-1 text-[10px] font-bold text-primary">
+              <Video size={11} strokeWidth={2.2} />
+              {m("apptChannel")}
+            </span>
           </div>
 
-          {/* Water */}
-          <div className="mkt-rise flex flex-col gap-2 rounded-2xl border border-divider bg-white p-3" style={{ "--i": 1 } as CSSProperties}>
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-xs font-bold text-ink">
-                <span className="flex h-5 w-5 items-center justify-center rounded-lg bg-mkt-sky/40 text-primary">
-                  <Droplets size={12} strokeWidth={2.2} />
-                </span>
-                {m("waterLabel")}
+          {/* Today's activity — informational in the app (no calorie burn, no check-off). */}
+          <div className="mkt-rise flex items-center justify-between gap-2 rounded-2xl border border-divider bg-white p-2.5" style={{ "--i": 1 } as CSSProperties}>
+            <div className="flex min-w-0 items-center gap-2">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-mkt-mint-bg text-mkt-emerald-deep">
+                <Footprints size={16} strokeWidth={2} />
               </span>
-              <div className="flex items-baseline gap-1">
-                <span className="mkt-nums text-xs font-black text-mkt-emerald-deep">{m("waterCurrent")}</span>
-                <span className="mkt-nums text-[10px] text-ink-muted">{m("waterTarget")}</span>
+              <div className="min-w-0 text-start">
+                <div className="text-[9px] font-semibold text-ink-muted">{m("activityLabel")}</div>
+                <div className="truncate text-[11px] font-extrabold text-ink">{m("activityName")}</div>
               </div>
             </div>
-            <div className="h-2.5 w-full overflow-hidden rounded-full bg-divider">
-              <div className="mkt-grow h-full w-[72%] rounded-full bg-gradient-to-r from-mkt-sky to-mkt-mint" style={{ "--grow-delay": "0.5s" } as CSSProperties} />
-            </div>
-            <div className="flex items-center justify-between text-[10px]">
-              <span className="font-bold text-mkt-emerald-deep">{m("waterAdd")}</span>
-              <span className="font-medium text-ink-muted">{m("waterRemaining")}</span>
+            <div className="shrink-0 text-end">
+              <div className="mkt-nums text-[11px] font-black text-mkt-emerald-deep">{m("activityMinutes")}</div>
+              <div className="text-[9px] font-medium text-ink-muted">{m("activityTimes")}</div>
             </div>
           </div>
 
