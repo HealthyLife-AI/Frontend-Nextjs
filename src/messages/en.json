@@ -211,7 +211,15 @@
       "noProfileYet": "No health profile on file yet.",
       "fillProfile": "Fill in health profile",
       "usernameLabel": "Username",
-      "noUsername": "No username yet"
+      "noUsername": "No username yet",
+      "tabs": {
+        "label": "Patient sections",
+        "overview": "Overview",
+        "followUp": "Follow-up",
+        "plan": "Plan & health",
+        "settings": "Settings",
+        "accountActions": "Account and follow-up"
+      }
     },
     "bmi": {
       "label": "BMI",
