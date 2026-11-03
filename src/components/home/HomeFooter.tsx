@@ -40,7 +40,9 @@ export async function HomeFooter() {
             <div className="flex flex-col gap-2.5">
               <a href="#how-it-works" className={link}>{t("linkHowItWorks")}</a>
               <a href="#why" className={link}>{t("linkWhy")}</a>
+              <a href="#clinical" className={link}>{t("linkClinical")}</a>
               <a href="#patient-app" className={link}>{t("linkPatientApp")}</a>
+              <a href="#between-visits" className={link}>{t("linkBetweenVisits")}</a>
               <a href="#faq" className={link}>{t("faq")}</a>
             </div>
           </nav>

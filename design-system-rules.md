@@ -24,6 +24,23 @@ logical-property rule (§6) and the two-locale message rule (§7) still apply
 to it in full; only the layout/visual source changed. The dashboard, auth
 and account screens are unaffected and remain Figma-bound.
 
+**Dashboard addendum, 2026-11-03.** Three layout decisions from the
+post-features design review, applied in code ahead of the Figma file
+(resync the frames to them, or say if a frame should win instead):
+
+1. **Patient page = header + action strip + four tabs** (Overview,
+   Follow-up, Plan & health, Settings) instead of one ~20-card column.
+   New patient-page cards go into the tab they belong to; anything that
+   needs the nutritionist's action now (pending proposals, the next
+   appointment) goes in the strip above the tabs and renders nothing when
+   empty. Panels are all mounted and toggled with `hidden`, never
+   conditionally rendered, so cards load once and keep their state.
+2. **Pages start-align.** A page narrower than the content column keeps
+   its `max-w-*` but never `mx-auto`, so every page's title starts at the
+   same inline-start edge. Only print views and empty/404 states center.
+3. **Numbers are grouped** ("7,851") in Latin digits:
+   `Intl.NumberFormat(locale === "ar" ? "ar-SA-u-nu-latn" : "en-GB")`.
+
 Previous rule, kept for context:
 
 > "Stitch mockups are references; the code must conform to these tokens,

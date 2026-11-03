@@ -1,8 +1,8 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowRight, FileText, UtensilsCrossed } from "lucide-react";
+import { ArrowRight, FileText, LayoutDashboard, MessagesSquare, Settings2, UtensilsCrossed, type LucideIcon } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ClientStatusBadge } from "@/components/clients/ClientStatusBadge";
@@ -61,6 +61,43 @@ import type { AiSummary } from "@/lib/aiSummaries/types";
  * adherence and water figures have no backing field anywhere in the API,
  * so they are not invented here (the rule S3-09 set for the plan designer).
  */
+const TABS: { key: "overview" | "followUp" | "plan" | "settings"; hash: string; icon: LucideIcon }[] = [
+  { key: "overview", hash: "overview", icon: LayoutDashboard },
+  { key: "followUp", hash: "follow-up", icon: MessagesSquare },
+  { key: "plan", hash: "plan", icon: UtensilsCrossed },
+  { key: "settings", hash: "settings", icon: Settings2 },
+];
+type TabKey = (typeof TABS)[number]["key"];
+
+/** Where the tab bar sticks: the fixed app header (72px) plus a 12px gap. Matches `top-[84px]` below. */
+const TABS_STICKY_TOP = 84;
+
+/** Anchors that live inside a tab: a deep link to one opens its tab (the appointments page links to #reviews). */
+const ANCHOR_TAB: Record<string, TabKey> = { reviews: "followUp", requests: "followUp" };
+
+function tabFromHash(hash: string): TabKey | null {
+  const name = hash.replace(/^#/, "");
+  return TABS.find((tab) => tab.hash === name)?.key ?? ANCHOR_TAB[name] ?? null;
+}
+
+/**
+ * Layout (2026-11): the page grew to ~20 cards in one ~10,000px column as
+ * features landed, so it is now a header, an action strip, and four tabs:
+ *
+ * - Above the tabs, whatever tab is open: the follow-up-ended banner,
+ *   pending health-record proposals (the patient list's "pending" badge
+ *   links here) and the next appointment.
+ * - Overview: AI summary, adherence and the progress charts, goal
+ *   projection, weight insight, sleep and wellbeing.
+ * - Follow-up: session reviews (#reviews), requests, check-ins, meal log.
+ * - Plan & health: current plan, morning preview, food preferences, reports.
+ * - Settings: measurement schedule, alert thresholds, account actions.
+ *
+ * Every panel is rendered and the inactive ones are `hidden`, so each card
+ * still loads once on arrival exactly as before and keeps its state across
+ * tab switches. The tab is mirrored in the URL hash (replaceState, no
+ * history entry), so a reload or a shared link reopens it.
+ */
 export default function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const t = useTranslations("clients.detail");
@@ -79,6 +116,57 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   const [latestSummary, setLatestSummary] = useState<AiSummary | null>(null);
   // Height and age only, for the BMI line's fallback and its band (Item B).
   const [profile, setProfile] = useState<HealthProfile | null>(null);
+  const tTabs = useTranslations("clients.detail.tabs");
+  // Read once on mount. The tabs only render after the client loads, so the
+  // server's render (no window) and the client's never differ here.
+  const [tab, setTab] = useState<TabKey>(() => (typeof window === "undefined" ? null : tabFromHash(window.location.hash)) ?? "overview");
+  const tabsTopRef = useRef<HTMLDivElement>(null);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const deepLinkHandled = useRef(false);
+
+  // Back/forward or an in-page link changing the hash switches the tab too.
+  useEffect(() => {
+    const onHash = () => {
+      const next = tabFromHash(window.location.hash);
+      if (next) setTab(next);
+    };
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
+  // A deep link to an anchor inside a tab (#reviews) scrolls to it once the
+  // page has content; the browser's own hash scroll ran before it existed.
+  useEffect(() => {
+    if (!client || deepLinkHandled.current) return;
+    deepLinkHandled.current = true;
+    const anchor = window.location.hash.slice(1);
+    if (anchor in ANCHOR_TAB) requestAnimationFrame(() => document.getElementById(anchor)?.scrollIntoView({ block: "start" }));
+  }, [client]);
+
+  function selectTab(next: TabKey, focus = false) {
+    setTab(next);
+    window.history.replaceState(null, "", `#${TABS.find((x) => x.key === next)?.hash ?? ""}`);
+    if (focus) tabRefs.current[TABS.findIndex((x) => x.key === next)]?.focus();
+    // Scrolled past the tabs (the bar is stuck)? Bring the new panel's top into view. An explicit
+    // offset rather than scrollIntoView: html's global `scroll-padding-top` (the landing header's)
+    // would add itself to any scroll-margin here.
+    const top = tabsTopRef.current?.getBoundingClientRect().top;
+    if (top !== undefined && top < TABS_STICKY_TOP) window.scrollTo({ top: window.scrollY + top - TABS_STICKY_TOP });
+  }
+
+  // WAI-ARIA tabs: arrows move and select (mirrored in RTL), Home/End jump.
+  function onTabKey(e: KeyboardEvent<HTMLDivElement>) {
+    const index = TABS.findIndex((x) => x.key === tab);
+    const rtl = document.documentElement.dir === "rtl";
+    const step = e.key === "ArrowRight" ? (rtl ? -1 : 1) : e.key === "ArrowLeft" ? (rtl ? 1 : -1) : 0;
+    let next = index;
+    if (step !== 0) next = (index + step + TABS.length) % TABS.length;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = TABS.length - 1;
+    else return;
+    e.preventDefault();
+    selectTab(TABS[next].key, true);
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -151,7 +239,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
+    <div className="flex w-full max-w-5xl flex-col gap-6">
       <Link
         href="/dashboard/patients"
         className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-sm font-semibold text-ink-muted shadow-panel transition-colors hover:border-primary/30 hover:text-mkt-teal-deep"
@@ -201,7 +289,11 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           </div>
         </div>
 
-        <dl className="grid grid-cols-2 divide-divider text-sm sm:grid-cols-5 sm:divide-x sm:rtl:divide-x-reverse">
+        {/* Six facts: 2 / 3 / 6 columns (the old 5-column grid left "adherence" alone on a
+            second row). On one row the columns size to their content, so a long status pill
+            ("hasn't signed in yet") doesn't wrap inside a fixed sixth. Hairlines come from a
+            1px gap over the divider color, so they stay right at every column count. */}
+        <dl className="grid grid-cols-2 gap-px bg-divider text-sm sm:grid-cols-3 lg:grid-cols-[repeat(6,auto)] [&>div]:bg-card">
           <div className="flex flex-col gap-1.5 p-5">
             <dt className="text-xs font-semibold text-ink-muted">{t("phoneLabel")}</dt>
             <dd className="font-bold text-ink" dir="ltr">
@@ -270,62 +362,102 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
 
       {client.archived_at && <FollowUpBanner client={client} onChange={setClient} />}
 
-      <PatientRequestsCard subscriberId={id} readOnly={client.archived_at !== null} />
-
-      <CurrentPlanCard subscriberId={id} />
-
-      <MeasurementScheduleCard subscriberId={id} readOnly={client.archived_at !== null} />
-
-      <CheckinCard subscriberId={id} readOnly={client.archived_at !== null} />
-
-      <FoodPreferencesCard subscriberId={id} readOnly={client.archived_at !== null} />
-
-      <MorningPreviewCard subscriberId={id} />
-
-      <ReportsCard subscriberId={id} readOnly={client.archived_at !== null} />
-
-      <AlertSettingsCard subscriberId={id} readOnly={client.archived_at !== null} />
-
+      {/* Needs-action strip, shown whatever tab is open. Each renders nothing when empty. */}
       <PendingProposals subscriberId={id} readOnly={client.archived_at !== null} />
       <PatientAppointmentCard subscriberId={id} subscriberName={client.name} readOnly={client.archived_at !== null} />
 
-      <AiSummaryCard summary={latestSummary} />
-
-      <div id="reviews" className="scroll-mt-24">
-        <ReviewsPanel subscriberId={id} readOnly={client.archived_at !== null} />
-      </div>
-      <MealLogSection subscriberId={id} />
-
-      {progressFailed && (
-        <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
-          {tProgress("loadFailed")}
-        </p>
-      )}
-
-      <GoalProjectionCard subscriberId={id} readOnly={client.archived_at !== null} />
-
-      <WeightInsightCard subscriberId={id} readOnly={client.archived_at !== null} />
-
-      <WellbeingCard subscriberId={id} />
-
-      {progress && (
-        <div className="flex flex-col gap-4">
-          <AdherenceHeadline adherence={progress.adherence} />
-          <WeightTrendChart points={progress.weight_trend} />
-          <PlanVsActualChart days={progress.daily_calories} />
-          <BodyCompositionCards
-            latest={progress.body_composition.latest}
-            previous={progress.body_composition.previous}
-            change={progress.body_composition.change}
-          />
+      <div ref={tabsTopRef} className="-mb-6" aria-hidden="true" />
+      <div className="sticky top-[84px] z-10">
+        <div
+          role="tablist"
+          aria-label={tTabs("label")}
+          onKeyDown={onTabKey}
+          className="flex w-full gap-0.5 overflow-x-auto rounded-full border border-border/70 bg-white/85 p-1 shadow-panel backdrop-blur-xl [scrollbar-width:none] sm:w-fit sm:gap-1 [&::-webkit-scrollbar]:hidden"
+        >
+          {TABS.map(({ key, icon: Icon }, i) => {
+            const selected = tab === key;
+            return (
+              <button
+                key={key}
+                ref={(el) => {
+                  tabRefs.current[i] = el;
+                }}
+                type="button"
+                role="tab"
+                id={`patient-tab-${key}`}
+                aria-selected={selected}
+                aria-controls={`patient-panel-${key}`}
+                tabIndex={selected ? 0 : -1}
+                onClick={() => selectTab(key)}
+                className={`inline-flex h-10 shrink-0 grow items-center justify-center gap-2 whitespace-nowrap rounded-full px-2 text-[13px] font-semibold transition-[background-color,color,box-shadow] duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:grow-0 sm:px-4 sm:text-sm ${
+                  selected ? "bg-gradient-to-br from-primary to-mkt-teal-deep text-white shadow-brand" : "text-ink-muted hover:bg-canvas hover:text-ink"
+                }`}
+              >
+                <Icon size={16} strokeWidth={1.75} className="hidden sm:block" aria-hidden="true" />
+                {tTabs(key)}
+              </button>
+            );
+          })}
         </div>
-      )}
+      </div>
 
-      {/* Kept at the bottom, away from the everyday actions in the header. */}
-      <div className="flex flex-wrap justify-end gap-2.5 border-t border-divider pt-6">
-        {!client.archived_at && <ResetPasswordButton client={client} onUsername={(username) => setClient({ ...client, username })} />}
-        {!client.archived_at && <FollowUpControls client={client} onChange={setClient} />}
-        <DeleteClientButton client={client} />
+      <div role="tabpanel" id="patient-panel-overview" aria-labelledby="patient-tab-overview" hidden={tab !== "overview"} className="flex flex-col gap-6">
+        {progressFailed && (
+          <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2.5 text-sm text-status-late">
+            {tProgress("loadFailed")}
+          </p>
+        )}
+
+        <AiSummaryCard summary={latestSummary} />
+
+        {progress && (
+          <div className="flex flex-col gap-4">
+            <AdherenceHeadline adherence={progress.adherence} />
+            <WeightTrendChart points={progress.weight_trend} />
+            <PlanVsActualChart days={progress.daily_calories} />
+            <BodyCompositionCards
+              latest={progress.body_composition.latest}
+              previous={progress.body_composition.previous}
+              change={progress.body_composition.change}
+            />
+          </div>
+        )}
+
+        <GoalProjectionCard subscriberId={id} readOnly={client.archived_at !== null} />
+        <WeightInsightCard subscriberId={id} readOnly={client.archived_at !== null} />
+        <WellbeingCard subscriberId={id} />
+      </div>
+
+      <div role="tabpanel" id="patient-panel-followUp" aria-labelledby="patient-tab-followUp" hidden={tab !== "followUp"} className="flex flex-col gap-6">
+        {/* Lands just under the sticky tab bar: html's scroll-padding-top (6rem) plus this margin. */}
+        <div id="reviews" className="scroll-mt-14">
+          <ReviewsPanel subscriberId={id} readOnly={client.archived_at !== null} />
+        </div>
+        <PatientRequestsCard subscriberId={id} readOnly={client.archived_at !== null} />
+        <CheckinCard subscriberId={id} readOnly={client.archived_at !== null} />
+        <MealLogSection subscriberId={id} />
+      </div>
+
+      <div role="tabpanel" id="patient-panel-plan" aria-labelledby="patient-tab-plan" hidden={tab !== "plan"} className="flex flex-col gap-6">
+        <CurrentPlanCard subscriberId={id} />
+        <MorningPreviewCard subscriberId={id} />
+        <FoodPreferencesCard subscriberId={id} readOnly={client.archived_at !== null} />
+        <ReportsCard subscriberId={id} readOnly={client.archived_at !== null} />
+      </div>
+
+      <div role="tabpanel" id="patient-panel-settings" aria-labelledby="patient-tab-settings" hidden={tab !== "settings"} className="flex flex-col gap-6">
+        <MeasurementScheduleCard subscriberId={id} readOnly={client.archived_at !== null} />
+        <AlertSettingsCard subscriberId={id} readOnly={client.archived_at !== null} />
+
+        {/* Account actions, away from the everyday actions in the header. */}
+        <section className="flex flex-col gap-4 rounded-panel border border-border/70 bg-card p-5 shadow-panel sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-base font-bold text-ink">{tTabs("accountActions")}</h2>
+          <div className="flex flex-wrap gap-2.5">
+            {!client.archived_at && <ResetPasswordButton client={client} onUsername={(username) => setClient({ ...client, username })} />}
+            {!client.archived_at && <FollowUpControls client={client} onChange={setClient} />}
+            <DeleteClientButton client={client} />
+          </div>
+        </section>
       </div>
     </div>
   );

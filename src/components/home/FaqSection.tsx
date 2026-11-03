@@ -9,6 +9,8 @@ const QUESTIONS = [
   { questionKey: "q1Question", answerKey: "q1Answer" },
   { questionKey: "q2Question", answerKey: "q2Answer" },
   { questionKey: "q3Question", answerKey: "q3Answer" },
+  { questionKey: "q6Question", answerKey: "q6Answer" },
+  { questionKey: "q5Question", answerKey: "q5Answer" },
   { questionKey: "q4Question", answerKey: "q4Answer" },
 ] as const;
 

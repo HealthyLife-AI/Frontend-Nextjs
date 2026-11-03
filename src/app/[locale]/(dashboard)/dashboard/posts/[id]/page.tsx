@@ -29,7 +29,7 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
   }, [authorizedFetch, id]);
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
+    <div className="flex w-full max-w-5xl flex-col gap-6">
       <PageHeader title={t("editTitle")} subtitle={t("editorSubtitle")} />
 
       {failed && (

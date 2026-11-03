@@ -117,7 +117,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
+    <div className="flex w-full max-w-2xl flex-col gap-6">
       <PageHeader title={t("title")} subtitle={t("subtitle")} />
 
       <section className="rounded-panel border border-border/70 bg-card p-5 shadow-panel">
