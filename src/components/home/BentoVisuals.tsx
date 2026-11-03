@@ -110,13 +110,15 @@ export async function ClientsVisual() {
     <div className="flex items-center gap-3 rounded-2xl border border-divider bg-gradient-to-b from-canvas to-white p-4">
       <Illo src="/home/why/illo-2.webp" className="-my-3 w-28 sm:w-32" />
       <div className="min-w-0 flex-1">
-      <div className="flex items-center justify-between">
+      {/* Wraps the count under the avatars when the card is narrow (phones) rather than
+          breaking "48 clients" / "3 need attention today" word by word. */}
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
         <div className="flex -space-x-2 rtl:space-x-reverse">
           {avatars.map((tone, i) => (
             <Rise key={i} i={i} className={`h-8 w-8 rounded-full bg-gradient-to-br ${tone} ring-2 ring-white`} />
           ))}
         </div>
-        <div className="text-end">
+        <div className="whitespace-nowrap text-start sm:text-end">
           <div className="mkt-nums text-sm font-extrabold text-ink">{t("clientsLabel")}</div>
           <div className="text-[11px] font-semibold text-status-attention">{t("clientsSub")}</div>
         </div>
@@ -173,9 +175,9 @@ export async function AnalyticsVisual() {
     <div className="flex items-center gap-3 rounded-2xl border border-divider bg-gradient-to-b from-canvas to-white p-4">
       <Illo src="/home/why/illo-4.webp" className="-my-3 w-24 sm:w-28" />
       <div className="min-w-0 flex-1">
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-xs font-bold text-ink">{t("chartLabel")}</span>
-        <span className="mkt-nums rounded-full bg-status-on-track-bg px-2 py-0.5 text-[11px] font-bold text-status-on-track">{t("chartDelta")}</span>
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+        <span className="whitespace-nowrap text-xs font-bold text-ink">{t("chartLabel")}</span>
+        <span className="mkt-nums whitespace-nowrap rounded-full bg-status-on-track-bg px-2 py-0.5 text-[11px] font-bold text-status-on-track">{t("chartDelta")}</span>
       </div>
       <svg viewBox="0 0 240 90" className="h-24 w-full rtl:-scale-x-100" aria-hidden="true">
         <defs>

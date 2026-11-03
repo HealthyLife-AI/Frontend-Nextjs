@@ -300,9 +300,9 @@ function Metric({
   return (
     <div className="min-w-0 rounded-xl bg-white p-2.5 shadow-card sm:p-3">
       <span className="block truncate text-[11px] text-ink-muted sm:text-xs">{label}</span>
-      <div className="mt-0.5 flex items-baseline gap-1">
+      <div className="mt-0.5 flex flex-wrap items-baseline gap-x-1">
         <span className={`mkt-nums text-lg font-extrabold sm:text-xl ${text}`}>{value}</span>
-        <span className="truncate text-[10px] text-ink-muted sm:text-[11px]">{unit}</span>
+        <span className="mkt-nums text-[10px] leading-tight text-ink-muted sm:text-[11px]">{unit}</span>
       </div>
       <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-canvas">
         <div className={`mkt-grow h-full rounded-full ${tone}`} style={{ width, "--grow-delay": delay } as CSSProperties} />

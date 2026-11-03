@@ -76,7 +76,10 @@ export function HowItWorksSteps() {
             {/* -inset-3 on mobile, not -inset-6: at the 16px page gutter the wider halo bled past
                 the viewport edge and forced a horizontal scrollbar on the whole page. */}
             <div className="pointer-events-none absolute -inset-3 -z-10 rounded-[2.5rem] bg-gradient-to-br from-mkt-glow/25 via-transparent to-mkt-sky/40 blur-2xl sm:-inset-6" aria-hidden="true" />
-            <div className="relative min-h-[25rem] overflow-hidden rounded-3xl border border-white/80 bg-white/80 p-3 shadow-float ring-1 ring-ink/[0.06] backdrop-blur-xl sm:aspect-[4/3.1] sm:min-h-0 sm:p-4">
+            {/* Below `sm` the scenes share one grid cell, so the panel is as tall as the tallest
+                scene (a fixed min-height clipped scenes 1 and 3 on phones); from `sm` up they are
+                absolutely positioned in a fixed-aspect panel. Either way they crossfade in place. */}
+            <div className="relative grid overflow-hidden rounded-3xl border border-white/80 bg-white/80 p-3 shadow-float ring-1 ring-ink/[0.06] backdrop-blur-xl sm:block sm:aspect-[4/3.1] sm:p-4">
               <div className="mkt-dots absolute inset-0 -z-0 opacity-70" aria-hidden="true" />
               <InviteScene active={active === 0} />
               <PlanScene active={active === 1} />
@@ -150,7 +153,7 @@ export function HowItWorksSteps() {
 
 function SceneFrame({ active, children }: { active: boolean; children: React.ReactNode }) {
   return (
-    <div data-active={active ? "" : undefined} aria-hidden={!active} className="mkt-scene absolute inset-3 flex flex-col sm:inset-4">
+    <div data-active={active ? "" : undefined} aria-hidden={!active} className="mkt-scene relative flex flex-col [grid-area:1/1] sm:absolute sm:inset-4">
       {children}
     </div>
   );
