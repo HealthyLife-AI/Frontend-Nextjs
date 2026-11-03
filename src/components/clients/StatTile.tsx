@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import { useLocale } from "next-intl";
 
 type Tone = "primary" | "success" | "warning" | "danger";
 
@@ -14,7 +15,8 @@ const TONE_CLASSES: Record<Tone, { chip: string; glow: string }> = {
  * from the SAME semantic token, never independently chosen colors), a
  * large tabular-figures number, and a short label. Styled after the
  * landing page's feature cards — soft corner glow in the tone color,
- * lift on hover.
+ * lift on hover. The number is grouped ("7,851", not "7851") in Latin
+ * digits, like every other figure on the dashboard.
  */
 export function StatTile({
   icon: Icon,
@@ -28,6 +30,8 @@ export function StatTile({
   tone: Tone;
 }) {
   const classes = TONE_CLASSES[tone];
+  const locale = useLocale();
+  const formatted = new Intl.NumberFormat(locale === "ar" ? "ar-SA-u-nu-latn" : "en-GB").format(value);
 
   return (
     <div className="group relative flex flex-col gap-4 overflow-hidden rounded-panel border border-border/70 bg-card p-5 shadow-panel transition-all hover:-translate-y-0.5 hover:shadow-panel-hover">
@@ -39,7 +43,7 @@ export function StatTile({
         <Icon size={21} strokeWidth={1.9} />
       </div>
       <div className="relative flex flex-col gap-0.5">
-        <span className="text-[28px] font-extrabold leading-none tabular-nums text-ink">{value}</span>
+        <span className="text-[28px] font-extrabold leading-none tabular-nums text-ink">{formatted}</span>
         <span className="text-sm font-medium text-ink-muted">{label}</span>
       </div>
     </div>

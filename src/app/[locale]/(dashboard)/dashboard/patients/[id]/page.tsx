@@ -239,7 +239,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
+    <div className="flex w-full max-w-5xl flex-col gap-6">
       <Link
         href="/dashboard/patients"
         className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-sm font-semibold text-ink-muted shadow-panel transition-colors hover:border-primary/30 hover:text-mkt-teal-deep"

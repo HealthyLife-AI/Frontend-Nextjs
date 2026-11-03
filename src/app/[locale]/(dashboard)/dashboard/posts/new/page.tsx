@@ -9,7 +9,7 @@ export default function NewPostPage() {
   const t = useTranslations("posts");
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
+    <div className="flex w-full max-w-5xl flex-col gap-6">
       <PageHeader title={t("newTitle")} subtitle={t("editorSubtitle")} />
       <PostEditor />
     </div>
