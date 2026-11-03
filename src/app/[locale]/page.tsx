@@ -8,7 +8,9 @@ import { Hero } from "@/components/home/Hero";
 import { FoodLibraryMarquee } from "@/components/home/FoodLibraryMarquee";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { WhyHealthyLifeSection } from "@/components/home/WhyHealthyLifeSection";
+import { ClinicalChecksSection } from "@/components/home/ClinicalChecksSection";
 import { PatientAppSection } from "@/components/home/PatientAppSection";
+import { BetweenVisitsSection } from "@/components/home/BetweenVisitsSection";
 import { PrinciplesSection } from "@/components/home/PrinciplesSection";
 import { FaqSection } from "@/components/home/FaqSection";
 import { CtaSection } from "@/components/home/CtaSection";
@@ -20,7 +22,9 @@ import { HomeFooter } from "@/components/home/HomeFooter";
  * Redesigned as a product-led page in the idiom of contemporary software
  * landing pages: an aurora hero with the product itself as the visual,
  * the real local food library as the "proof" strip, a scroll-driven
- * "how it works", a bento feature grid, and a dark closing band. Motion
+ * "how it works", a bento feature grid, the plan designer's clinical
+ * checks, the client app, the follow-up loop between visits, and a dark
+ * closing band. Motion
  * is the page's signature — word-by-word headline, a dashboard that
  * levels out in 3D, cursor spotlight on cards, a typing AI summary — and
  * all of it is transform/opacity only and switched off under
@@ -63,7 +67,9 @@ export default async function HomePage({
         <FoodLibraryMarquee />
         <HowItWorksSection />
         <WhyHealthyLifeSection />
+        <ClinicalChecksSection />
         <PatientAppSection />
+        <BetweenVisitsSection />
         <PrinciplesSection />
         <FaqSection />
         <CtaSection />

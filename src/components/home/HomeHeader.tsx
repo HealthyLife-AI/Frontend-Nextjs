@@ -9,6 +9,7 @@ import { Link } from "@/i18n/navigation";
 const SECTION_LINKS = [
   { id: "how-it-works", key: "howItWorks" },
   { id: "why", key: "why" },
+  { id: "clinical", key: "clinical" },
   { id: "patient-app", key: "patientApp" },
   { id: "faq", key: "faq" },
   { id: "contact", key: "contact" },
@@ -23,7 +24,9 @@ const SECTION_LINKS = [
  * links via a plain color transition rather than a shared-layout
  * animation, which keeps it cheap.
  *
- * Below `lg` the links live in a sheet that drops from under the bar.
+ * Below `xl` the links live in a sheet that drops from under the bar
+ * (six links plus sign-in and the CTA don't fit one line in Arabic at
+ * 1024px, so the inline nav starts at 1280px).
  * While it's open the page doesn't scroll behind it and Escape closes
  * it. The locale switcher lives in `HomeFooter`.
  */
@@ -54,17 +57,24 @@ export function HomeHeader() {
   }, []);
 
   useEffect(() => {
-    const sections = SECTION_LINKS.map(({ id }) => document.getElementById(id)).filter(
-      (el): el is HTMLElement => el !== null
-    );
+    // Every landing section with an id, not only the linked ones: when an
+    // unlinked section (e.g. "between visits") is in the band, no link is lit
+    // instead of the previous one staying highlighted.
+    const sections = Array.from(document.querySelectorAll<HTMLElement>("main section[id]"));
     if (sections.length === 0) return;
 
+    // Callbacks only carry the entries that changed, so keep the full set of
+    // sections currently in the band: the most-covered one wins, and when the
+    // band is over a part with no id (hero, food strip) nothing is lit.
+    const inBand = new Map<string, number>();
     const observer = new IntersectionObserver(
       (entries) => {
-        // The section occupying the band just below the header wins.
-        const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-        if (visible[0]) setActive(visible[0].target.id);
-        else if (window.scrollY < 200) setActive(null);
+        for (const e of entries) {
+          if (e.isIntersecting) inBand.set(e.target.id, e.intersectionRatio);
+          else inBand.delete(e.target.id);
+        }
+        const best = [...inBand.entries()].sort((a, b) => b[1] - a[1])[0];
+        setActive(best ? best[0] : null);
       },
       { rootMargin: "-35% 0px -55% 0px", threshold: [0, 0.2, 0.5] }
     );
@@ -93,7 +103,7 @@ export function HomeHeader() {
       <div
         className={`mx-auto transition-[max-width,margin,background-color,box-shadow,border-color,backdrop-filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           condensed
-            ? "mt-3 max-w-6xl rounded-2xl border border-white/70 bg-white/80 shadow-[0_12px_40px_-16px_rgba(11,46,48,0.25)] backdrop-blur-xl lg:rounded-full"
+            ? "mt-3 max-w-6xl rounded-2xl border border-white/70 bg-white/80 shadow-[0_12px_40px_-16px_rgba(11,46,48,0.25)] backdrop-blur-xl xl:rounded-full"
             : "mt-0 max-w-7xl border border-transparent bg-transparent"
         }`}
       >
@@ -119,7 +129,7 @@ export function HomeHeader() {
             />
           </Link>
 
-          <nav className="hidden items-center gap-1 lg:flex" aria-label={t("home")}>
+          <nav className="hidden items-center gap-1 xl:flex" aria-label={t("home")}>
             {SECTION_LINKS.map(({ id, key }) => {
               const isActive = active === id;
               return (
@@ -127,7 +137,7 @@ export function HomeHeader() {
                   key={id}
                   href={`#${id}`}
                   aria-current={isActive ? "location" : undefined}
-                  className={`rounded-full px-3.5 py-2 text-[15px] font-medium transition-colors duration-300 ${
+                  className={`whitespace-nowrap rounded-full px-3 py-2 text-[15px] font-medium transition-colors duration-300 ${
                     isActive ? "bg-mkt-teal-deep/[0.08] text-mkt-teal-deep" : "text-mkt-nav-muted hover:bg-ink/[0.04] hover:text-mkt-teal-deep"
                   }`}
                 >
@@ -140,13 +150,13 @@ export function HomeHeader() {
           <div className="flex items-center gap-2">
             <Link
               href="/login"
-              className="hidden h-10 items-center rounded-full px-4 text-sm font-semibold text-mkt-teal-deep transition-colors hover:bg-mkt-teal-deep/[0.08] sm:inline-flex"
+              className="hidden h-10 items-center whitespace-nowrap rounded-full px-4 text-sm font-semibold text-mkt-teal-deep transition-colors hover:bg-mkt-teal-deep/[0.08] sm:inline-flex"
             >
               {t("signIn")}
             </Link>
             <Link
               href="/register"
-              className="group relative inline-flex h-10 items-center gap-1.5 overflow-hidden rounded-full bg-gradient-to-br from-primary to-mkt-teal-deep px-4 text-sm font-bold text-white shadow-brand transition-[transform,box-shadow] duration-300 hover:-translate-y-px hover:shadow-[0_14px_28px_-12px_rgba(0,101,114,0.6)] active:translate-y-0 sm:px-5"
+              className="group relative inline-flex h-10 items-center gap-1.5 overflow-hidden whitespace-nowrap rounded-full bg-gradient-to-br from-primary to-mkt-teal-deep px-4 text-sm font-bold text-white shadow-brand transition-[transform,box-shadow] duration-300 hover:-translate-y-px hover:shadow-[0_14px_28px_-12px_rgba(0,101,114,0.6)] active:translate-y-0 sm:px-5"
             >
               <span className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 transition-opacity group-hover:animate-shimmer group-hover:opacity-100" aria-hidden="true" />
               {t("cta")}
@@ -158,7 +168,7 @@ export function HomeHeader() {
               aria-expanded={open}
               aria-controls="home-mobile-nav"
               aria-label={open ? t("menuClose") : t("menuOpen")}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-ink transition-colors hover:bg-ink/[0.05] lg:hidden"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-ink transition-colors hover:bg-ink/[0.05] xl:hidden"
             >
               {open ? <X size={20} strokeWidth={1.75} /> : <Menu size={20} strokeWidth={1.75} />}
             </button>
@@ -168,7 +178,7 @@ export function HomeHeader() {
         {/* Mobile sheet — grid-rows trick animates height without JS measuring. */}
         <div
           id="home-mobile-nav"
-          className={`grid transition-[grid-template-rows,opacity] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] lg:hidden ${
+          className={`grid transition-[grid-template-rows,opacity] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] xl:hidden ${
             open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
           }`}
         >

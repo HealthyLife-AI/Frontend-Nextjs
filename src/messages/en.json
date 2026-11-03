@@ -495,6 +495,7 @@
       "home": "Home",
       "howItWorks": "How it works",
       "why": "Why HealthyLife",
+      "clinical": "Clinical checks",
       "patientApp": "Client app",
       "faq": "FAQ",
       "contact": "Contact",
@@ -658,6 +659,46 @@
         "langEn": "English"
       }
     },
+    "clinical": {
+      "eyebrow": "Clinical depth",
+      "title": "Every plan is checked <highlight>as you build it</highlight>",
+      "subtitle": "Allergies, glycemic load, sodium and calories are checked on every food and alternative you add. The warnings guide you — the decision stays yours.",
+      "item1Title": "Allergy conflicts",
+      "item1Body": "Each food and alternative is checked against the client's approved allergies and intolerances — celiac counts as a gluten allergy.",
+      "item2Title": "Glycemic index and load",
+      "item2Body": "For diabetes, insulin resistance and prediabetes, high-GI foods — and high loads for the amount you chose — are flagged.",
+      "item3Title": "Calorie target and safe floor",
+      "item3Body": "A goal-adjusted suggestion from Mifflin-St Jeor × activity level, and a warning if a plan drops below the guideline floor.",
+      "item4Title": "Conditions and sodium",
+      "item4Body": "High-sodium foods are flagged for hypertension, and ready-made tips for each condition go into the client's instructions in one click.",
+      "item5Title": "Budget and easy prep",
+      "item5Body": "Prefer economical or no-cook foods for a client; foods carry a regional cost tier and a preparation level.",
+      "item6Title": "Print, templates, reuse",
+      "item6Body": "Print a plan or save it as a PDF with your instructions, keep it as a template, or start the next plan from the last one.",
+      "visual": {
+        "title": "Plan check · Sara",
+        "live": "Updates as you build",
+        "cond1": "Insulin resistance",
+        "cond2": "Hypertension",
+        "cond3": "Peanut allergy",
+        "row1Food": "Peanut butter",
+        "row1Note": "Conflicts with a confirmed peanut allergy",
+        "row1Tag": "Allergy",
+        "row2Food": "White rice · 200 g",
+        "row2Note": "High glycemic load for this amount",
+        "row2Tag": "Glycemic",
+        "row3Food": "Feta cheese · 30 g",
+        "row3Note": "High in sodium (1,116 mg/100 g)",
+        "row3Tag": "Sodium",
+        "row4Food": "Alternative: bulgur · 150 g",
+        "row4Note": "No warnings",
+        "row4Tag": "OK",
+        "calLabel": "Daily calories",
+        "calValue": "1,650 / 1,700 kcal",
+        "suggestion": "System suggestion: 1,700 kcal (Mifflin-St Jeor × activity level)",
+        "footnote": "Illustrative example. You review every warning and make the call."
+      }
+    },
     "patientApp": {
       "eyebrow": "A radically simple client experience",
       "title": "What your client sees: <highlight>clarity that drives adherence</highlight>",
@@ -708,6 +749,67 @@
       "googlePlay": "Google Play",
       "comingSoon": "Soon"
     },
+    "betweenVisits": {
+      "eyebrow": "Between visits",
+      "title": "Care that continues <highlight>between appointments</highlight>",
+      "subtitle": "Bookings, questions, session notes and check-ins used to be scattered across WhatsApp chats. Now each has its place — for you and for your client.",
+      "item1Title": "Appointments on your hours",
+      "item1Body": "Set your availability, and clients book a follow-up, a results review or a quick consult from the app. They can change it up to 12 hours before.",
+      "item1Chips": [
+        "WhatsApp",
+        "Phone",
+        "Video"
+      ],
+      "item2Title": "Requests in one inbox",
+      "item2Body": "A special occasion, a food they can't find, a sudden craving — clients send a quick request and see your reply in the app.",
+      "item2Chips": [
+        "Special occasion",
+        "Food not available",
+        "Sudden craving"
+      ],
+      "item3Title": "Session notes and tasks",
+      "item3Body": "After each session, write a short review — a rating, key points and tasks. Your client sees it in the app and ticks the tasks off.",
+      "item3Chips": [
+        "On track",
+        "Small adjustment",
+        "Let's review together"
+      ],
+      "item4Title": "A health record you approve",
+      "item4Body": "Clients can propose a change to their goal, medications or allergies. Nothing changes until you approve it.",
+      "item4Chips": [
+        "Goal",
+        "Medications",
+        "Allergies"
+      ],
+      "item5Title": "Check-ins, sleep and mood",
+      "item5Body": "A short questionnaire every one or two weeks, with answers that need you flagged — and 14 days of sleep, mood and stress next to their food logs.",
+      "item5Chips": [
+        "Every 1–2 weeks",
+        "Sleep",
+        "Mood",
+        "Stress"
+      ],
+      "item6Title": "Measurements on schedule",
+      "item6Body": "Choose how often each client measures. They're reminded on the day, and you're alerted if they're three days late.",
+      "item6Chips": [
+        "Weekly",
+        "Every 2 weeks",
+        "Monthly",
+        "Custom"
+      ],
+      "morningTitle": "Your tips, and a morning message every day",
+      "morningBody": "Publish short tips to all your clients, to those with a given condition, or to clients you choose. Each morning at 7:30 the app greets them with the day's meals, activity and reminders.",
+      "morningApp": "HealthyLife",
+      "morningTime": "7:30",
+      "morningPush": "Good morning! Your plan for today is ready",
+      "morningListTitle": "Today's reminders",
+      "morningLines": [
+        "Today is your body measurements day.",
+        "You have a short questionnaire from your nutritionist.",
+        "Your nutritionist replied to your request.",
+        "You have a new tip from your nutritionist."
+      ]
+    },
     "principles": {
       "eyebrow": "What we hold ourselves to",
       "title": "Built with nutritionists, not just for them",
@@ -735,6 +837,10 @@
       "q3Answer": "No — the app is light and built for a quick daily check-in. You send your client a username and password over WhatsApp; they sign in and see their plan straight away. Logging works even offline, and they get an evening reminder if they forget.",
       "q4Question": "How do I get started, and how does onboarding work?",
       "q4Answer": "It's simple: create your account, and you'll be ready to add your first client the same day. No sales calls, no setup fees.",
+      "q5Question": "Who can see my clients' data?",
+      "q5Answer": "Only you. Each nutritionist sees only their own clients, and that's checked on every request. Clients agree to the privacy policy with a recorded consent, and can delete their account at any time.",
+      "q6Question": "Can clients book appointments with me?",
+      "q6Answer": "Yes. Set your availability, and clients book a follow-up, a results review or a quick consult from the app — by WhatsApp, phone or video. They can change it up to 12 hours before, and you can also book one for them yourself.",
       "moreTitle": "Still have a question?",
       "moreBody": "Write to us and a real person will answer.",
       "moreLink": "Contact the team"
@@ -764,7 +870,9 @@
       "securityShort": "Clinical security",
       "linkHowItWorks": "How the platform works",
       "linkWhy": "Why HealthyLife",
+      "linkClinical": "Clinical checks",
       "linkPatientApp": "Client follow-up app",
+      "linkBetweenVisits": "Between visits",
       "faq": "FAQ"
     }
   },
