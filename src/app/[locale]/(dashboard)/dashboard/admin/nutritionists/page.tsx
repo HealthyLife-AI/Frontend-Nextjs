@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import { Search } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { Badge } from "@/components/ui/Badge";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Pager } from "@/components/foods/FoodTable";
 import { listAdminNutritionists, setNutritionistCountry, type AdminNutritionistPage } from "@/lib/admin/api";
@@ -94,7 +95,10 @@ export default function AdminNutritionistsPage() {
                             {n.name.replace(/^د\.\s*/, "").charAt(0)}
                           </div>
                           <div className="flex min-w-0 flex-col">
-                            <span className="truncate font-bold text-ink">{n.name}</span>
+                            <span className="flex min-w-0 items-center gap-2">
+                              <span className="truncate font-bold text-ink">{n.name}</span>
+                              {n.is_demo && <Badge tone="neutral">{t("demoBadge")}</Badge>}
+                            </span>
                             <span className="truncate text-xs text-ink-muted" dir="ltr">
                               {n.email}
                             </span>

@@ -43,6 +43,8 @@ export type AdminNutritionist = {
   country: string;
   clients_count: number;
   active_clients_count: number;
+  /** A fake account made by `demo:seed`: shown with a badge, left out of the totals. */
+  is_demo: boolean;
   created_at: string | null;
 };
 
@@ -50,7 +52,8 @@ export type AdminNutritionistPage = {
   /** The countries a nutritionist can be set to (code => Arabic name): one list, from the server. */
   countries: Record<string, string>;
   data: AdminNutritionist[];
-  meta: { current_page: number; last_page: number; total: number; per_page: number };
+  /** `total` counts real nutritionists only; `demo_count` is how many demo accounts the list also shows. */
+  meta: { current_page: number; last_page: number; total: number; demo_count: number; per_page: number };
 };
 
 export type FoodSource = "usda" | "admin" | "nutritionist";
