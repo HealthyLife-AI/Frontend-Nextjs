@@ -521,7 +521,31 @@
     "loadFailed": "تعذّر تحميل ملفك المهني.",
     "replyHoursLabel": "أوقات الرد (اختياري)",
     "replyHoursPlaceholder": "الأحد–الخميس 9–5",
-    "replyHoursHint": "نص قصير يظهر لمرضاك في التطبيق."
+    "replyHoursHint": "نص قصير يظهر لمرضاك في التطبيق.",
+    "accountDescription": "بيانات تسجيل الدخول والباقة",
+    "profileDescription": "هذه المعلومات تظهر لمرضاك في التطبيق",
+    "planTierShort": "تُحدَّد من الاشتراك",
+    "unsaved": "تغييرات غير محفوظة",
+    "unsavedBar": "لديك تغييرات غير محفوظة",
+    "discard": "تجاهل",
+    "sectionsNav": "أقسام الإعدادات",
+    "replyHoursShort": "أوقات الرد",
+    "preview": {
+      "title": "كيف يراك مرضاك",
+      "doctor": "د. {name}",
+      "replyHours": "أوقات الرد: {hours}",
+      "whatsapp": "تواصل عبر واتساب",
+      "notSet": "لم تُحدَّد",
+      "note": "تتحدّث المعاينة مع كل تعديل قبل الحفظ."
+    },
+    "completion": {
+      "title": "اكتمال الملف",
+      "count": "{done} من {total}",
+      "barLabel": "اكتمل {done} من {total} من حقول الملف",
+      "add": "إضافة",
+      "addField": "إضافة {field}",
+      "done": "ملفك مكتمل"
+    }
   },
   "aiSummary": {
     "title": "الملخص الأسبوعي بالذكاء الاصطناعي",
@@ -1527,7 +1551,8 @@
         "4": "الخميس",
         "5": "الجمعة",
         "6": "السبت"
-      }
+      },
+      "windowsTitle": "الفترات الأسبوعية"
     },
     "reschedule": {
       "title": "تغيير الموعد",
