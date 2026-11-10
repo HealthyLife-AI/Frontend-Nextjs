@@ -8,6 +8,7 @@ import { Link } from "@/i18n/navigation";
 import { PlanDesigner } from "@/components/mealPlans/PlanDesigner";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { FollowUpGate } from "@/components/clients/FollowUpControls";
+import { PageContainer } from "@/components/layout/PageContainer";
 
 export default function PlanDesignerPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -18,7 +19,7 @@ export default function PlanDesignerPage({ params }: { params: Promise<{ id: str
   const tDetail = useTranslations("clients.detail");
 
   return (
-    <div className="flex w-full max-w-6xl flex-col gap-6">
+    <PageContainer variant="detail">
       <Link
         href={`/dashboard/patients/${id}`}
         className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-sm font-semibold text-ink-muted shadow-panel transition-colors hover:border-primary/30 hover:text-mkt-teal-deep"
@@ -32,6 +33,6 @@ export default function PlanDesignerPage({ params }: { params: Promise<{ id: str
       <FollowUpGate subscriberId={id}>
         <PlanDesigner subscriberId={id} planId={planId} />
       </FollowUpGate>
-    </div>
+    </PageContainer>
   );
 }

@@ -26,6 +26,11 @@ export type Alert = {
    */
   is_resolved: boolean;
   created_at: string;
+  /**
+   * The request a `quick_request` alert is about. Absent (older API) or null
+   * (other types): link to the requests list instead of one request.
+   */
+  quick_request_id?: number | null;
 };
 
 export type AlertListResponse = {

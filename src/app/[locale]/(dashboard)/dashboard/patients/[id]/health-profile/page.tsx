@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { FollowUpGate } from "@/components/clients/FollowUpControls";
 import { HealthRecordsEditor } from "@/components/healthRecords/HealthRecordsEditor";
 import { ConditionsCard } from "@/components/healthRecords/ConditionsCard";
+import { PageContainer } from "@/components/layout/PageContainer";
 
 export default function HealthProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -16,7 +17,7 @@ export default function HealthProfilePage({ params }: { params: Promise<{ id: st
   const tDetail = useTranslations("clients.detail");
 
   return (
-    <div className="flex w-full max-w-2xl flex-col gap-6">
+    <PageContainer variant="form">
       <Link
         href={`/dashboard/patients/${id}`}
         className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-sm font-semibold text-ink-muted shadow-panel transition-colors hover:border-primary/30 hover:text-mkt-teal-deep"
@@ -40,6 +41,6 @@ export default function HealthProfilePage({ params }: { params: Promise<{ id: st
       <FollowUpGate subscriberId={id}>
         <HealthRecordsEditor subscriberId={id} />
       </FollowUpGate>
-    </div>
+    </PageContainer>
   );
 }

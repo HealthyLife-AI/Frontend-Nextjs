@@ -35,11 +35,21 @@ post-features design review, applied in code ahead of the Figma file
    appointment) goes in the strip above the tabs and renders nothing when
    empty. Panels are all mounted and toggled with `hidden`, never
    conditionally rendered, so cards load once and keep their state.
-2. **Pages start-align.** A page narrower than the content column keeps
-   its `max-w-*` but never `mx-auto`, so every page's title starts at the
-   same inline-start edge. Only print views and empty/404 states center.
+2. **Pages start-align, and their width comes from `PageContainer`**
+   (`components/layout/PageContainer.tsx`, 2026-11-10): `list` and
+   `detail` fill the content column, `form` caps at 720px. A page never
+   sets its own `max-w-*` or `mx-auto`; only print views, empty/404
+   states and the two post editors keep their own width.
 3. **Numbers are grouped** ("7,851") in Latin digits:
    `Intl.NumberFormat(locale === "ar" ? "ar-SA-u-nu-latn" : "en-GB")`.
+
+**Contrast addendum, 2026-11-10 (WCAG AA, 4.5:1).** `--color-ink-muted`
+is `#557375`. Text on a tinted status chip uses the `*-ink` tokens
+(`text-status-on-track-ink` / `-attention-ink` / `-late-ink`), never the
+plain status color, which stays for dots, icons and fills. A read or
+secondary row is never faded with `opacity-*`: use `text-ink-soft` or
+`text-ink-muted`. The §1 catalog values for `ink-muted` are superseded by
+this.
 
 Previous rule, kept for context:
 

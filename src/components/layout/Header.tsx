@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Bell, Menu } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { listAlerts } from "@/lib/alerts/api";
+import { useUnreadAlerts } from "@/components/alerts/UnreadAlertsProvider";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 
 const SECTIONS = [
@@ -36,28 +35,14 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
   const t = useTranslations("nav");
   const locale = useLocale();
   const pathname = usePathname();
-  const { authorizedFetch, user } = useAuth();
+  const { user } = useAuth();
   const isAdmin = user?.role === "admin";
 
-  const [unreadCount, setUnreadCount] = useState<number | null>(null);
+  // Shared with the Alerts page, which refreshes it after a mark-read. An
+  // admin has no provider (alerts belong to a nutritionist's clients): null.
+  const { count: unreadCount } = useUnreadAlerts();
 
   const section = SECTIONS.find(({ href }) => pathname === href || pathname.startsWith(`${href}/`));
-
-  // Mount-once, not polled: nothing asks for realtime yet, and Header
-  // persists across client-side navigation.
-  useEffect(() => {
-    // Alerts belong to a nutritionist's clients; an admin has none (403).
-    if (isAdmin) return;
-    let cancelled = false;
-
-    listAlerts(authorizedFetch, { is_read: false }).then((result) => {
-      if (!cancelled && result.ok) setUnreadCount(result.data.meta.total);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [authorizedFetch, isAdmin]);
 
   // Header only mounts after AppShell sees an authenticated session, which
   // is resolved client-side — it never server-renders, so formatting the

@@ -7,6 +7,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { PendingFoodsProvider } from "@/components/admin/PendingFoodsProvider";
+import { UnreadAlertsProvider } from "@/components/alerts/UnreadAlertsProvider";
 import { OpenRequestsProvider } from "@/components/quickRequests/OpenRequestsProvider";
 import { NutritionistProfileProvider } from "@/components/nutritionists/NutritionistProfileProvider";
 import { DeletionNotices } from "@/components/notices/DeletionNotices";
@@ -89,7 +90,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <PendingFoodsProvider>{shell}</PendingFoodsProvider>
   ) : (
     <NutritionistProfileProvider>
-      <OpenRequestsProvider>{shell}</OpenRequestsProvider>
+      <OpenRequestsProvider>
+        <UnreadAlertsProvider>{shell}</UnreadAlertsProvider>
+      </OpenRequestsProvider>
     </NutritionistProfileProvider>
   );
 }

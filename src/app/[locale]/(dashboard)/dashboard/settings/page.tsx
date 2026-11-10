@@ -13,6 +13,7 @@ import { getNutritionistProfile, saveNutritionistProfile } from "@/lib/nutrition
 import { WHATSAPP_PATTERN, type NutritionistGender, type NutritionistProfile } from "@/lib/nutritionists/types";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { AvailabilitySettings } from "@/components/appointments/AvailabilitySettings";
+import { PageContainer } from "@/components/layout/PageContainer";
 
 /**
  * S4-00 / FR-28: the nutritionist's own professional profile — the
@@ -117,7 +118,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="flex w-full max-w-2xl flex-col gap-6">
+    <PageContainer variant="form">
       <PageHeader title={t("title")} subtitle={t("subtitle")} />
 
       <section className="rounded-panel border border-border/70 bg-card p-5 shadow-panel">
@@ -252,6 +253,6 @@ export default function SettingsPage() {
         </div>
         <p className="mt-3 text-xs text-ink-muted/80">{t("languageNote")}</p>
       </section>
-    </div>
+    </PageContainer>
   );
 }
