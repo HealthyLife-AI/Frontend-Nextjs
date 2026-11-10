@@ -521,7 +521,31 @@
     "loadFailed": "Could not load your profile.",
     "replyHoursLabel": "Reply hours (optional)",
     "replyHoursPlaceholder": "Sun–Thu 9–5",
-    "replyHoursHint": "Short text your patients see in the app."
+    "replyHoursHint": "Short text your patients see in the app.",
+    "accountDescription": "Sign-in details and plan",
+    "profileDescription": "Your patients see this information in the app",
+    "planTierShort": "Set by your subscription",
+    "unsaved": "Unsaved changes",
+    "unsavedBar": "You have unsaved changes",
+    "discard": "Discard",
+    "sectionsNav": "Settings sections",
+    "replyHoursShort": "Reply hours",
+    "preview": {
+      "title": "How your patients see you",
+      "doctor": "Dr. {name}",
+      "replyHours": "Reply hours: {hours}",
+      "whatsapp": "Contact on WhatsApp",
+      "notSet": "Not set",
+      "note": "The preview updates with every change, before you save."
+    },
+    "completion": {
+      "title": "Profile completeness",
+      "count": "{done} of {total}",
+      "barLabel": "{done} of {total} profile fields completed",
+      "add": "Add",
+      "addField": "Add {field}",
+      "done": "Your profile is complete"
+    }
   },
   "aiSummary": {
     "title": "Weekly AI summary",
@@ -1527,7 +1551,8 @@
         "4": "Thursday",
         "5": "Friday",
         "6": "Saturday"
-      }
+      },
+      "windowsTitle": "Weekly windows"
     },
     "reschedule": {
       "title": "Reschedule appointment",
