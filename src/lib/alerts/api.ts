@@ -29,3 +29,15 @@ export function listAlerts(
 export function markAlertRead(fetcher: Fetcher, id: number) {
   return fetcher(`/alerts/${id}/read`, { method: "PATCH" }).then((res) => parseJson<Alert>(res));
 }
+
+/**
+ * Marks every unread alert matching the filters as read (all of them when
+ * none is given). Filters go in the body; `undefined` ones are left out.
+ */
+export function markAllAlertsRead(fetcher: Fetcher, filters: { severity?: AlertSeverity; subscriber_id?: number } = {}) {
+  return fetcher("/alerts/read-all", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(filters),
+  }).then((res) => parseJson<{ updated?: number }>(res));
+}

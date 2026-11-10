@@ -40,6 +40,7 @@ import { CurrentPlanCard } from "@/components/mealPlans/CurrentPlanCard";
 import { PendingProposals } from "@/components/healthRecords/PendingProposals";
 import { listAiSummaries } from "@/lib/aiSummaries/api";
 import type { AiSummary } from "@/lib/aiSummaries/types";
+import { PageContainer } from "@/components/layout/PageContainer";
 
 /**
  * S4-07 / US-08 / UC-08: the Client Profile & Progress screen — the
@@ -239,7 +240,7 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="flex w-full max-w-5xl flex-col gap-6">
+    <PageContainer variant="detail">
       <Link
         href="/dashboard/patients"
         className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-sm font-semibold text-ink-muted shadow-panel transition-colors hover:border-primary/30 hover:text-mkt-teal-deep"
@@ -459,6 +460,6 @@ export default function ClientDetailPage({ params }: { params: Promise<{ id: str
           </div>
         </section>
       </div>
-    </div>
+    </PageContainer>
   );
 }

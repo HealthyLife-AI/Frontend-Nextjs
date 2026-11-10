@@ -24,7 +24,8 @@
   --color-divider: #f0f5f4;
 
   --color-ink: #0b2e30;
-  --color-ink-muted: #5c7a7c;
+  --color-ink-muted: #557375; /* 4.5:1+ on canvas (was #5c7a7c, 4.4:1) */
+  --color-ink-soft: #3d5556; /* body text of a read row: quieter than ink, still AA */
 
   --color-status-on-track: #02c39a;
   --color-status-on-track-bg: #e0f8f2;
@@ -32,6 +33,13 @@
   --color-status-attention-bg: #fbf1e0;
   --color-status-late: #c0392b;
   --color-status-late-bg: #fbe6e4;
+  /* Text on the tinted chips above (WCAG AA 4.5:1); the plain status colors stay for dots, icons and fills. */
+  --color-status-on-track-ink: #00745c;
+  --color-status-attention-ink: #8a5a00;
+  --color-status-late-ink: #b03024;
+  /* Template macro bar: protein uses --color-primary-hover. */
+  --color-macro-carbs: #3fb39a;
+  --color-macro-fat: #c98a1b;
 
   --color-danger: #c0392b;
 
@@ -116,6 +124,7 @@
 
   --color-ink: var(--color-ink);
   --color-ink-muted: var(--color-ink-muted);
+  --color-ink-soft: var(--color-ink-soft);
 
   --color-status-on-track: var(--color-status-on-track);
   --color-status-on-track-bg: var(--color-status-on-track-bg);
@@ -123,6 +132,11 @@
   --color-status-attention-bg: var(--color-status-attention-bg);
   --color-status-late: var(--color-status-late);
   --color-status-late-bg: var(--color-status-late-bg);
+  --color-status-on-track-ink: var(--color-status-on-track-ink);
+  --color-status-attention-ink: var(--color-status-attention-ink);
+  --color-status-late-ink: var(--color-status-late-ink);
+  --color-macro-carbs: var(--color-macro-carbs);
+  --color-macro-fat: var(--color-macro-fat);
 
   --color-danger: var(--color-danger);
 

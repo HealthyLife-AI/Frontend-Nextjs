@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { useAuth } from "@/components/auth/AuthProvider";
-import { closeQuickRequest, respondToQuickRequest, type QuickRequest } from "@/lib/quickRequests/api";
+import type { QuickRequest } from "@/lib/quickRequests/api";
+import { useRequestReply } from "./useRequestReply";
 
 /**
  * Phase 1, E6: one patient request. An open one carries the reply box and
@@ -28,29 +27,11 @@ export function QuickRequestCard({
 }) {
   const t = useTranslations("quickRequests");
   const format = useFormatter();
-  const { authorizedFetch } = useAuth();
-
-  const [reply, setReply] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { reply, setReply, busy, error, canSend, send, close } = useRequestReply(request, onChanged);
 
   const date = (iso: string) => format.dateTime(new Date(iso), { dateStyle: "medium", timeStyle: "short", numberingSystem: "latn" });
   const day = (ymd: string) => format.dateTime(new Date(`${ymd}T00:00:00`), { dateStyle: "medium", numberingSystem: "latn" });
   const open = request.status === "open";
-
-  async function run(action: () => ReturnType<typeof respondToQuickRequest>) {
-    setBusy(true);
-    setError(null);
-    const r = await action();
-    setBusy(false);
-
-    if (!r.ok) {
-      setError(r.error.errors?.response?.[0] ?? r.error.message ?? t("failed"));
-      return;
-    }
-
-    onChanged({ ...request, ...r.data });
-  }
 
   return (
     <article className={`flex flex-col gap-3 rounded-panel border bg-card p-4 shadow-panel ${open ? "border-primary/30" : "border-border/70"}`}>
@@ -71,7 +52,7 @@ export function QuickRequestCard({
 
       {request.response && (
         <div className="rounded-field bg-status-on-track-bg px-3.5 py-2.5 text-sm text-ink">
-          <span className="block text-xs font-bold text-status-on-track">{t("yourReply")}</span>
+          <span className="block text-xs font-bold text-status-on-track-ink">{t("yourReply")}</span>
           <p className="whitespace-pre-line">{request.response}</p>
         </div>
       )}
@@ -92,7 +73,7 @@ export function QuickRequestCard({
           />
           <p className="text-xs text-ink-muted">{t("replyNote")}</p>
           {error && (
-            <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2 text-sm text-status-late">
+            <p role="alert" className="rounded-field bg-status-late-bg px-3.5 py-2 text-sm text-status-late-ink">
               {error}
             </p>
           )}
@@ -106,10 +87,10 @@ export function QuickRequestCard({
               </Link>
             </div>
             <div className="flex gap-2">
-              <Button variant="ghost" disabled={busy} onClick={() => run(() => closeQuickRequest(authorizedFetch, request.id))}>
+              <Button variant="ghost" disabled={busy !== null} onClick={close}>
                 {t("close")}
               </Button>
-              <Button isLoading={busy} disabled={reply.trim() === ""} onClick={() => run(() => respondToQuickRequest(authorizedFetch, request.id, reply.trim()))}>
+              <Button isLoading={busy !== null} disabled={!canSend} onClick={send}>
                 {t("send")}
               </Button>
             </div>
