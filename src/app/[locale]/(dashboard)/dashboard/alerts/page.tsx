@@ -407,7 +407,7 @@ function AlertRow({ alert, onMarkRead }: { alert: Alert; onMarkRead: (id: number
         <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
       </span>
 
-      <div className="flex min-w-0 flex-1 basis-[280px] flex-col gap-0.5">
+      <div className="flex min-w-0 flex-1 basis-[200px] flex-col gap-0.5 sm:basis-[280px]">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
           {unread && <span className="h-2 w-2 shrink-0 rounded-full bg-primary" aria-hidden="true" />}
           <Link href={`/dashboard/patients/${alert.subscriber_id}`} className={`text-sm text-ink hover:text-primary hover:underline ${unread ? "font-extrabold" : "font-bold"}`}>
