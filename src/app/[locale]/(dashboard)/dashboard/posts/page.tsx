@@ -11,6 +11,7 @@ import { Dialog } from "@/components/ui/Dialog";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { formatLongDate } from "@/lib/format/date";
 import { createPost, getPostTemplates, listPosts, type Post, type PostPage, type PostTemplate } from "@/lib/posts/api";
+import { PageContainer } from "@/components/layout/PageContainer";
 
 /**
  * Phase 3, A6: «النصائح»: the education posts this nutritionist wrote, with
@@ -76,7 +77,7 @@ export default function PostsPage() {
   };
 
   return (
-    <div className="flex w-full max-w-4xl flex-col gap-6">
+    <PageContainer variant="list">
       <PageHeader
         title={t("title")}
         subtitle={t("subtitle")}
@@ -113,12 +114,12 @@ export default function PostsPage() {
         </div>
       )}
 
-      <ul className="flex flex-col gap-3">
+      <ul className="grid grid-cols-[repeat(auto-fill,minmax(min(360px,100%),1fr))] gap-3">
         {posts?.data.map((post) => (
           <li key={post.id}>
             <Link
               href={`/dashboard/posts/${post.id}`}
-              className="flex flex-col gap-2 rounded-panel border border-border/70 bg-card p-4 shadow-panel transition-colors hover:border-primary/40"
+              className="flex h-full flex-col gap-2 rounded-panel border border-border/70 bg-card p-4 shadow-panel transition-colors hover:border-primary/40"
             >
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="min-w-0 flex-1 break-words text-base font-bold text-ink">{post.title}</h2>
@@ -180,6 +181,6 @@ export default function PostsPage() {
           ))}
         </ul>
       </Dialog>
-    </div>
+    </PageContainer>
   );
 }
