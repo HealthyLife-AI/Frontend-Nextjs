@@ -14,17 +14,26 @@ import type { CSSProperties } from "react";
  *
  * `startIndex` lets a headline made of several runs (before / highlight /
  * after) continue one stagger sequence instead of restarting per run.
+ *
+ * `blur` hands the words to GSAP instead (`BlurText.tsx`): each word is
+ * marked `data-blur-word` and starts from the state that attribute
+ * carries in `globals.css`, rather than running the `.mkt-word` CSS
+ * animation. `inline-block` is a class either way, because it is layout,
+ * not animation — a word left `inline` would ignore the transform the
+ * moment the attribute comes off.
  */
 export function SplitWords({
   text,
   startIndex = 0,
   offsetMs = 0,
   className = "",
+  blur = false,
 }: {
   text: string;
   startIndex?: number;
   offsetMs?: number;
   className?: string;
+  blur?: boolean;
 }) {
   const words = text.split(/\s+/).filter(Boolean);
 
@@ -33,12 +42,18 @@ export function SplitWords({
       {words.map((word, i) => (
         <span key={`${word}-${i}`}>
           {i > 0 ? " " : null}
-          <span
-            className={`mkt-word ${className}`}
-            style={{ "--i": startIndex + i, "--offset": `${offsetMs}ms` } as CSSProperties}
-          >
-            {word}
-          </span>
+          {blur ? (
+            <span data-blur-word="" className={`inline-block ${className}`}>
+              {word}
+            </span>
+          ) : (
+            <span
+              className={`mkt-word ${className}`}
+              style={{ "--i": startIndex + i, "--offset": `${offsetMs}ms` } as CSSProperties}
+            >
+              {word}
+            </span>
+          )}
         </span>
       ))}
     </>

@@ -339,6 +339,51 @@ html[dir="rtl"] {
 }
 
 /*
+ * Start states for the two GSAP-driven reveals: section blocks
+ * (`Reveal.tsx`) and headline words (`BlurText.tsx` + `SplitWords`
+ * with `blur`). They live here, not in an inline `style` prop, because
+ * GSAP animates the inline style and React would re-assert its own on
+ * the next render and snap the element back to hidden; each component
+ * drops its attribute the moment GSAP has taken the element over.
+ *
+ * Both are reset under reduced motion and inside `<noscript>` (see the
+ * homepage), so a visitor who never runs the animation still reads the
+ * page.
+ */
+[data-reveal] {
+  opacity: 0;
+}
+
+[data-reveal="up"] {
+  transform: translateY(1.5rem);
+}
+
+[data-reveal="scale"] {
+  transform: scale(0.96);
+}
+
+[data-reveal="blur"] {
+  transform: translateY(1rem);
+  filter: blur(6px);
+}
+
+[data-blur-word] {
+  opacity: 0;
+  transform: translateY(0.6em);
+  filter: blur(10px);
+}
+
+/*
+ * Lenis (`SmoothScroll.tsx`) animates the real scroll position, so the
+ * native smooth scrolling declared above would fight its `scrollTo` on
+ * every in-page anchor. Lenis marks the document while it is running,
+ * which is exactly when native smoothing has to be off.
+ */
+html.lenis {
+  scroll-behavior: auto;
+}
+
+/*
  * Hero product visual (HeroVisual.tsx): starts tipped back in 3D and
  * levels out once it scrolls into view; pointer position then nudges it
  * by a few degrees (the `--tilt-*` vars are written by JS, clamped to
@@ -586,6 +631,18 @@ html[dir="rtl"] .mkt-grow {
   .mkt-word {
     animation: none;
     opacity: 1;
+  }
+
+  /*
+   * The JS in Reveal/BlurText also releases these on mount; doing it in
+   * CSS as well means the content is never hidden, not even for the
+   * frames before hydration.
+   */
+  [data-reveal],
+  [data-blur-word] {
+    opacity: 1;
+    transform: none;
+    filter: none;
   }
 
   .mkt-tilt,
