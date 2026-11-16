@@ -1,7 +1,9 @@
 import Image from "next/image";
 import { ArrowUpRight, PlayCircle, Sparkles } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
+import { BlurText } from "./BlurText";
+import { BrandStarBorder } from "./BrandStarBorder";
+import { HeroRays } from "./HeroRays";
 import { HeroVisual } from "./HeroVisual";
 import { SplitWords, countWords } from "./SplitWords";
 
@@ -21,15 +23,22 @@ import { SplitWords, countWords } from "./SplitWords";
  * photo's teal wave rather than being cropped by it.
  *
  * The word stagger is a single sequence across the three copy runs, so
- * `startIndex` carries the count forward from run to run.
+ * `startIndex` carries the count forward from run to run — the headline
+ * itself is handed to GSAP (`BlurText`), and the badge/body/CTA runs stay
+ * on the CSS `.mkt-word` sequence, whose 55 ms step `BlurText` matches so
+ * the whole block still reads as one entrance.
+ *
+ * `HeroRays` adds React Bits' Light Rays over the photo in the brand
+ * mint; like every layer here it is gone under reduced motion.
  */
 export async function Hero() {
   const t = await getTranslations("home.hero");
   const start = t("headlineStart");
   const highlight = t("headlineHighlight");
   const end = t("headlineEnd");
-  const startCount = countWords(start);
-  const totalWords = startCount + 1 + countWords(end);
+  // The headline's own stagger is GSAP's (BlurText); this count only keeps
+  // the copy below it on the same `.mkt-word` sequence it always was.
+  const totalWords = countWords(start) + 1 + countWords(end);
 
   return (
     <section className="relative isolate overflow-hidden bg-canvas pt-28 lg:pt-40">
@@ -56,6 +65,8 @@ export async function Hero() {
         <div className="absolute top-[26rem] start-[30%] h-[28rem] w-[34rem] rounded-full bg-primary/10 blur-3xl animate-aurora-c" />
       </div>
 
+      <HeroRays />
+
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex max-w-xl flex-col items-start text-start lg:max-w-[600px]">
           <p
@@ -67,13 +78,14 @@ export async function Hero() {
           </p>
 
           <h1 className="mt-7 text-balance text-[2.25rem] font-extrabold leading-[1.18] text-ink sm:text-5xl lg:text-[58px] lg:leading-[1.12] ltr:tracking-[-0.02em]">
-            <SplitWords text={start} startIndex={1} />{" "}
-            <span className="relative inline-block whitespace-nowrap">
-              <SplitWords
-                text={highlight}
-                startIndex={startCount + 1}
-                className="bg-gradient-to-br from-primary via-mkt-teal-deep to-mkt-emerald bg-clip-text text-transparent"
-              />
+            <BlurText>
+              <SplitWords text={start} blur />{" "}
+              <span className="relative inline-block whitespace-nowrap">
+                <SplitWords
+                  text={highlight}
+                  blur
+                  className="bg-gradient-to-br from-primary via-mkt-teal-deep to-mkt-emerald bg-clip-text text-transparent"
+                />
               <svg
                 aria-hidden="true"
                 viewBox="0 0 200 14"
@@ -92,9 +104,10 @@ export async function Hero() {
                   className="animate-[draw-line_1s_cubic-bezier(0.22,1,0.36,1)_1.1s_forwards]"
                   style={{ "--draw-length": 100 } as React.CSSProperties}
                 />
-              </svg>
-            </span>{" "}
-            <SplitWords text={end} startIndex={startCount + 2} />
+                </svg>
+              </span>{" "}
+              <SplitWords text={end} blur />
+            </BlurText>
           </h1>
 
           <p
@@ -108,14 +121,14 @@ export async function Hero() {
             className="mkt-word mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center lg:mt-9"
             style={{ "--i": totalWords + 5 } as React.CSSProperties}
           >
-            <Link
+            <BrandStarBorder
               href="/register"
-              className="group relative inline-flex h-13 items-center gap-2 overflow-hidden rounded-full bg-gradient-to-br from-primary to-mkt-teal-deep px-7 text-base font-bold text-white shadow-brand transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_36px_-14px_rgba(0,101,114,0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              className="group h-13 text-base shadow-brand transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_36px_-14px_rgba(0,101,114,0.65)]"
+              style={{ paddingInline: "1.75rem" }}
             >
-              <span className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:animate-shimmer group-hover:opacity-100" aria-hidden="true" />
               {t("ctaPrimary")}
               <ArrowUpRight size={18} strokeWidth={2.2} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:-scale-x-100 rtl:group-hover:-translate-x-0.5" />
-            </Link>
+            </BrandStarBorder>
             <a
               href="#how-it-works"
               className="inline-flex h-13 items-center gap-2 rounded-full border border-ink/10 bg-white/80 px-6 text-base font-semibold text-mkt-teal-deep backdrop-blur transition-[background-color,border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"

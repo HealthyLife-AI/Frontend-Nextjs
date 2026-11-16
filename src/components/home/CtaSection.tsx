@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { ArrowUpRight, BadgeCheck, CalendarDays } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
+import { BrandStarBorder } from "./BrandStarBorder";
 import { Reveal } from "./Reveal";
 
 /**
@@ -52,14 +52,14 @@ export async function CtaSection() {
           </Reveal>
 
           <Reveal delayMs={240} className="mt-9 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-            <Link
+            <BrandStarBorder
               href="/register"
-              className="group relative inline-flex h-13 items-center gap-2 overflow-hidden rounded-full bg-gradient-to-br from-primary to-mkt-teal-deep px-8 text-base font-bold text-white shadow-brand transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_36px_-14px_rgba(0,101,114,0.65)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              className="group h-13 text-base shadow-brand transition-[transform,box-shadow] duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_36px_-14px_rgba(0,101,114,0.65)]"
+              style={{ paddingInline: "2rem" }}
             >
-              <span className="pointer-events-none absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:animate-shimmer group-hover:opacity-100" aria-hidden="true" />
               {t("primary")}
               <ArrowUpRight size={18} strokeWidth={2.2} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:-scale-x-100 rtl:group-hover:-translate-x-0.5" />
-            </Link>
+            </BrandStarBorder>
             <a
               href={`mailto:${email}?subject=${encodeURIComponent(t("secondary"))}`}
               className="inline-flex h-13 items-center gap-2 rounded-full border border-ink/10 bg-white/80 px-7 text-base font-semibold text-mkt-teal-deep backdrop-blur transition-[background-color,border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"

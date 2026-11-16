@@ -3,6 +3,7 @@ import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import { SmoothScroll } from "@/components/home/SmoothScroll";
 import { HomeHeader } from "@/components/home/HomeHeader";
 import { Hero } from "@/components/home/Hero";
 import { FoodLibraryMarquee } from "@/components/home/FoodLibraryMarquee";
@@ -61,6 +62,15 @@ export default async function HomePage({
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
+      <noscript>
+        <style
+          dangerouslySetInnerHTML={{
+            __html:
+              "[data-reveal],[data-blur-word]{opacity:1!important;transform:none!important;filter:none!important}",
+          }}
+        />
+      </noscript>
+      <SmoothScroll />
       <HomeHeader />
       <main>
         <Hero />
