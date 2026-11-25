@@ -117,7 +117,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
   const [medicationNames, setMedicationNames] = useState<string[]>([]);
   // Pilot feedback 2, A5: the activation / acknowledgement dialog. A fresh `key`
   // per open remounts it, so its tick never carries over from a previous one.
-  const [allergenDialog, setAllergenDialog] = useState<{ key: number; mode: "activate" | "acknowledge"; conflicts: DialogConflict[] } | null>(null);
+  const [allergenDialog, setAllergenDialog] = useState<{ key: number; mode: "activate" | "acknowledge" | "save"; conflicts: DialogConflict[] } | null>(null);
   const [acknowledging, setAcknowledging] = useState(false);
 
   useEffect(() => {
@@ -323,7 +323,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
     }
   }
 
-  async function handleSave(): Promise<MealPlan | null> {
+  async function handleSave(acknowledge = false): Promise<MealPlan | null> {
     setError(null);
     setSaving(true);
 
@@ -338,16 +338,26 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
       activities: activitiesToInput(activities),
     };
     const result = currentPlan
-      ? await updateMealPlan(authorizedFetch, subscriberId, currentPlan.id, payload)
+      ? await updateMealPlan(authorizedFetch, subscriberId, currentPlan.id, payload, acknowledge)
       : await createMealPlan(authorizedFetch, subscriberId, payload);
 
     setSaving(false);
 
     if (!result.ok) {
+      // Audit A-02: an edit to the ACTIVE plan that adds a confirmed-allergy
+      // food is refused and nothing is saved; she reviews it in the same
+      // dialog as activation and saves again with the acknowledgement.
+      const refusal = result.error as unknown as AllergenRefusal;
+      if (result.status === 422 && refusal.code === "allergen_conflict_unacknowledged") {
+        setAllergenDialog({ key: Date.now(), mode: "save", conflicts: fromServer(refusal.allergen_conflicts ?? []) });
+        return null;
+      }
+
       setError(result.error.message);
       return null;
     }
 
+    if (acknowledge) setAllergenDialog(null);
     setCurrentPlan(result.data);
     setDirty(false);
     setMealsDirty(false);
@@ -602,7 +612,7 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
             <Bookmark size={16} strokeWidth={1.75} />
             {t("saveAsTemplate")}
           </Button>
-          <Button variant="secondary" isLoading={saving} onClick={handleSave}>
+          <Button variant="secondary" isLoading={saving} onClick={() => void handleSave()}>
             {t("savePlan")}
           </Button>
           <Button isLoading={activating} disabled={isActive} onClick={handleActivateClick}>
@@ -719,9 +729,15 @@ function PlanDesignerInner({ subscriberId, planId }: { subscriberId: string; pla
           mode={allergenDialog.mode}
           conflicts={allergenDialog.conflicts}
           medications={allergenDialog.mode === "activate" ? medicationNames : []}
-          busy={activating || acknowledging}
+          busy={activating || acknowledging || saving}
           onCancel={() => setAllergenDialog(null)}
-          onConfirm={() => (allergenDialog.mode === "acknowledge" ? void handleAcknowledge() : void handleActivate(allergenDialog.conflicts.some((c) => c.severity === "confirmed_allergy")))}
+          onConfirm={() =>
+            allergenDialog.mode === "acknowledge"
+              ? void handleAcknowledge()
+              : allergenDialog.mode === "save"
+                ? void handleSave(true)
+                : void handleActivate(allergenDialog.conflicts.some((c) => c.severity === "confirmed_allergy"))
+          }
         />
       )}
     </div>
