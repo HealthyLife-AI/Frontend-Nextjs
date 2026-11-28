@@ -21,17 +21,26 @@ export function createMealPlan(fetcher: Fetcher, subscriberId: number | string, 
   }).then((res) => parseJson<MealPlan>(res));
 }
 
-/** Full replace (PRD F-4: edited as one whole form) — same shape as createMealPlan. */
+/**
+ * Full replace (PRD F-4: edited as one whole form) — same shape as createMealPlan.
+ *
+ * An ACTIVE plan reaches the patient as soon as it is saved, so an edit that
+ * adds a food conflicting with a CONFIRMED allergy is refused with 422
+ * `allergen_conflict_unacknowledged` (with `allergen_conflicts`) and nothing
+ * is saved, exactly like activation (audit A-02). Sent again with
+ * `acknowledge` true, it is saved and the review is recorded.
+ */
 export function updateMealPlan(
   fetcher: Fetcher,
   subscriberId: number | string,
   planId: number | string,
-  payload: MealPlanInput
+  payload: MealPlanInput,
+  acknowledge = false
 ) {
   return fetcher(`/clients/${subscriberId}/meal-plans/${planId}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(acknowledge ? { ...payload, acknowledge_allergen_conflicts: true } : payload),
   }).then((res) => parseJson<MealPlan>(res));
 }
 
@@ -57,7 +66,7 @@ export function activateMealPlan(
   }).then((res) => parseJson<MealPlan>(res));
 }
 
-/** The 422 body of a refused activation: the code and the conflicts to show. */
+/** The 422 body of a refused activation or active-plan save: the code and the conflicts to show. */
 export type AllergenRefusal = { code?: string; allergen_conflicts?: AllergenConflict[] };
 
 /**
