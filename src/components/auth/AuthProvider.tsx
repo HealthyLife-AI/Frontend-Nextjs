@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useLocale } from "next-intl";
 import type { AuthUser } from "@/lib/auth/types";
 
 type AuthStatus = "loading" | "authenticated" | "unauthenticated";
@@ -35,6 +36,8 @@ type RegisterPayload = {
   email: string;
   password: string;
   password_confirmation: string;
+  /** The language of the verification e-mail (BE-17). */
+  locale?: string;
 };
 
 type AuthContextValue = AuthState & {
@@ -136,6 +139,7 @@ async function parseError(res: Response): Promise<AuthActionError> {
  * already holds in memory.
  */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const locale = useLocale();
   const [state, setState] = useState<AuthState>({
     user: null,
     accessToken: null,
@@ -208,7 +212,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const doRequest = (token: string) =>
         fetch(`${LARAVEL_API_URL}${path}`, {
           ...init,
-          headers: { ...init.headers, Authorization: `Bearer ${token}` },
+          // The language the dashboard shows, so the API answers its refusals in it (BE-17).
+          headers: { "Accept-Language": locale, ...init.headers, Authorization: `Bearer ${token}` },
         });
 
       let response: Response | undefined;
@@ -238,7 +243,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       return doRequest(fresh);
     },
-    [state.accessToken, refreshAccessToken, clearSession]
+    [state.accessToken, refreshAccessToken, clearSession, locale]
   );
 
   const login = useCallback(

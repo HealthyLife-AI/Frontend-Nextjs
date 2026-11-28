@@ -27,6 +27,26 @@
     "openRequestsBadge": "{count, plural, one {1 open request} other {# open requests}}",
     "posts": "Tips"
   },
+  "emailVerification": {
+    "verify": {
+      "title": "Confirming your e-mail",
+      "subtitle": "One moment.",
+      "working": "Checking your link…",
+      "doneTitle": "Your e-mail is confirmed",
+      "doneBody": "You can now add patients and use the AI assistant.",
+      "continue": "Continue to the dashboard",
+      "invalidTitle": "This link doesn't work",
+      "invalidBody": "It may have expired or already been replaced by a newer one. Sign in and we'll send you a new link.",
+      "signIn": "Sign in"
+    },
+    "banner": {
+      "title": "Confirm your e-mail to start adding patients",
+      "body": "We sent a link to {email}. Until you confirm it you can't add patients or use the AI assistant. After confirming, reload this page.",
+      "resend": "Send me a new link",
+      "sent": "A new link is on its way. Check your spam folder too.",
+      "failed": "We couldn't send it just now. Try again in a minute."
+    }
+  },
   "auth": {
     "common": {
       "or": "or continue with e-mail",

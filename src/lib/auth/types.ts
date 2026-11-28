@@ -9,6 +9,10 @@ export type AuthUser = {
   avatar_url?: string | null;
   /** A nutritionist's country (ISO code); read-only for them, an admin sets it. */
   country?: string;
+  /** Nutritionists only (BE-17): the address is confirmed. */
+  email_verified?: boolean;
+  /** Nutritionists only (BE-17): unconfirmed AND held to it, so adding patients and the AI are blocked. */
+  email_verification_required?: boolean;
 };
 
 /** What the browser gets back — never includes the refresh token. */

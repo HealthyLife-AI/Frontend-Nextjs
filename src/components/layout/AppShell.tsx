@@ -12,6 +12,7 @@ import { OpenRequestsProvider } from "@/components/quickRequests/OpenRequestsPro
 import { NutritionistProfileProvider } from "@/components/nutritionists/NutritionistProfileProvider";
 import { DeletionNotices } from "@/components/notices/DeletionNotices";
 import { ProfileCompletionBanner } from "@/components/nutritionists/ProfileCompletionBanner";
+import { EmailVerificationBanner } from "@/components/auth/EmailVerificationBanner";
 
 /**
  * The one shared shell every dashboard role mounts (dashboard-builder
@@ -75,6 +76,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <Header onMenuClick={() => setMobileNavOpen(true)} />
       <main className="relative min-h-screen pt-[72px] lg:ps-72">
         <div key={pathname} className="animate-page-in mx-auto flex w-full max-w-7xl flex-col gap-7 p-4 sm:p-8">
+          {!isAdmin && <EmailVerificationBanner />}
           {!isAdmin && <ProfileCompletionBanner />}
           {!isAdmin && <DeletionNotices />}
           {children}

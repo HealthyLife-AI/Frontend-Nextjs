@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useAuth } from "./AuthProvider";
 import { AuthDivider } from "./AuthDivider";
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/Button";
 
 export function RegisterForm() {
   const t = useTranslations("auth.register");
+  const locale = useLocale();
   const tCommon = useTranslations("auth.common");
   const tValidation = useTranslations("auth.validation");
   const tErrors = useTranslations("auth.errors");
@@ -44,6 +45,7 @@ export function RegisterForm() {
       email,
       password,
       password_confirmation: passwordConfirmation,
+      locale,
     });
 
     if (result.ok) {
