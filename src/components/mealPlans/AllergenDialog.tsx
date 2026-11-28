@@ -61,7 +61,7 @@ export function AllergenConfirmDialog({
 }: {
   open: boolean;
   /** "activate": approving a plan. "acknowledge": recording a review of the plan already in force. */
-  mode: "activate" | "acknowledge";
+  mode: "activate" | "acknowledge" | "save";
   conflicts: DialogConflict[];
   medications: string[];
   busy: boolean;
@@ -77,13 +77,13 @@ export function AllergenConfirmDialog({
   const canConfirm = !needsTick || reviewed;
 
   return (
-    <Dialog open={open} onClose={onCancel} busy={busy} size="lg" title={mode === "acknowledge" ? t("titleAcknowledge") : t("titleActivate")}>
+    <Dialog open={open} onClose={onCancel} busy={busy} size="lg" title={mode === "acknowledge" ? t("titleAcknowledge") : mode === "save" ? t("titleSave") : t("titleActivate")}>
       <div className="flex flex-col gap-4">
         <MedicationNotice names={medications} />
 
         {conflicts.length > 0 && (
           <>
-            <p className="text-sm text-ink-muted">{needsTick ? t("bodyConfirmed") : t("bodySoft")}</p>
+            <p className="text-sm text-ink-muted">{needsTick ? (mode === "save" ? t("bodySave") : t("bodyConfirmed")) : t("bodySoft")}</p>
 
             <ul className="flex max-h-64 flex-col gap-2 overflow-y-auto">
               {conflicts.map((c) => {
@@ -134,7 +134,7 @@ export function AllergenConfirmDialog({
             {t("cancel")}
           </Button>
           <Button onClick={onConfirm} isLoading={busy} disabled={!canConfirm}>
-            {mode === "acknowledge" ? t("confirmAcknowledge") : t("confirmActivate")}
+            {mode === "acknowledge" ? t("confirmAcknowledge") : mode === "save" ? t("confirmSave") : t("confirmActivate")}
           </Button>
         </div>
       </div>

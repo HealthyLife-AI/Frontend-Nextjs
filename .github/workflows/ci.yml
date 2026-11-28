@@ -1,0 +1,43 @@
+name: CI
+
+# Lint, type-check and production build on every PR and on main.
+# Vercel deploys main; this catches a broken build before merge instead of after.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci --no-audit --no-fund
+
+      - name: Lint
+        run: npx eslint .
+
+      - name: Type-check
+        run: npx tsc --noEmit -p .
+
+      # No secrets are given to the build: the bundle must build from the
+      # public defaults alone, as it does for a fork PR.
+      - name: Build
+        run: npx next build
